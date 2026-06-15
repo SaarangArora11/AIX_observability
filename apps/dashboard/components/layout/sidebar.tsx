@@ -21,6 +21,8 @@ import {
   LogIn,
   Sun,
   Moon,
+  Microscope,
+  MessageSquare,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -47,9 +49,11 @@ interface UserInfo {
 const navItems = [
   { label: 'Dashboard', href: '/', icon: Home, badgeKey: null },
   { label: 'Live Traces', href: '/traces', icon: Activity, badgeKey: null },
+  { label: 'Prompt Analysis', href: '/prompt-analysis', icon: Microscope, badgeKey: null },
   { label: 'Alerts', href: '/alerts', icon: AlertTriangle, badgeKey: 'alerts' },
   { label: 'Cost Analysis', href: '/cost', icon: DollarSign, badgeKey: null },
   { label: 'Replay', href: '/replay', icon: PlayCircle, badgeKey: null },
+  { label: 'Demo Chat', href: 'http://localhost:8090/demo', icon: MessageSquare, badgeKey: null },
 ];
 
 function getAlertIcon(alertType: string) {

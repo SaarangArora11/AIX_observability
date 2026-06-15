@@ -832,3 +832,118 @@ export async function deleteReplaySet(
 
   return response.json();
 }
+
+// ============================================================================
+// Refract KPIs & Prompt Analysis API
+// ============================================================================
+
+export interface RefractKPIsResponse {
+  categories: Array<{
+    category: string;
+    count: number;
+    total_cost: number;
+    avg_latency: number;
+  }>;
+  model_fit: Array<{
+    fit: string;
+    count: number;
+    total_cost: number;
+  }>;
+  sources: Array<{
+    source: string;
+    count: number;
+    total_cost: number;
+  }>;
+  model_breakdown: Array<{
+    model: string;
+    provider: string;
+    count: number;
+    total_cost: number;
+    avg_latency: number;
+    total_tokens: number;
+  }>;
+  token_flow: {
+    total_prompt_tokens: number;
+    total_completion_tokens: number;
+    total_tokens: number;
+  };
+  kpis: {
+    avg_prompt_efficiency: number;
+    model_alignment_score: number;
+    overkill_percentage: number;
+    estimated_savings: number;
+    total_analyzed: number;
+  };
+  time_range: {
+    start: string;
+    end: string;
+  };
+}
+
+export async function getRefractKPIs(params?: TimeRangeParams): Promise<RefractKPIsResponse> {
+  const queryParams = new URLSearchParams();
+
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.append(key, String(value));
+      }
+    });
+  }
+
+  const response = await fetch(`${API_BASE_URL}/cost/refract-kpis?${queryParams}`, {
+    headers: buildHeaders(),
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Refract KPIs: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export interface PromptAnalysisResult {
+  trace_id: string;
+  span_id: string;
+  category: string;
+  complexity: string;
+  model_fit: string;
+  model_fit_reason: string;
+  suggested_model: string | null;
+  prompt_efficiency: number;
+}
+
+export async function analyzePrompt(
+  traceId: string,
+  spanId: string
+): Promise<{ success: boolean; analysis: PromptAnalysisResult }> {
+  const response = await fetch(`${API_BASE_URL}/prompt-analysis/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...buildHeaders() },
+    credentials: 'include',
+    body: JSON.stringify({ traceId, spanId }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to analyze prompt: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function batchAnalyzePrompts(
+  limit?: number
+): Promise<{ success: boolean; analyzed: number; results: PromptAnalysisResult[] }> {
+  const response = await fetch(`${API_BASE_URL}/prompt-analysis/batch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...buildHeaders() },
+    credentials: 'include',
+    body: JSON.stringify({ limit: limit || 10 }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to batch analyze: ${response.statusText}`);
+  }
+
+  return response.json();
+}
