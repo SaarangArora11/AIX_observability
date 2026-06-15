@@ -10,6 +10,7 @@ import tracesRoutes from './routes/traces';
 import analyticsRoutes from './routes/analytics';
 import alertsRoutes from './routes/alerts';
 import authRoutes from './routes/auth';
+import promptAnalysisRoutes from './routes/prompt-analysis';
 
 const app = new Hono();
 
@@ -18,7 +19,7 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8090'],
     credentials: true,
   })
 );
@@ -38,6 +39,7 @@ app.route('/auth', authRoutes);
 app.route('/traces', tracesRoutes);
 app.route('/cost', analyticsRoutes);
 app.route('/alerts', alertsRoutes);
+app.route('/prompt-analysis', promptAnalysisRoutes);
 
 // 404 handler
 app.notFound((c) => {
