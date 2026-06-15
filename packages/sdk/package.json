@@ -1,0 +1,61 @@
+{
+  "name": "@uselumina/sdk",
+  "version": "0.1.2",
+  "description": "Official TypeScript/JavaScript SDK for Lumina - Open-source AI Observability Platform",
+  "keywords": [
+    "lumina",
+    "observability",
+    "llm",
+    "ai",
+    "opentelemetry",
+    "tracing",
+    "monitoring",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt"
+  ],
+  "homepage": "https://uselumina.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/use-lumina/Lumina.git",
+    "directory": "packages/sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/use-lumina/Lumina/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Lumina Team",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && bun build src/index.ts --outdir dist --target node --sourcemap=external",
+    "dev": "bun run --watch src/index.ts",
+    "test": "bun test",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
+    "@opentelemetry/resources": "^2.2.0",
+    "@opentelemetry/sdk-trace-base": "^2.2.0",
+    "@opentelemetry/sdk-trace-node": "^2.2.0",
+    "@opentelemetry/semantic-conventions": "^1.38.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.3.3"
+  }
+}

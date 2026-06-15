@@ -1,0 +1,63 @@
+{
+  "name": "lumina",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "dev": "bun run --filter '*' dev",
+    "test": "bun test",
+    "build:config": "cd packages/config && bun run build",
+    "build:schema": "cd packages/schema && bun run build",
+    "build:core": "cd packages/core && bun run build",
+    "build:sdk": "cd packages/sdk && bun run build",
+    "build:packages": "bun run build:config && bun run build:schema && bun run build:core && bun run build:sdk",
+    "dev:api": "cd services/api && bun run dev",
+    "dev:ingestion": "cd services/ingestion && bun run dev",
+    "dev:replay": "cd services/replay && bun run dev",
+    "start:api": "cd services/api && bun run start",
+    "start:ingestion": "cd services/ingestion && bun run start",
+    "start:replay": "cd services/replay && bun run start",
+    "docker:up": "cd infra/docker && docker compose up -d",
+    "docker:down": "cd infra/docker && docker compose down",
+    "docker:logs": "cd infra/docker && docker compose logs -f",
+    "docker:build": "cd infra/docker && docker compose build",
+    "migrate": "cd packages/database && bun run db:migrate",
+    "create-customer": "bun run infra/scripts/create-customer.ts",
+    "test:alerts": "bun run infra/scripts/test-alerts.ts",
+    "test:alerts:cost": "bun run infra/scripts/test-alerts.ts cost-spike",
+    "test:alerts:quality": "bun run infra/scripts/test-alerts.ts quality-drop",
+    "test:alerts:combined": "bun run infra/scripts/test-alerts.ts combined",
+    "test:alerts:all": "bun run infra/scripts/test-alerts.ts all",
+    "clean": "rm -rf node_modules packages/*/node_modules services/*/node_modules apps/*/node_modules examples/*/node_modules",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .prettierignore",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.50.0"
+  }
+}
