@@ -21,7 +21,7 @@ export const TraceSchema = z.object({
 
   // Model information
   model: z.string().min(1),
-  provider: z.enum(['openai', 'anthropic', 'cohere', 'other']).optional(),
+  provider: z.enum(['openai', 'anthropic', 'google', 'cohere', 'other']).optional(),
 
   // Request/Response
   prompt: z.string(),
@@ -42,6 +42,15 @@ export const TraceSchema = z.object({
   // Status
   status: z.enum(['success', 'error']).default('success'),
   error_message: z.string().optional(),
+
+  // Refract-specific fields
+  source: z.enum(['sdk', 'proxy']).default('sdk').optional(),
+  prompt_category: z.string().optional(),
+  prompt_complexity: z.enum(['simple', 'moderate', 'complex']).optional(),
+  model_fit: z.enum(['underkill', 'good_fit', 'overkill']).optional(),
+  model_fit_reason: z.string().optional(),
+  suggested_model: z.string().optional(),
+  prompt_efficiency: z.number().optional(),
 });
 
 export type Trace = z.infer<typeof TraceSchema>;

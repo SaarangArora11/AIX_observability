@@ -18,7 +18,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - Refract
+      - refract
 
   # NATS JetStream - Message queue for async trace processing
   nats:
@@ -39,7 +39,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - Refract
+      - refract
 
   # Redis - Cache for semantic scores
   redis:
@@ -56,7 +56,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - Refract
+      - refract
 
   # Ingestion Service - Receives OTLP traces
   ingestion:
@@ -90,7 +90,7 @@ services:
       nats:
         condition: service_healthy
     networks:
-      - Refract
+      - refract
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
       interval: 30s
@@ -124,7 +124,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - Refract
+      - refract
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/health"]
       interval: 30s
@@ -158,7 +158,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - Refract
+      - refract
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/health"]
       interval: 30s
@@ -188,13 +188,40 @@ services:
       - ingestion
       - replay
     networks:
-      - Refract
+      - refract
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 40s
+
+  # Proxy Gateway - Transparent LLM proxy for observability
+  proxy:
+    build:
+      context: ../../
+      dockerfile: services/proxy/Dockerfile
+    container_name: refract-proxy
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PROXY_PORT: 8090
+      INGESTION_URL: http://ingestion:8080
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "8090:8090"
+    depends_on:
+      - ingestion
+    networks:
+      - refract
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
   postgres-data:
@@ -205,5 +232,5 @@ volumes:
     driver: local
 
 networks:
-  Refract:
+  refract:
     driver: bridge

@@ -18,7 +18,7 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
   const model = responseModel || requestModel || 'unknown';
 
   const prompt = getStringAttribute(span, 'gen_ai.prompt', '');
-  const completion = getStringAttribute(span, 'gen_ai.completion', '');
+  const completion = getStringAttribute(span, 'gen_ai.completion', '') || getStringAttribute(span, 'gen_ai.response', '');
 
   const promptTokens = getNumberAttribute(span, 'gen_ai.usage.prompt_tokens', 0);
   const completionTokens = getNumberAttribute(span, 'gen_ai.usage.completion_tokens', 0);
@@ -29,8 +29,9 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
   );
 
   // Extract Refract-specific attributes
-  const environment = getStringAttribute(span, 'Refract.environment', 'live') as 'live' | 'test';
-  const providedCost = getNumberAttribute(span, 'Refract.cost_usd', 0);
+  const environment = getStringAttribute(span, 'refract.environment', 'live') as 'live' | 'test';
+  const providedCost = getNumberAttribute(span, 'gen_ai.cost', 0) || getNumberAttribute(span, 'refract.cost_usd', 0);
+  const source = getStringAttribute(span, 'refract.source', 'sdk');
 
   // Calculate cost if not provided
   const costUsd =
@@ -96,6 +97,9 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
     // Status
     status,
     error_message: errorMessage,
+
+    // Source (proxy or sdk)
+    source,
   };
 }
 
@@ -112,7 +116,7 @@ function mapOTLPStatus(code: OTLPStatusCode): 'success' | 'error' {
  */
 function mapLLMSystemToProvider(
   system: string
-): 'openai' | 'anthropic' | 'cohere' | 'other' | undefined {
+): 'openai' | 'anthropic' | 'google' | 'cohere' | 'other' | undefined {
   const normalized = system.toLowerCase();
 
   if (normalized.includes('openai') || normalized === 'openai') {
@@ -120,6 +124,9 @@ function mapLLMSystemToProvider(
   }
   if (normalized.includes('anthropic') || normalized === 'anthropic') {
     return 'anthropic';
+  }
+  if (normalized.includes('google') || normalized === 'google' || normalized.includes('gemini')) {
+    return 'google';
   }
   if (normalized.includes('cohere') || normalized === 'cohere') {
     return 'cohere';
@@ -166,7 +173,7 @@ function parseTagsAttribute(span: ParsedOTLPSpan): string[] | undefined {
 function extractMetadata(span: ParsedOTLPSpan): Record<string, unknown> | undefined {
   const metadata: Record<string, unknown> = {};
 
-  const excludedPrefixes = ['gen_ai.', 'Refract.', 'service.', 'telemetry.'];
+  const excludedPrefixes = ['gen_ai.', 'refract.', 'Refract.', 'service.', 'telemetry.'];
 
   for (const [key, value] of Object.entries(span.attributes)) {
     // Skip if it matches excluded prefixes
