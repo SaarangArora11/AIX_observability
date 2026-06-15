@@ -57,6 +57,16 @@ export const traces = pgTable(
     status: varchar('status', { length: 20 }).notNull(),
     errorMessage: text('error_message'),
 
+    // Prompt Analysis (Refract)
+    promptCategory: varchar('prompt_category', { length: 50 }),
+    promptComplexity: varchar('prompt_complexity', { length: 20 }),
+    modelFit: varchar('model_fit', { length: 30 }),
+    modelFitReason: text('model_fit_reason'),
+    suggestedModel: varchar('suggested_model', { length: 255 }),
+    source: varchar('source', { length: 20 }).default('sdk'),
+    promptEfficiency: doublePrecision('prompt_efficiency'),
+    analyzedAt: timestamp('analyzed_at', { withTimezone: true, mode: 'date' }),
+
     // Semantic scoring (added in migration 003)
     semanticScore: doublePrecision('semantic_score'),
     hashSimilarity: doublePrecision('hash_similarity'),
@@ -86,6 +96,9 @@ export const traces = pgTable(
     semanticScoreIdx: index('idx_traces_semantic_score')
       .on(table.semanticScore)
       .where(sql`${table.semanticScore} IS NOT NULL`),
+    promptCategoryIdx: index('idx_prompt_category').on(table.promptCategory),
+    sourceIdx: index('idx_source').on(table.source),
+    modelFitIdx: index('idx_model_fit').on(table.modelFit),
 
     // CHECK constraints
     environmentCheck: check(
@@ -94,7 +107,7 @@ export const traces = pgTable(
     ),
     providerCheck: check(
       'traces_provider_check',
-      sql`${table.provider} IN ('openai', 'anthropic', 'cohere', 'other')`
+      sql`${table.provider} IN ('openai', 'anthropic', 'google', 'cohere', 'other')`
     ),
     statusCheck: check('traces_status_check', sql`${table.status} IN ('success', 'error')`),
   })
