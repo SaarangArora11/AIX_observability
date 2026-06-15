@@ -116,7 +116,7 @@ app.get('/', requireAuth, async (c) => {
       offset = '0',
     } = c.req.query();
 
-    // Use the query builder from @lumina/database
+    // Use the query builder from @refract/database
     const alertsList = await getAlertsWithFilters(db, {
       customerId,
       alertType: alertType as any,

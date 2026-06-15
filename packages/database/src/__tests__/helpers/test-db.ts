@@ -13,7 +13,7 @@ export async function setupTestDatabase(): Promise<{
   db: Database;
   client: postgres.Sql;
 }> {
-  const testDbUrl = process.env.DATABASE_URL || 'postgresql://localhost:5432/lumina_test';
+  const testDbUrl = process.env.DATABASE_URL || 'postgresql://localhost:5432/Refract_test';
 
   const { db, client } = createDatabase({
     connectionString: testDbUrl,

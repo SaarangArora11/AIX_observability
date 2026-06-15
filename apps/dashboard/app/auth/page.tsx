@@ -69,7 +69,7 @@ function AuthForm() {
         <div className="relative z-10 animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-8 w-8 text-white" />
-            <h1 className="text-3xl font-bold text-white">Lumina</h1>
+            <h1 className="text-3xl font-bold text-white">Refract</h1>
           </div>
           <p className="text-blue-100 text-lg">Observe and optimize AI in production</p>
         </div>
@@ -105,7 +105,7 @@ function AuthForm() {
         </div>
 
         <div className="relative z-10 text-blue-100 text-sm animate-fade-in stagger-4">
-          © 2025 Lumina. All rights reserved.
+          © 2025 Refract. All rights reserved.
         </div>
       </div>
 
@@ -115,7 +115,7 @@ function AuthForm() {
           <div className="lg:hidden mb-8 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Sparkles className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold">Lumina</h1>
+              <h1 className="text-3xl font-bold">Refract</h1>
             </div>
             <p className="text-muted-foreground">Observe and optimize AI in production</p>
           </div>
@@ -124,7 +124,7 @@ function AuthForm() {
             <div className="mb-6">
               <h2 className="text-2xl font-bold tracking-tight mb-2">Welcome back</h2>
               <p className="text-sm text-muted-foreground">
-                Sign in to access your Lumina dashboard
+                Sign in to access your Refract dashboard
               </p>
             </div>
 
@@ -199,10 +199,10 @@ function AuthForm() {
               <p className="text-xs text-center text-muted-foreground">
                 Need help? Contact{' '}
                 <a
-                  href="mailto:support@lumina.dev"
+                  href="mailto:support@Refract.dev"
                   className="text-primary hover:underline font-medium"
                 >
-                  support@lumina.dev
+                  support@Refract.dev
                 </a>
               </p>
             </div>

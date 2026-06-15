@@ -79,18 +79,18 @@ export async function authMiddleware(c: AppContext, next: Next) {
 
 /**
  * Extract customer ID from token
- * MVP implementation: token format is "lumina_<customer_id>_<random>"
+ * MVP implementation: token format is "Refract_<customer_id>_<random>"
  * Customer ID can contain underscores (e.g., customer_9cd1f4692e64871f)
  * Production would use JWT or proper API key management
  */
 function extractCustomerId(token: string): string | null {
   // Simple validation for MVP
-  if (!token.startsWith('lumina_')) {
+  if (!token.startsWith('Refract_')) {
     return null;
   }
 
-  // Remove the "lumina_" prefix
-  const withoutPrefix = token.substring('lumina_'.length);
+  // Remove the "Refract_" prefix
+  const withoutPrefix = token.substring('Refract_'.length);
 
   // Split the remaining string and take everything except the last part (which is the random suffix)
   const parts = withoutPrefix.split('_');
@@ -107,6 +107,6 @@ function extractCustomerId(token: string): string | null {
     return parts.slice(0, -1).join('_');
   }
 
-  // Fallback: assume customer_id is the first part after lumina_
+  // Fallback: assume customer_id is the first part after Refract_
   return parts[0] || null;
 }

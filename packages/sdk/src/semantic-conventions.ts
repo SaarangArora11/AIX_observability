@@ -19,14 +19,14 @@ export const LLM_USAGE_TOTAL_TOKENS = 'gen_ai.usage.total_tokens';
 export const LLM_PROMPT = 'gen_ai.prompt';
 export const LLM_COMPLETION = 'gen_ai.completion';
 
-// Lumina-specific extensions
-export const LUMINA_CUSTOMER_ID = 'lumina.customer_id';
-export const LUMINA_ENVIRONMENT = 'lumina.environment';
-export const LUMINA_SERVICE_NAME = 'lumina.service_name';
-export const LUMINA_ENDPOINT = 'lumina.endpoint';
-export const LUMINA_COST_USD = 'lumina.cost_usd';
-export const LUMINA_RESPONSE_HASH = 'lumina.response_hash';
-export const LUMINA_TAGS = 'lumina.tags';
+// Refract-specific extensions
+export const Refract_CUSTOMER_ID = 'Refract.customer_id';
+export const REFRACT_ENVIRONMENT = 'Refract.environment';
+export const Refract_SERVICE_NAME = 'Refract.service_name';
+export const REFRACT_ENDPOINT = 'Refract.endpoint';
+export const Refract_COST_USD = 'Refract.cost_usd';
+export const Refract_RESPONSE_HASH = 'Refract.response_hash';
+export const Refract_TAGS = 'Refract.tags';
 
 // Span names
 export const SPAN_NAME_LLM_REQUEST = 'llm.request';

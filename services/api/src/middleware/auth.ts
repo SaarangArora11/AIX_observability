@@ -36,7 +36,7 @@ export async function requireAuth(c: Context, next: Next) {
   if (!finalToken) {
     const cookieHeader = c.req.header('cookie');
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:^|; )lumina_token=([^;]+)/);
+      const match = cookieHeader.match(/(?:^|; )Refract_token=([^;]+)/);
       if (match) {
         finalToken = match[1];
       }
@@ -75,7 +75,7 @@ export async function optionalAuth(c: Context, next: Next) {
   if (!finalToken) {
     const cookieHeader = c.req.header('cookie');
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:^|; )lumina_token=([^;]+)/);
+      const match = cookieHeader.match(/(?:^|; )Refract_token=([^;]+)/);
       if (match) finalToken = match[1];
     }
   }

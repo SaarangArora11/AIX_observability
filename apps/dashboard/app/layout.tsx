@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Lumina Dashboard',
+  title: 'Refract Dashboard',
   description: 'AI-powered document intelligence platform',
 };
 
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const theme = localStorage.getItem('lumina-ui-theme') || 'light';
+                const theme = localStorage.getItem('refract-ui-theme') || 'light';
                 if (theme === 'dark') {
                   document.documentElement.classList.add('dark');
                 }
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className="bg-background text-foreground antialiased font-sans"
         suppressHydrationWarning
       >
-        <ThemeProvider defaultTheme="light" storageKey="lumina-ui-theme">
+        <ThemeProvider defaultTheme="light" storageKey="refract-ui-theme">
           <SkeletonThemeProvider>
             <DashboardLayout>{children}</DashboardLayout>
           </SkeletonThemeProvider>

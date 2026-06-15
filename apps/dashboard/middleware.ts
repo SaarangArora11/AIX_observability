@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Protect the dashboard app pages by requiring an httpOnly `lumina_token` cookie.
+// Protect the dashboard app pages by requiring an httpOnly `Refract_token` cookie.
 // If the cookie is missing, redirect to `/auth` and include the original
 // path in `from` query param so the client can return after login.
 //
@@ -32,7 +32,7 @@ export function middleware(req: NextRequest) {
   }
 
   // Managed cloud mode: check for authentication token
-  const token = req.cookies.get('lumina_token')?.value;
+  const token = req.cookies.get('Refract_token')?.value;
 
   if (!token) {
     const loginUrl = new URL('/auth', req.url);

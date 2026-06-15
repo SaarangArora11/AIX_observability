@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/example-nextjs-rag",
+  "name": "@Refract/example-nextjs-rag",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
-    "@uselumina/sdk": "workspace:*",
+    "@refract/sdk": "workspace:*",
     "ai": "^5.0.114",
     "cheerio": "^1.1.2",
     "lucide-react": "^0.562.0",

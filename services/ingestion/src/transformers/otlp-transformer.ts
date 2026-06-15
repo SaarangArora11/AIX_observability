@@ -1,9 +1,9 @@
-import type { ParsedOTLPSpan, Trace, OTLPStatusCode } from '@lumina/schema';
+import type { ParsedOTLPSpan, Trace, OTLPStatusCode } from '@refract/schema';
 import { getStringAttribute, getNumberAttribute } from '../parsers/otlp-parser';
-import { calculateCost } from '@lumina/core';
+import { calculateCost } from '@refract/core';
 
 /**
- * Transform OTLP span to Lumina Trace format
+ * Transform OTLP span to Refract Trace format
  */
 export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): Trace {
   // Calculate duration in milliseconds
@@ -28,9 +28,9 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
     promptTokens + completionTokens
   );
 
-  // Extract Lumina-specific attributes
-  const environment = getStringAttribute(span, 'lumina.environment', 'live') as 'live' | 'test';
-  const providedCost = getNumberAttribute(span, 'lumina.cost_usd', 0);
+  // Extract Refract-specific attributes
+  const environment = getStringAttribute(span, 'Refract.environment', 'live') as 'live' | 'test';
+  const providedCost = getNumberAttribute(span, 'Refract.cost_usd', 0);
 
   // Calculate cost if not provided
   const costUsd =
@@ -55,7 +55,7 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
   // Extract metadata (non-standard attributes)
   const metadata = extractMetadata(span);
 
-  // Map OTLP status to Lumina status
+  // Map OTLP status to Refract status
   const status = mapOTLPStatus(span.status.code as OTLPStatusCode);
   const errorMessage = span.status.message || undefined;
 
@@ -100,7 +100,7 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
 }
 
 /**
- * Map OTLP status code to Lumina status
+ * Map OTLP status code to Refract status
  */
 function mapOTLPStatus(code: OTLPStatusCode): 'success' | 'error' {
   // STATUS_CODE_ERROR = 2
@@ -135,7 +135,7 @@ function mapLLMSystemToProvider(
  * Parse tags attribute (stored as JSON string)
  */
 function parseTagsAttribute(span: ParsedOTLPSpan): string[] | undefined {
-  const tagsValue = span.attributes['lumina.tags'];
+  const tagsValue = span.attributes['Refract.tags'];
 
   if (!tagsValue) {
     return undefined;
@@ -161,12 +161,12 @@ function parseTagsAttribute(span: ParsedOTLPSpan): string[] | undefined {
 
 /**
  * Extract metadata from span attributes
- * Excludes standard OTEL and Lumina attributes
+ * Excludes standard OTEL and Refract attributes
  */
 function extractMetadata(span: ParsedOTLPSpan): Record<string, unknown> | undefined {
   const metadata: Record<string, unknown> = {};
 
-  const excludedPrefixes = ['gen_ai.', 'lumina.', 'service.', 'telemetry.'];
+  const excludedPrefixes = ['gen_ai.', 'Refract.', 'service.', 'telemetry.'];
 
   for (const [key, value] of Object.entries(span.attributes)) {
     // Skip if it matches excluded prefixes

@@ -1,4 +1,4 @@
-// @lumina/config - Configuration management
+// @refract/config - Configuration management
 
 // Configuration schemas and types
 export * from './config';

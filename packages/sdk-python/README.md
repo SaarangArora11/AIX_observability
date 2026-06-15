@@ -1,11 +1,11 @@
-# lumina-sdk
+# Refract-sdk
 
-Python SDK for [Lumina](https://uselumina.com) — OpenTelemetry-native LLM observability.
+Python SDK for [Refract](https://useRefract.com) — OpenTelemetry-native LLM observability.
 
 ## Installation
 
 ```bash
-pip install lumina-sdk
+pip install Refract-sdk
 ```
 
 Or install directly from the monorepo for development:
@@ -18,19 +18,19 @@ pip install -e packages/sdk-python/
 
 ```python
 import os
-from lumina import init_lumina
+from Refract import init_refract
 
-lumina = init_lumina({
-    "api_key": os.environ["LUMINA_API_KEY"],
+Refract = init_refract({
+    "api_key": os.environ["REFRACT_API_KEY"],
     "service_name": "my-app",
-    "endpoint": "https://collector.lumina.app/v1/traces",
+    "endpoint": "https://collector.Refract.app/v1/traces",
 })
 
 # Trace an OpenAI call
 import openai
 client = openai.OpenAI()
 
-response = lumina.trace_llm(
+response = Refract.trace_llm(
     lambda: client.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": "Hello!"}],
@@ -47,13 +47,13 @@ print(response.choices[0].message.content)
 ```python
 import asyncio
 import openai
-from lumina import init_lumina
+from Refract import init_refract
 
-lumina = init_lumina({"service_name": "my-app"})
+Refract = init_refract({"service_name": "my-app"})
 client = openai.AsyncOpenAI()
 
 async def main():
-    response = await lumina.trace_llm(
+    response = await Refract.trace_llm(
         lambda: client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": "Hello!"}],
@@ -69,7 +69,7 @@ asyncio.run(main())
 ### Custom spans
 
 ```python
-result = lumina.trace(
+result = Refract.trace(
     "rag_pipeline",
     lambda span: run_rag(span),
     metadata={"query": "What is observability?"},
@@ -81,13 +81,13 @@ result = lumina.trace(
 
 | Variable                   | Default                           | Description                        |
 | -------------------------- | --------------------------------- | ---------------------------------- |
-| `LUMINA_API_KEY`           | —                                 | API key (omit for self-hosted)     |
-| `LUMINA_ENDPOINT`          | `http://localhost:9411/v1/traces` | OTLP collector URL                 |
-| `LUMINA_SERVICE_NAME`      | —                                 | Service name attached to all spans |
-| `LUMINA_ENVIRONMENT`       | `live`                            | `live` or `test`                   |
-| `LUMINA_CUSTOMER_ID`       | —                                 | Customer identifier                |
-| `LUMINA_ENABLED`           | `true`                            | Set to `false` to disable          |
-| `LUMINA_BATCH_SIZE`        | `10`                              | Max spans per export batch         |
-| `LUMINA_BATCH_INTERVAL_MS` | `5000`                            | Batch flush interval (ms)          |
-| `LUMINA_MAX_RETRIES`       | `3`                               | Export retry count                 |
-| `LUMINA_TIMEOUT_MS`        | `30000`                           | Export timeout (ms)                |
+| `REFRACT_API_KEY`           | —                                 | API key (omit for self-hosted)     |
+| `REFRACT_ENDPOINT`          | `http://localhost:9411/v1/traces` | OTLP collector URL                 |
+| `Refract_SERVICE_NAME`      | —                                 | Service name attached to all spans |
+| `REFRACT_ENVIRONMENT`       | `live`                            | `live` or `test`                   |
+| `Refract_CUSTOMER_ID`       | —                                 | Customer identifier                |
+| `REFRACT_ENABLED`           | `true`                            | Set to `false` to disable          |
+| `REFRACT_BATCH_SIZE`        | `10`                              | Max spans per export batch         |
+| `REFRACT_BATCH_INTERVAL_MS` | `5000`                            | Batch flush interval (ms)          |
+| `REFRACT_MAX_RETRIES`       | `3`                               | Export retry count                 |
+| `REFRACT_TIMEOUT_MS`        | `30000`                           | Export timeout (ms)                |

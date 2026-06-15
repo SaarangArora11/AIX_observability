@@ -1,6 +1,6 @@
 # RAG System Integration Guide
 
-This guide shows you how to instrument Retrieval-Augmented Generation (RAG) systems with Lumina to get full observability across your entire pipeline.
+This guide shows you how to instrument Retrieval-Augmented Generation (RAG) systems with Refract to get full observability across your entire pipeline.
 
 ## What is RAG?
 
@@ -9,7 +9,7 @@ RAG (Retrieval-Augmented Generation) systems combine:
 1. **Retrieval**: Searching a knowledge base (vector database) for relevant context
 2. **Generation**: Using an LLM to generate a response based on the retrieved context
 
-## Why Instrument RAG with Lumina?
+## Why Instrument RAG with Refract?
 
 RAG pipelines have unique observability challenges:
 
@@ -18,7 +18,7 @@ RAG pipelines have unique observability challenges:
 - **Performance bottlenecks**: Slow retrieval OR slow generation
 - **Context bloat**: Too much context = higher costs + lower quality
 
-Lumina helps you:
+Refract helps you:
 
 - ✅ Track costs for both retrieval and generation
 - ✅ Detect when context quality degrades
@@ -32,8 +32,8 @@ Lumina helps you:
 ### Setup
 
 ```bash
-# Install Lumina SDK
-npm install @uselumina/sdk
+# Install Refract SDK
+npm install @refract/sdk
 
 # Install your RAG dependencies
 npm install @pinecone-database/pinecone @anthropic-ai/sdk
@@ -42,12 +42,12 @@ npm install @pinecone-database/pinecone @anthropic-ai/sdk
 ### Simple RAG Example
 
 ```typescript
-import { initLumina } from '@uselumina/sdk';
+import { initRefract } from '@refract/sdk';
 import { Pinecone } from '@pinecone-database/pinecone';
 import Anthropic from '@anthropic-ai/sdk';
 
-const lumina = initLumina({
-  api_key: process.env.LUMINA_API_KEY,
+const Refract = initRefract({
+  api_key: process.env.REFRACT_API_KEY,
   environment: 'production',
 });
 
@@ -55,11 +55,11 @@ const pinecone = new Pinecone();
 const anthropic = new Anthropic();
 
 export async function answerQuestion(question: string) {
-  // Lumina creates ONE parent trace for the entire RAG flow
-  return await lumina.trace(
+  // Refract creates ONE parent trace for the entire RAG flow
+  return await Refract.trace(
     async () => {
       // Step 1: Retrieval (child span)
-      const context = await lumina.trace(
+      const context = await Refract.trace(
         async () => {
           const embedding = await getEmbedding(question);
 
@@ -83,7 +83,7 @@ export async function answerQuestion(question: string) {
       );
 
       // Step 2: Generation (child span)
-      const response = await lumina.trace(
+      const response = await Refract.trace(
         async () => {
           return await anthropic.messages.create({
             model: 'claude-3-5-sonnet-20241022',
@@ -125,7 +125,7 @@ Answer:`,
 }
 ```
 
-### What You'll See in Lumina
+### What You'll See in Refract
 
 ```
 📊 RAG Pipeline (total: 1.2s, cost: $0.016)
@@ -149,10 +149,10 @@ When your RAG system does multiple retrieval rounds:
 
 ```typescript
 export async function multiHopRAG(question: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       // Hop 1: Initial retrieval
-      const initialContext = await lumina.trace(
+      const initialContext = await Refract.trace(
         async () => {
           // ... retrieval logic
         },
@@ -163,7 +163,7 @@ export async function multiHopRAG(question: string) {
       );
 
       // Hop 2: Query refinement
-      const refinedQuery = await lumina.trace(
+      const refinedQuery = await Refract.trace(
         async () => {
           // Use LLM to refine query based on initial context
           return await refineQuery(question, initialContext);
@@ -174,7 +174,7 @@ export async function multiHopRAG(question: string) {
       );
 
       // Hop 3: Second retrieval with refined query
-      const refinedContext = await lumina.trace(
+      const refinedContext = await Refract.trace(
         async () => {
           // ... retrieval logic with refinedQuery
         },
@@ -185,7 +185,7 @@ export async function multiHopRAG(question: string) {
       );
 
       // Final generation
-      const response = await lumina.trace(
+      const response = await Refract.trace(
         async () => {
           // ... generation logic
         },
@@ -203,10 +203,10 @@ export async function multiHopRAG(question: string) {
 
 ```typescript
 export async function ragWithReranking(question: string) {
-  return await lumina.trace(async () => {
+  return await Refract.trace(async () => {
 
     // Initial retrieval (broad)
-    const candidates = await lumina.trace(async () => {
+    const candidates = await Refract.trace(async () => {
       return await vectorSearch(question, topK: 20);
     }, {
       name: 'rag-retrieval-candidates',
@@ -214,7 +214,7 @@ export async function ragWithReranking(question: string) {
     });
 
     // Reranking
-    const reranked = await lumina.trace(async () => {
+    const reranked = await Refract.trace(async () => {
       return await rerank(question, candidates, topK: 5);
     }, {
       name: 'rag-reranking',
@@ -225,7 +225,7 @@ export async function ragWithReranking(question: string) {
     });
 
     // Generation with top results
-    const response = await lumina.trace(async () => {
+    const response = await Refract.trace(async () => {
       // ... generation logic
     }, {
       name: 'rag-generation',
@@ -244,7 +244,7 @@ export async function ragWithReranking(question: string) {
 ### Track Context Size
 
 ```typescript
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const results = await vectorSearch(question);
     const contextText = results.join('\n\n');
@@ -264,7 +264,7 @@ const context = await lumina.trace(
 
 ### Alert on Context Bloat
 
-In your Lumina dashboard, set up alerts:
+In your Refract dashboard, set up alerts:
 
 - Context length > 3000 tokens (warning)
 - Context length > 5000 tokens (critical)
@@ -272,7 +272,7 @@ In your Lumina dashboard, set up alerts:
 
 ### Compare RAG Strategies
 
-Use Lumina's replay feature to test:
+Use Refract's replay feature to test:
 
 ```typescript
 // Strategy A: Retrieve 10 documents
@@ -296,7 +296,7 @@ const strategyB = { topK: 20, rerank: true, finalK: 5 };
 ### Track Retrieval Quality
 
 ```typescript
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const results = await vectorSearch(question);
 
@@ -320,10 +320,10 @@ const context = await lumina.trace(
 
 ### Detect Context Utilization
 
-Lumina's semantic scorer can detect when the LLM ignores context:
+Refract's semantic scorer can detect when the LLM ignores context:
 
 ```typescript
-// Lumina automatically tracks:
+// Refract automatically tracks:
 // - Did the response use the retrieved context?
 // - Semantic similarity to expected output
 // - Hallucination detection
@@ -344,7 +344,7 @@ import { Pinecone } from '@pinecone-database/pinecone';
 const pinecone = new Pinecone();
 const index = pinecone.index('knowledge-base');
 
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const embedding = await getEmbedding(query);
 
@@ -377,7 +377,7 @@ const client = weaviate.client({
   host: 'localhost:8080',
 });
 
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const results = await client.graphql
       .get()
@@ -407,7 +407,7 @@ import { ChromaClient } from 'chromadb';
 const client = new ChromaClient();
 const collection = await client.getCollection({ name: 'documents' });
 
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const results = await collection.query({
       queryTexts: [query],
@@ -433,7 +433,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(url, key);
 
-const context = await lumina.trace(
+const context = await Refract.trace(
   async () => {
     const embedding = await getEmbedding(query);
 
@@ -457,7 +457,7 @@ const context = await lumina.trace(
 
 ## RAG Dashboard Metrics
 
-Once instrumented, Lumina tracks:
+Once instrumented, Refract tracks:
 
 ### Cost Metrics
 
@@ -491,17 +491,17 @@ Once instrumented, Lumina tracks:
 
 ```typescript
 // ✅ Good: Clear hierarchy
-lumina.trace(
+Refract.trace(
   async () => {
-    await lumina.trace(retrieval, { name: 'retrieval' });
-    await lumina.trace(generation, { name: 'generation' });
+    await Refract.trace(retrieval, { name: 'retrieval' });
+    await Refract.trace(generation, { name: 'generation' });
   },
   { name: 'rag-pipeline' }
 );
 
 // ❌ Bad: Flat traces
-lumina.trace(retrieval);
-lumina.trace(generation);
+Refract.trace(retrieval);
+Refract.trace(generation);
 ```
 
 ### 2. Add Meaningful Attributes
@@ -540,7 +540,7 @@ attributes: {
   'rag.strategy': 'reranking',
 }
 
-// Use Lumina's replay to compare v2.0 vs v2.1
+// Use Refract's replay to compare v2.0 vs v2.1
 ```
 
 ---
@@ -549,7 +549,7 @@ attributes: {
 
 ### High Costs?
 
-Check Lumina dashboard:
+Check Refract dashboard:
 
 1. Is context length growing? (alert: context > 3K tokens)
 2. Are you retrieving too many documents? (reduce topK)
@@ -557,7 +557,7 @@ Check Lumina dashboard:
 
 ### Low Quality?
 
-Check Lumina dashboard:
+Check Refract dashboard:
 
 1. Retrieval relevance scores low? (improve embeddings/indexing)
 2. Response ignoring context? (improve prompt engineering)
@@ -565,7 +565,7 @@ Check Lumina dashboard:
 
 ### Slow Performance?
 
-Check Lumina dashboard:
+Check Refract dashboard:
 
 1. Retrieval slow? (add vector DB indexes, reduce topK)
 2. Generation slow? (reduce context length, use faster model)
@@ -575,7 +575,7 @@ Check Lumina dashboard:
 
 ## Next Steps
 
-- ✅ Instrument your RAG pipeline with Lumina
+- ✅ Instrument your RAG pipeline with Refract
 - 📊 Set up alerts for cost spikes and quality drops
 - 🔄 Use replay to test RAG improvements
 - 📈 Track metrics over time to optimize

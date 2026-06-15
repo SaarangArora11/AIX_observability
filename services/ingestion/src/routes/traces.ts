@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { OTLPTraceRequest } from '@lumina/schema';
+import type { OTLPTraceRequest } from '@refract/schema';
 import { parseOTLPTraces } from '../parsers/otlp-parser';
 import { transformOTLPBatch } from '../transformers/otlp-transformer';
 import {
@@ -57,7 +57,7 @@ traces.post('/v1/traces', async (c) => {
       );
     }
 
-    // Transform to Lumina trace format
+    // Transform to Refract trace format
     const traces = transformOTLPBatch(parsedSpans, customerId);
 
     // Store in PostgreSQL (synchronous for immediate query availability)

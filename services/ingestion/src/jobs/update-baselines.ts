@@ -12,8 +12,8 @@
 
 import { eq, and, gte } from 'drizzle-orm';
 import { getDatabase } from '../database/client';
-import { upsertBaseline, traces } from '@lumina/database';
-import { calculateBaseline } from '@lumina/core';
+import { upsertBaseline, traces } from '@refract/database';
+import { calculateBaseline } from '@refract/core';
 
 interface ServiceEndpoint {
   serviceName: string;

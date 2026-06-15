@@ -8,7 +8,7 @@ permalink: /integrations
 
 # Integration Guides
 
-Learn how to integrate Lumina with your LLM applications.
+Learn how to integrate Refract with your LLM applications.
 
 ## Supported Providers
 
@@ -21,7 +21,7 @@ Learn how to integrate Lumina with your LLM applications.
 
 All integrations follow a simple pattern:
 
-1. Install the SDK: `npm install @uselumina/sdk`
+1. Install the SDK: `npm install @refract/sdk`
 2. Initialize the client
 3. Wrap your LLM calls with `traceLLM()`
 4. View traces in the dashboard

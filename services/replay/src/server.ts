@@ -1,5 +1,5 @@
 /**
- * Lumina Replay Engine Service
+ * Refract Replay Engine Service
  * Captures and re-executes production traffic for regression testing
  */
 
@@ -25,7 +25,7 @@ app.use(
 app.get('/health', (c) => {
   return c.json({
     status: 'healthy',
-    service: 'lumina-replay',
+    service: 'refract-replay',
     version: '0.1.0',
     timestamp: new Date().toISOString(),
   });
@@ -60,7 +60,7 @@ async function start() {
     console.log('✅ Database client ready');
 
     // Start server
-    console.log(`🚀 Lumina Replay Engine starting on port ${PORT}...`);
+    console.log(`🚀 Refract Replay Engine starting on port ${PORT}...`);
 
     Bun.serve({
       port: PORT,

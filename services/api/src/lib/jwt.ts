@@ -5,7 +5,7 @@
 
 import { SignJWT, jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'lumina-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'Refract-dev-secret-change-in-production';
 const secret = new TextEncoder().encode(JWT_SECRET);
 
 export interface JWTPayload {

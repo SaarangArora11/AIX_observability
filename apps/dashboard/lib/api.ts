@@ -1,6 +1,6 @@
 /**
- * API Client for Lumina Dashboard
- * Connects to the Lumina Query API Service
+ * API Client for Refract Dashboard
+ * Connects to the Refract Query API Service
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081';

@@ -8,12 +8,12 @@ import {
   insertTracesBatch,
   upsertBaseline,
   calculatePercentiles,
-} from '@lumina/database';
-import type { NewTrace } from '@lumina/database';
+} from '@refract/database';
+import type { NewTrace } from '@refract/database';
 
 async function main() {
   const { db, client } = createDatabase({
-    connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/lumina',
+    connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/Refract',
   });
 
   try {

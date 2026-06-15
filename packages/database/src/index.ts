@@ -1,5 +1,5 @@
 /**
- * @lumina/database
+ * @refract/database
  *
  * Shared database package with Drizzle ORM
  * Provides schemas, connection management, and reusable query builders

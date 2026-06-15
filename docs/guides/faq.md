@@ -11,23 +11,23 @@ nav_order: 3
 
 ## General
 
-### What is Lumina?
+### What is Refract?
 
-Lumina is an open-source, OpenTelemetry-native observability platform for AI systems. It helps you track costs, latency, and quality across your LLM applications with minimal overhead.
+Refract is an open-source, OpenTelemetry-native observability platform for AI systems. It helps you track costs, latency, and quality across your LLM applications with minimal overhead.
 
-### Why did you build Lumina?
+### Why did you build Refract?
 
-Traditional APM tools don't understand semantic degradation, token-level costs, or hallucination detection. Existing "AI observability" platforms were built for data scientists running batch evaluations, not for backend engineers running production systems. Lumina bridges this gap by providing infrastructure-grade observability specifically designed for AI systems.
+Traditional APM tools don't understand semantic degradation, token-level costs, or hallucination detection. Existing "AI observability" platforms were built for data scientists running batch evaluations, not for backend engineers running production systems. Refract bridges this gap by providing infrastructure-grade observability specifically designed for AI systems.
 
-### Is Lumina production-ready?
+### Is Refract production-ready?
 
-Yes! Lumina is built with the same principles as production infrastructure tools: real-time ingestion, at-least-once delivery guarantees, and zero-overhead instrumentation using OpenTelemetry.
+Yes! Refract is built with the same principles as production infrastructure tools: real-time ingestion, at-least-once delivery guarantees, and zero-overhead instrumentation using OpenTelemetry.
 
 ## Pricing & Hosting
 
 ### How does pricing work?
 
-Lumina uses a simple pricing model:
+Refract uses a simple pricing model:
 
 - **Self-hosted (Free)**: 50,000 traces/day, 7-day retention, all features included
 - **Managed Cloud**: Unlimited traces, unlimited retention, SSO, SLA support
@@ -90,7 +90,7 @@ However, we recommend keeping the defaults for optimal performance.
 
 ### What's the performance impact?
 
-Lumina uses OpenTelemetry's `BatchSpanProcessor` for zero-overhead async ingestion. Typical overhead is **\<1ms** per LLM call. The SDK batches traces and sends them in the background without blocking your application.
+Refract uses OpenTelemetry's `BatchSpanProcessor` for zero-overhead async ingestion. Typical overhead is **\<1ms** per LLM call. The SDK batches traces and sends them in the background without blocking your application.
 
 ### How is data secured?
 
@@ -103,9 +103,9 @@ Lumina uses OpenTelemetry's `BatchSpanProcessor` for zero-overhead async ingesti
 
 **Managed cloud:** We're GDPR compliant, SOC 2 Type II certified, and support data residency requirements (EU, US, APAC regions available).
 
-### Can I use Lumina in production?
+### Can I use Refract in production?
 
-Absolutely! Lumina is built for production:
+Absolutely! Refract is built for production:
 
 - Real-time ingestion (\<500ms from trace to alert)
 - At-least-once delivery guarantees
@@ -114,14 +114,14 @@ Absolutely! Lumina is built for production:
 
 ### How does OpenTelemetry support work?
 
-Lumina is **OpenTelemetry-first by design**:
+Refract is **OpenTelemetry-first by design**:
 
 - Uses standard OTLP format for ingestion
 - Implements OpenTelemetry semantic conventions for LLMs (`gen_ai.*`)
-- Can send traces to both Lumina AND your existing OTEL backend simultaneously
+- Can send traces to both Refract AND your existing OTEL backend simultaneously
 - Works with any OTEL collector
 
-This means zero lock-in - you can use Lumina alongside Datadog, Grafana, or any other OTEL-compatible tool.
+This means zero lock-in - you can use Refract alongside Datadog, Grafana, or any other OTEL-compatible tool.
 
 ## Features
 
@@ -138,7 +138,7 @@ Think of it as integration testing for LLMs.
 
 ### How does semantic comparison work?
 
-Lumina uses a **hybrid quality detection system**:
+Refract uses a **hybrid quality detection system**:
 
 **Tier 1 (Fast):** Hash-based structural comparison (~1ms, free)
 
@@ -151,7 +151,7 @@ Lumina uses a **hybrid quality detection system**:
 
 Result: 90% of traces get instant evaluation, but semantic accuracy is never compromised.
 
-### What alerts does Lumina provide?
+### What alerts does Refract provide?
 
 **Cost Spike Alerts:** Triggered when cost per request increases >20% compared to baseline (configurable threshold).
 
@@ -179,7 +179,7 @@ API keys are **optional** but enable specific features:
 
 ### Can I use other LLM providers?
 
-Yes! Lumina supports:
+Yes! Refract supports:
 
 - OpenAI (GPT-4, GPT-3.5)
 - Anthropic (Claude)
@@ -193,8 +193,8 @@ The SDK auto-calculates costs based on the model and token counts.
 We welcome contributions! Check out:
 
 - [Contributing Guide](../../CONTRIBUTING.md)
-- [GitHub Issues](https://github.com/use-lumina/Lumina/issues)
-- [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
+- [GitHub Issues](https://github.com/aigenthix/Refract/issues)
+- [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
 
 ## Replay Feature
 
@@ -308,7 +308,7 @@ Model changed: claude-sonnet-4 → claude-haiku-3.5
 3. Verify your SDK configuration:
 
    ```typescript
-   const lumina = new Lumina({
+   const Refract = new Refract({
      endpoint: 'http://localhost:8080/v1/traces', // ← Must be correct
    });
    ```
@@ -375,34 +375,34 @@ This will delete all traces, alerts, and baselines. Use with caution!
 
 ## Comparison
 
-### How is Lumina different from LangSmith?
+### How is Refract different from LangSmith?
 
-- **Lumina:** OTEL-first, built for backend engineers, infrastructure-grade architecture
+- **Refract:** OTEL-first, built for backend engineers, infrastructure-grade architecture
 - **LangSmith:** Tight LangChain integration, built for LangChain users, evaluation focus
 
-### How is Lumina different from Langfuse?
+### How is Refract different from Langfuse?
 
-- **Lumina:** 50k traces/day free (self-hosted), OTEL-native, real-time production focus
+- **Refract:** 50k traces/day free (self-hosted), OTEL-native, real-time production focus
 - **Langfuse:** Unlimited traces (self-hosted), OSS, prompt management focus
 
-### How is Lumina different from Helicone?
+### How is Refract different from Helicone?
 
-- **Lumina:** End-to-end RAG tracing, cost+quality correlation, replay testing
+- **Refract:** End-to-end RAG tracing, cost+quality correlation, replay testing
 - **Langfuse:** Gateway approach, simple cost tracking, quality monitoring
 
-### How is Lumina different from Datadog?
+### How is Refract different from Datadog?
 
-- **Lumina:** Purpose-built for AI systems, semantic understanding, startup-friendly pricing
+- **Refract:** Purpose-built for AI systems, semantic understanding, startup-friendly pricing
 - **Datadog:** General APM adding LLM features, enterprise pricing ($100k+/year)
 
-### Should I use Lumina or Phoenix?
+### Should I use Refract or Phoenix?
 
-- **Use Lumina if:** You want production alerting, cost correlation, backend engineer UX
+- **Use Refract if:** You want production alerting, cost correlation, backend engineer UX
 - **Use Phoenix if:** You want pure OSS RAG evaluation, no managed option needed
 
 ## Still Have Questions?
 
-- 📖 [Read the full documentation](https://use-lumina.github.io/Lumina)
-- 💬 [Ask in GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
+- 📖 [Read the full documentation](https://use-Refract.github.io/Refract)
+- 💬 [Ask in GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
 - 📧 [Email us](mailto:your-email@example.com)
-- 🐛 [Report a bug](https://github.com/use-lumina/Lumina/issues)
+- 🐛 [Report a bug](https://github.com/aigenthix/Refract/issues)

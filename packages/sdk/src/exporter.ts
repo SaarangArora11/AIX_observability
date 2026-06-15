@@ -24,7 +24,7 @@ export class HttpExporter {
     }
 
     if (this.isShuttingDown) {
-      console.warn('[Lumina SDK] Cannot export trace: SDK is shutting down');
+      console.warn('[Refract SDK] Cannot export trace: SDK is shutting down');
       return;
     }
 
@@ -50,7 +50,7 @@ export class HttpExporter {
     try {
       await this.sendBatch(traces);
     } catch (error) {
-      console.error('[Lumina SDK] Failed to flush traces:', error);
+      console.error('[Refract SDK] Failed to flush traces:', error);
       // Re-add traces to batch for retry (with limit)
       if (this.batch.length < this.config.batch_size * 2) {
         this.batch.push(...traces);
@@ -72,7 +72,7 @@ export class HttpExporter {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.config.api_key}`,
-          'User-Agent': 'lumina-sdk-typescript/0.1.0',
+          'User-Agent': 'Refract-sdk-typescript/0.1.0',
         },
         body: JSON.stringify(payload),
         signal: AbortSignal.timeout(this.config.timeout_ms),
@@ -86,7 +86,7 @@ export class HttpExporter {
       const result = (await response.json()) as IngestResponse;
 
       if (!result.success) {
-        console.error('[Lumina SDK] Ingestion failed:', result.errors);
+        console.error('[Refract SDK] Ingestion failed:', result.errors);
       }
     } catch (error) {
       if (retryCount < this.config.max_retries) {
@@ -111,7 +111,7 @@ export class HttpExporter {
     this.batchTimer = setInterval(() => {
       if (this.batch.length > 0) {
         this.flush().catch((error) => {
-          console.error('[Lumina SDK] Auto-flush failed:', error);
+          console.error('[Refract SDK] Auto-flush failed:', error);
         });
       }
     }, this.config.batch_interval_ms);

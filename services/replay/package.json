@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/replay",
+  "name": "@Refract/replay",
   "version": "0.1.0",
   "type": "module",
   "main": "./src/server.ts",
@@ -10,10 +10,10 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@lumina/schema": "workspace:*",
-    "@lumina/config": "workspace:*",
-    "@lumina/core": "workspace:*",
-    "@lumina/database": "workspace:*",
+    "@refract/schema": "workspace:*",
+    "@refract/config": "workspace:*",
+    "@refract/core": "workspace:*",
+    "@refract/database": "workspace:*",
     "@anthropic-ai/sdk": "^0.32.1",
     "openai": "^4.73.0",
     "hono": "^3.12.0",

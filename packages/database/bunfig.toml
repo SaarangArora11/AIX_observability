@@ -1,5 +1,5 @@
 [test]
-# Bun test configuration for @lumina/database
+# Bun test configuration for @refract/database
 
 # Set test timeout to 10 seconds
 timeout = 10000

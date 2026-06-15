@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/api",
+  "name": "@Refract/api",
   "version": "0.1.0",
   "type": "module",
   "main": "./src/server.ts",
@@ -10,10 +10,10 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@lumina/schema": "workspace:*",
-    "@lumina/config": "workspace:*",
-    "@lumina/core": "workspace:*",
-    "@lumina/database": "workspace:*",
+    "@refract/schema": "workspace:*",
+    "@refract/config": "workspace:*",
+    "@refract/core": "workspace:*",
+    "@refract/database": "workspace:*",
     "hono": "^3.12.0",
     "jose": "^5.2.0",
     "postgres": "^3.4.3"

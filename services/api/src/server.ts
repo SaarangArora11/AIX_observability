@@ -1,5 +1,5 @@
 /**
- * Lumina Query API Service
+ * Refract Query API Service
  * Provides RESTful endpoints for dashboard queries
  */
 
@@ -27,7 +27,7 @@ app.use(
 app.get('/health', (c) => {
   return c.json({
     status: 'healthy',
-    service: 'lumina-api',
+    service: 'refract-api',
     version: '0.1.0',
     timestamp: new Date().toISOString(),
   });
@@ -65,7 +65,7 @@ async function start() {
     console.log('✅ Database client ready');
 
     // Start server
-    console.log(`🚀 Lumina Query API starting on port ${PORT}...`);
+    console.log(`🚀 Refract Query API starting on port ${PORT}...`);
 
     Bun.serve({
       port: PORT,

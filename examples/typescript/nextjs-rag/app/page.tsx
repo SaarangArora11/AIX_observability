@@ -50,7 +50,7 @@ export default function Home() {
               Simple LLm Chat App
             </h1>
           </div>
-          <p className="text-gray-600 text-lg">Simple chat interface testing Lumina</p>
+          <p className="text-gray-600 text-lg">Simple chat interface testing Refract</p>
         </div>
 
         {/* Navigation Links */}

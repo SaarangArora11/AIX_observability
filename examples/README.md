@@ -1,23 +1,23 @@
-# Lumina Examples
+# Refract Examples
 
-End-to-end examples demonstrating Lumina LLM observability across TypeScript and Python.
+End-to-end examples demonstrating Refract LLM observability across TypeScript and Python.
 
 ## Structure
 
 ```
 examples/
 ├── typescript/
-│   ├── openai-basic/       # OpenAI + @uselumina/sdk (Node/Bun)
-│   ├── anthropic-basic/    # Anthropic Claude + @uselumina/sdk (Node/Bun)
+│   ├── openai-basic/       # OpenAI + @refract/sdk (Node/Bun)
+│   ├── anthropic-basic/    # Anthropic Claude + @refract/sdk (Node/Bun)
 │   └── nextjs-rag/         # Full RAG app with Next.js + Anthropic
 └── python/
-    ├── openai-basic/       # OpenAI + lumina-sdk
-    └── anthropic-basic/    # Anthropic Claude + lumina-sdk
+    ├── openai-basic/       # OpenAI + Refract-sdk
+    └── anthropic-basic/    # Anthropic Claude + Refract-sdk
 ```
 
 ## Prerequisites
 
-All examples require Lumina running locally:
+All examples require Refract running locally:
 
 ```bash
 cd ../infra/docker
@@ -25,7 +25,7 @@ docker-compose up -d
 
 # Verify
 curl http://localhost:8080/health
-# {"status":"ok","service":"lumina-ingestion"}
+# {"status":"ok","service":"refract-ingestion"}
 ```
 
 Then open the dashboard at http://localhost:3000.
@@ -96,11 +96,11 @@ Every example follows the same two-step integration:
 
 **TypeScript**
 ```typescript
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
-const lumina = new Lumina({ endpoint: 'http://localhost:8080/v1/traces' });
+const Refract = new Refract({ endpoint: 'http://localhost:8080/v1/traces' });
 
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   () => openai.chat.completions.create({ model: 'gpt-4', messages: [...] }),
   { name: 'my-call', system: 'openai' }
 );
@@ -108,11 +108,11 @@ const response = await lumina.traceLLM(
 
 **Python**
 ```python
-from lumina import init_lumina
+from Refract import init_refract
 
-lumina = init_lumina({"endpoint": "http://localhost:8080/v1/traces"})
+Refract = init_refract({"endpoint": "http://localhost:8080/v1/traces"})
 
-response = lumina.trace_llm(
+response = Refract.trace_llm(
     lambda: client.chat.completions.create(model="gpt-4", messages=[...]),
     name="my-call",
     system="openai",

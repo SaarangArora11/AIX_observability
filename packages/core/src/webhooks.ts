@@ -384,7 +384,7 @@ export function formatPagerDutyAlert(alert: Alert, integrationKey: string): obje
     payload: {
       summary: `${alertTypeLabel}: ${alert.details.serviceName}/${alert.details.endpoint}`,
       severity: mapSeverityToPagerDuty(alert.severity),
-      source: 'lumina',
+      source: 'refract',
       timestamp: alert.timestamp.toISOString(),
       custom_details: customDetails,
     },

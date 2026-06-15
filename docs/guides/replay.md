@@ -380,7 +380,7 @@ To enable real LLM calls, add API keys as shown above.
 
 1. Check replay service logs:
    ```bash
-   docker logs lumina-replay
+   docker logs refract-replay
    ```
 2. Verify API keys are valid
 3. Check for rate limiting errors
@@ -423,4 +423,4 @@ To enable real LLM calls, add API keys as shown above.
 
 ---
 
-**Questions?** Open a [GitHub Discussion](https://github.com/use-lumina/Lumina/discussions) or check the [FAQ](./faq.md).
+**Questions?** Open a [GitHub Discussion](https://github.com/aigenthix/Refract/discussions) or check the [FAQ](./faq.md).

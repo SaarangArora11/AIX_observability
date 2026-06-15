@@ -17,7 +17,7 @@ import { updateAllBaselines } from '../src/jobs/update-baselines';
 
 async function main() {
   console.log('╔════════════════════════════════════════════════════════╗');
-  console.log('║       Lumina Baseline Update - Manual Run             ║');
+  console.log('║       Refract Baseline Update - Manual Run             ║');
   console.log('╚════════════════════════════════════════════════════════╝\n');
 
   try {

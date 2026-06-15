@@ -18,14 +18,14 @@
  *   - all: Run all scenarios
  */
 
-import { Lumina } from '../../packages/sdk/src';
+import { Refract } from '../../packages/sdk/src';
 
-const API_URL = process.env.LUMINA_ENDPOINT || 'http://localhost:8080';
+const API_URL = process.env.REFRACT_ENDPOINT || 'http://localhost:8080';
 const API_KEY =
-  process.env.LUMINA_API_KEY ||
-  'lumina_customer_9cd1f4692e64871f_e5a102dec3e12c84b275c3e64bb5cdef9d7a3237';
+  process.env.REFRACT_API_KEY ||
+  'Refract_customer_9cd1f4692e64871f_e5a102dec3e12c84b275c3e64bb5cdef9d7a3237';
 
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: API_URL,
   api_key: API_KEY,
   service_name: 'alert-test-service',
@@ -51,7 +51,7 @@ async function testCostSpike() {
   // Step 1: Create baseline (normal cost)
   console.log('📊 Creating baseline with normal costs...');
   for (let i = 0; i < 50; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         // Simulate a normal LLM call
         return {
@@ -90,7 +90,7 @@ async function testCostSpike() {
   // Step 2: Send expensive traces
   console.log('💸 Sending expensive traces to trigger cost spike...');
   for (let i = 0; i < 5; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         // Simulate an expensive LLM call (10x more tokens)
         return {
@@ -137,7 +137,7 @@ async function testQualityDrop() {
   // Step 1: Create baseline (consistent responses)
   console.log('📊 Creating baseline with consistent responses...');
   for (let i = 0; i < 50; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: baselineResponse + (i % 3 === 0 ? ' It is known for the Eiffel Tower.' : ''),
@@ -183,7 +183,7 @@ async function testQualityDrop() {
   ];
 
   for (let i = 0; i < badResponses.length; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: badResponses[i],
@@ -230,7 +230,7 @@ async function testSemanticQualityDrop() {
   // Step 1: Create baseline (correct answers)
   console.log('📊 Creating baseline with correct answers...');
   for (let i = 0; i < 50; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: correctResponse + (i % 2 === 0 ? ' This is basic arithmetic.' : ''),
@@ -276,7 +276,7 @@ async function testSemanticQualityDrop() {
   ];
 
   for (let i = 0; i < hallucinatedResponses.length; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: hallucinatedResponses[i],
@@ -326,7 +326,7 @@ async function testCombinedAlert() {
   // Step 1: Create baseline
   console.log('📊 Creating baseline with good responses...');
   for (let i = 0; i < 50; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: goodResponse + ' This technology is still in development.',
@@ -371,7 +371,7 @@ async function testCombinedAlert() {
   ];
 
   for (let i = 0; i < 3; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         return {
           content: badResponses[i],
@@ -412,7 +412,7 @@ async function testLatencySpike() {
   // Step 1: Fast baseline
   console.log('📊 Creating baseline with fast responses...');
   for (let i = 0; i < 50; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         await sleep(50); // Fast response
         return {
@@ -441,7 +441,7 @@ async function testLatencySpike() {
   // Step 2: Slow traces
   console.log('🐌 Sending slow traces...');
   for (let i = 0; i < 5; i++) {
-    await lumina.traceLLM(
+    await Refract.traceLLM(
       async () => {
         await sleep(5000); // 100x slower
         return {
@@ -503,7 +503,7 @@ async function main() {
   const scenario = process.argv[2] || 'all';
 
   console.log('╔════════════════════════════════════════╗');
-  console.log('║   Lumina Alert System Test Suite      ║');
+  console.log('║   Refract Alert System Test Suite      ║');
   console.log('╚════════════════════════════════════════╝');
   console.log('');
   console.log(`📡 API URL: ${API_URL}`);
@@ -541,7 +541,7 @@ async function main() {
 
   // Flush all pending spans before exiting
   console.log('\n⏳ Flushing pending traces...');
-  await lumina.flush();
+  await Refract.flush();
   console.log('✅ All traces sent successfully!');
 
   console.log('\n📊 Next steps:');

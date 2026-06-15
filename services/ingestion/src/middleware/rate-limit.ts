@@ -5,7 +5,7 @@
  */
 
 import { Context, Next } from 'hono';
-import { getCache } from '@lumina/core';
+import { getCache } from '@refract/core';
 
 const DAILY_TRACE_LIMIT = 50000;
 const RATE_LIMIT_KEY_PREFIX = 'rate_limit:daily:';

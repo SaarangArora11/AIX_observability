@@ -142,7 +142,7 @@ export function Sidebar() {
         <Link href="/" className="relative h-15 w-auto cursor-pointer">
           <Image
             src={logoFull}
-            alt="Lumina Analytics"
+            alt="Refract Analytics"
             priority
             unoptimized
             height={48}

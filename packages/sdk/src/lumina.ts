@@ -9,18 +9,18 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import * as SemanticConventions from './semantic-conventions';
 
 /**
- * Main Lumina SDK class - OpenTelemetry-native LLM observability
+ * Main Refract SDK class - OpenTelemetry-native LLM observability
  *
  * This SDK uses OpenTelemetry as its foundation, making it:
  * - Compatible with existing OTEL infrastructure
  * - Vendor-agnostic and future-proof
  * - Integratable with Datadog, Grafana, etc.
  */
-export class Lumina {
+export class Refract {
   private config: SdkConfig;
   private provider: NodeTracerProvider;
   private tracer: OtelTracer;
-  private static instance: Lumina | null = null;
+  private static instance: Refract | null = null;
 
   constructor(config?: Partial<SdkConfig>) {
     // Load config from environment and merge with provided config
@@ -33,14 +33,14 @@ export class Lumina {
 
     // Initialize OpenTelemetry provider
     this.provider = this.initializeProvider();
-    this.tracer = this.provider.getTracer('@lumina/sdk', '1.0.0');
+    this.tracer = this.provider.getTracer('@Refract/sdk', '1.0.0');
 
     // Store singleton instance
-    Lumina.instance = this;
+    Refract.instance = this;
   }
 
   /**
-   * Initialize OTEL TracerProvider with Lumina exporter
+   * Initialize OTEL TracerProvider with Refract exporter
    */
   private initializeProvider(): NodeTracerProvider {
     // Create resource with service information
@@ -48,12 +48,12 @@ export class Lumina {
       resourceFromAttributes({
         [ATTR_SERVICE_NAME]: this.config.service_name || 'unknown-service',
         [ATTR_SERVICE_VERSION]: '1.0.0',
-        [SemanticConventions.LUMINA_CUSTOMER_ID]: this.config.customer_id || '',
-        [SemanticConventions.LUMINA_ENVIRONMENT]: this.config.environment,
+        [SemanticConventions.Refract_CUSTOMER_ID]: this.config.customer_id || '',
+        [SemanticConventions.REFRACT_ENVIRONMENT]: this.config.environment,
       })
     );
 
-    // Create OTLP exporter pointing to Lumina collector
+    // Create OTLP exporter pointing to Refract collector
     // Note: OTLPTraceExporter expects full URL including path
     const headers: Record<string, string> = {};
 
@@ -91,8 +91,8 @@ export class Lumina {
   /**
    * Get the singleton instance
    */
-  static getInstance(): Lumina | null {
-    return Lumina.instance;
+  static getInstance(): Refract | null {
+    return Refract.instance;
   }
 
   /**
@@ -117,7 +117,7 @@ export class Lumina {
    *
    * @example
    * // Trace a complex RAG (Retrieval-Augmented Generation) operation
-   * const answer = await lumina.trace('rag_request', async (parentSpan) => {
+   * const answer = await Refract.trace('rag_request', async (parentSpan) => {
    *   parentSpan.setAttribute('user_query', 'What is multi-span tracing?');
    *
    *   // Child operation 1: retrieval (could be another nested trace)
@@ -126,7 +126,7 @@ export class Lumina {
    *
    *   // Child operation 2: synthesis (using traceLLM)
    *   // This will appear as a child span of 'rag_request'
-   *   const response = await lumina.traceLLM(
+   *   const response = await Refract.traceLLM(
    *     () => llm.generate({ prompt: createPrompt(query, documents) }),
    *     { name: 'synthesis' }
    *   );
@@ -157,13 +157,13 @@ export class Lumina {
 
         // Add tags
         if (options?.tags) {
-          span.setAttribute(SemanticConventions.LUMINA_TAGS, JSON.stringify(options.tags));
+          span.setAttribute(SemanticConventions.Refract_TAGS, JSON.stringify(options.tags));
         }
 
-        // Add Lumina-specific attributes
-        span.setAttribute(SemanticConventions.LUMINA_ENVIRONMENT, this.config.environment);
+        // Add Refract-specific attributes
+        span.setAttribute(SemanticConventions.REFRACT_ENVIRONMENT, this.config.environment);
         if (this.config.service_name) {
-          span.setAttribute(SemanticConventions.LUMINA_SERVICE_NAME, this.config.service_name);
+          span.setAttribute(SemanticConventions.Refract_SERVICE_NAME, this.config.service_name);
         }
 
         // Execute the traced function, passing the span for enrichment
@@ -203,7 +203,7 @@ export class Lumina {
    *
    * @example
    * // Standalone usage
-   * const response = await lumina.traceLLM(
+   * const response = await Refract.traceLLM(
    *   () => openai.chat.completions.create({ model: 'gpt-4', ... }),
    *   {
    *     name: 'summarize_document',
@@ -289,7 +289,7 @@ export class Lumina {
           completionTokens || 0
         );
         if (cost > 0) {
-          span.setAttribute(SemanticConventions.LUMINA_COST_USD, cost);
+          span.setAttribute(SemanticConventions.Refract_COST_USD, cost);
         }
       }
 
@@ -358,24 +358,24 @@ export class Lumina {
 }
 
 /**
- * Initialize Lumina SDK with configuration
+ * Initialize Refract SDK with configuration
  * This is the primary way to set up the SDK
  *
  * @example
- * import { initLumina } from '@lumina/sdk';
+ * import { initRefract } from '@Refract/sdk';
  *
- * const lumina = initLumina({
- *   api_key: process.env.LUMINA_API_KEY,
- *   endpoint: 'https://collector.lumina.app/v1/traces',
+ * const Refract = initRefract({
+ *   api_key: process.env.REFRACT_API_KEY,
+ *   endpoint: 'https://collector.Refract.app/v1/traces',
  * });
  */
-export function initLumina(config?: Partial<SdkConfig>): Lumina {
-  return new Lumina(config);
+export function initRefract(config?: Partial<SdkConfig>): Refract {
+  return new Refract(config);
 }
 
 /**
- * Get the current Lumina instance (if initialized)
+ * Get the current Refract instance (if initialized)
  */
-export function getLumina(): Lumina | null {
-  return Lumina.getInstance();
+export function getRefract(): Refract | null {
+  return Refract.getInstance();
 }

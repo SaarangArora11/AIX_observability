@@ -27,7 +27,7 @@ async function hashPassword(password: string): Promise<string> {
 // Generate API key
 function generateApiKey(environment: 'live' | 'test'): string {
   const randomString = randomBytes(20).toString('hex');
-  return `lumina_${environment}_${randomString}`;
+  return `Refract_${environment}_${randomString}`;
 }
 
 // Model configurations with token counts and costs
@@ -180,7 +180,7 @@ async function main() {
   if (!databaseUrl) {
     console.error('❌ Error: DATABASE_URL environment variable not set');
     console.log('\nSet it with:');
-    console.log('  export DATABASE_URL="postgres://lumina:lumina@localhost:5432/lumina"');
+    console.log('  export DATABASE_URL="postgres://Refract:Refract@localhost:5432/Refract"');
     process.exit(1);
   }
 

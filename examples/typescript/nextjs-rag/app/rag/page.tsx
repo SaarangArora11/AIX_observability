@@ -113,7 +113,7 @@ export default function RAGPage() {
                   <Database className="h-6 w-6 text-white" />
                 </div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  RAG Demo with Lumina
+                  RAG Demo with Refract
                 </h1>
               </div>
               <p className="text-gray-600 text-lg">
@@ -205,12 +205,12 @@ export default function RAGPage() {
                   <button
                     onClick={() =>
                       setDocumentInput(
-                        'Lumina is an AI observability platform that helps developers monitor, analyze, and optimize their AI applications in production. It provides real-time tracing, cost analysis, and performance insights.'
+                        'Refract is an AI observability platform that helps developers monitor, analyze, and optimize their AI applications in production. It provides real-time tracing, cost analysis, and performance insights.'
                       )
                     }
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium underline decoration-2 underline-offset-2 hover:decoration-blue-700 transition-colors"
                   >
-                    Load sample about Lumina
+                    Load sample about Refract
                   </button>
                 </div>
               </div>

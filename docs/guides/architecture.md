@@ -1,8 +1,8 @@
-# Lumina Architecture
+# Refract Architecture
 
 ## System Overview
 
-Lumina is a microservices-based observability platform for LLM applications, consisting of three main services with async message processing via NATS JetStream and caching via Redis.
+Refract is a microservices-based observability platform for LLM applications, consisting of three main services with async message processing via NATS JetStream and caching via Redis.
 
 ### Interactive Architecture Diagram
 
@@ -10,11 +10,11 @@ Lumina is a microservices-based observability platform for LLM applications, con
 graph TB
     subgraph "Your Application"
         APP[Your LLM App]
-        SDK["@uselumina/sdk"]
+        SDK["@refract/sdk"]
         APP --> SDK
     end
 
-    subgraph "Lumina Platform - Self-Hosted"
+    subgraph "Refract Platform - Self-Hosted"
         subgraph "Ingestion Layer"
             INGEST["Ingestion Service<br/>Port 9411"]
             NATS["NATS Message Queue"]
@@ -85,13 +85,13 @@ graph TB
                                        │
                                        ▼
                              ┌─────────────────┐
-                             │  @uselumina/sdk    │
+                             │  @refract/sdk    │
                              │  (Trace Wrapper)│
                              └────────┬────────┘
                                       │ POST /v1/traces
                                       ▼
     ┌──────────────────────────────────────────────────────────────────┐
-    │                      LUMINA PLATFORM                             │
+    │                      Refract PLATFORM                             │
     │                                                                  │
     │  ┌─────────────────────┐   ┌─────────────────────┐             │
     │  │ INGESTION :9411     │   │  QUERY API :8081    │             │
@@ -136,7 +136,7 @@ graph TB
     │  │                                                                │
     │  ▼                                                                │
     │  ┌─────────────────────────────────────────┐                     │
-    │  │         @lumina/core (Shared)           │                     │
+    │  │         @refract/core (Shared)           │                     │
     │  ├─────────────────────────────────────────┤                     │
     │  │ • Cost Calculator    • Hash/Similarity  │                     │
     │  │ • Diff Engine        • Baseline Engine  │                     │
@@ -150,14 +150,14 @@ graph TB
 
 ### 1. Client Applications
 
-Any application instrumented with the Lumina SDK:
+Any application instrumented with the Refract SDK:
 
 - Next.js web applications
 - Node.js backend services
 - Python services (via OpenTelemetry)
 - Any OpenTelemetry-compatible client
 
-### 2. Lumina SDK (`@uselumina/sdk`)
+### 2. Refract SDK (`@refract/sdk`)
 
 **Location:** `/packages/sdk`
 
@@ -174,12 +174,12 @@ Any application instrumented with the Lumina SDK:
 **Example:**
 
 ```typescript
-const lumina = initLumina({
+const Refract = initRefract({
   endpoint: 'http://localhost:9411/v1/traces',
   service_name: 'my-app',
 });
 
-const result = await lumina.traceLLM(
+const result = await Refract.traceLLM(
   async () => anthropic.messages.create(...),
   { name: 'chat', system: 'anthropic', prompt: '...' }
 );
@@ -370,7 +370,7 @@ CREATE TABLE replay_results (
 );
 ```
 
-### 6. Core Library (`@lumina/core`)
+### 6. Core Library (`@refract/core`)
 
 **Location:** `/packages/core`
 
@@ -424,7 +424,7 @@ checkLatencyThreshold(latency, threshold);
 
 ```
 ┌─────────────┐          ┌──────────────┐         ┌──────────────────┐       ┌────────────┐
-│ Application │          │ @uselumina/sdk  │         │ Ingestion Service│       │ PostgreSQL │
+│ Application │          │ @refract/sdk  │         │ Ingestion Service│       │ PostgreSQL │
 └──────┬──────┘          └──────┬───────┘         └────────┬─────────┘       └─────┬──────┘
        │                        │                           │                       │
        │ traceLLM(fn, metadata) │                           │                       │
@@ -463,7 +463,7 @@ checkLatencyThreshold(latency, threshold);
 
 ```
 ┌────────┐         ┌───────────────┐      ┌──────────────┐      ┌────────────┐
-│ Client │         │ Query Service │      │ @lumina/core │      │ PostgreSQL │
+│ Client │         │ Query Service │      │ @refract/core │      │ PostgreSQL │
 └───┬────┘         └───────┬───────┘      └──────┬───────┘      └─────┬──────┘
     │                      │                     │                     │
     │ GET /api/traces?     │                     │                     │
@@ -648,7 +648,7 @@ checkLatencyThreshold(latency, threshold);
 ## File Structure
 
 ```
-lumina/
+Refract/
 ├── packages/
 │   ├── sdk/              # Client SDK
 │   └── core/             # Shared business logic

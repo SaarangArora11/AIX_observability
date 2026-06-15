@@ -1,14 +1,14 @@
-# Lumina Documentation
+# Refract Documentation
 
 **Open-source, OpenTelemetry-native observability for AI systems**
 
-Lumina is a lightweight observability platform for LLM applications that helps you track costs, latency, and quality across your AI systems with minimal overhead.
+Refract is a lightweight observability platform for LLM applications that helps you track costs, latency, and quality across your AI systems with minimal overhead.
 
 ---
 
 ## 🚀 Quick Start
 
-Get Lumina running in 5 minutes:
+Get Refract running in 5 minutes:
 
 1. **[Quickstart Guide](./guides/quickstart.md)** - Step-by-step installation
 2. **[Integration Guides](./guides/integrations.md)** - Connect your LLM apps
@@ -20,7 +20,7 @@ Get Lumina running in 5 minutes:
 
 ### Getting Started
 
-- **[Quickstart Guide](./guides/quickstart.md)** - Install and run Lumina in 5 minutes
+- **[Quickstart Guide](./guides/quickstart.md)** - Install and run Refract in 5 minutes
 - **[FAQ](./guides/faq.md)** - Common questions answered
 - **[Troubleshooting](./guides/troubleshooting.md)** - Fix common issues
 
@@ -105,15 +105,15 @@ Perfect for:
 
 ---
 
-## 🎯 Why Lumina?
+## 🎯 Why Refract?
 
 ### Built for Backend Engineers
 
-Unlike existing AI observability platforms built for data scientists, Lumina is designed for backend/SRE teams. We use the same observability patterns you already know: traces, P95 latencies, and PagerDuty alerts.
+Unlike existing AI observability platforms built for data scientists, Refract is designed for backend/SRE teams. We use the same observability patterns you already know: traces, P95 latencies, and PagerDuty alerts.
 
 ### OpenTelemetry-First
 
-Lumina is built on OpenTelemetry from day one (not retrofitted). This means:
+Refract is built on OpenTelemetry from day one (not retrofitted). This means:
 
 - Works with your existing OTEL stack
 - Can send to multiple backends simultaneously
@@ -141,8 +141,8 @@ The only platform that can query `cost > {'$0.50'} AND quality < {'0.8'}` in a s
 ### Docker Compose (Recommended)
 
 ```bash
-git clone https://github.com/use-lumina/Lumina
-cd Lumina/infra/docker
+git clone https://github.com/aigenthix/Refract
+cd Refract/infra/docker
 cp ../../.env.docker.example ../../.env.docker
 # Add your ANTHROPIC_API_KEY to .env.docker
 docker-compose --env-file ../../.env.docker up -d
@@ -159,11 +159,11 @@ Helm charts for production Kubernetes deployments coming soon.
 ## 🔌 Quick Integration
 
 ```typescript
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 import Anthropic from '@anthropic-ai/sdk';
 
-// Initialize Lumina (no API key needed for self-hosted!)
-const lumina = new Lumina({
+// Initialize Refract (no API key needed for self-hosted!)
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
 });
@@ -174,7 +174,7 @@ const anthropic = new Anthropic({
 });
 
 // Wrap your LLM call - that's it!
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -199,22 +199,22 @@ See [Integration Guides](./guides/integrations.md) for more examples.
 
 ### vs LangSmith
 
-- **Lumina:** OTEL-first, built for backend engineers, infrastructure-grade
+- **Refract:** OTEL-first, built for backend engineers, infrastructure-grade
 - **LangSmith:** Tight LangChain integration, evaluation focus
 
 ### vs Langfuse
 
-- **Lumina:** 50k traces/day free, OTEL-native, real-time alerts
+- **Refract:** 50k traces/day free, OTEL-native, real-time alerts
 - **Langfuse:** Unlimited traces (self-hosted), prompt management
 
 ### vs Helicone
 
-- **Lumina:** End-to-end RAG tracing, cost+quality correlation
+- **Refract:** End-to-end RAG tracing, cost+quality correlation
 - **Helicone:** Gateway approach, simple cost tracking
 
 ### vs Datadog
 
-- **Lumina:** Purpose-built for AI, startup-friendly pricing
+- **Refract:** Purpose-built for AI, startup-friendly pricing
 - **Datadog:** General APM, enterprise pricing ($100k+/year)
 
 ---
@@ -224,15 +224,15 @@ See [Integration Guides](./guides/integrations.md) for more examples.
 We welcome contributions! Check out:
 
 - [Contributing Guide](../CONTRIBUTING.md)
-- [GitHub Issues](https://github.com/use-lumina/Lumina/issues)
-- [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
+- [GitHub Issues](https://github.com/aigenthix/Refract/issues)
+- [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
 
 ---
 
 ## 📚 Resources
 
-- **[GitHub Repository](https://github.com/use-lumina/Lumina)** - Star us!
-- **[Example Applications](https://github.com/use-lumina/Lumina/tree/main/examples)** - Working examples
+- **[GitHub Repository](https://github.com/aigenthix/Refract)** - Star us!
+- **[Example Applications](https://github.com/aigenthix/Refract/tree/main/examples)** - Working examples
 - **[Changelog](../CHANGELOG.md)** - What's new
 - **[Security Policy](../SECURITY.md)** - Reporting vulnerabilities
 - **[License](../LICENSE)** - Apache 2.0
@@ -241,7 +241,7 @@ We welcome contributions! Check out:
 
 ## 💬 Community
 
-- **[GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)** - Ask questions
+- **[GitHub Discussions](https://github.com/aigenthix/Refract/discussions)** - Ask questions
 - **[Discord](https://discord.gg/your-invite)** - Join the community (coming soon)
 - **[Twitter](https://twitter.com/yourusername)** - Follow for updates
 - **[Email](mailto:your-email@example.com)** - Contact us
@@ -258,4 +258,4 @@ See our [Security Policy](../SECURITY.md) for details.
 
 **Free Forever • Self-Hosted • All Features Included**
 
-Self-hosted Lumina includes all features with 50k traces/day and 7-day retention for $0. Need more? [Upgrade to managed cloud →](mailto:your-email@example.com)
+Self-hosted Refract includes all features with 50k traces/day and 7-day retention for $0. Need more? [Upgrade to managed cloud →](mailto:your-email@example.com)

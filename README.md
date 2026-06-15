@@ -1,28 +1,28 @@
-# Lumina
+# Refract
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![npm version](https://img.shields.io/npm/v/@uselumina/sdk.svg)](https://www.npmjs.com/package/@uselumina/sdk)
-[![PyPI version](https://img.shields.io/pypi/v/lumina-sdk.svg)](https://pypi.org/project/lumina-sdk/)
-[![CI](https://github.com/use-lumina/Lumina/actions/workflows/ci.yml/badge.svg)](https://github.com/use-lumina/Lumina/actions/workflows/ci.yml)
-[![GitHub stars](https://img.shields.io/github/stars/use-lumina/Lumina?style=social)](https://github.com/use-lumina/Lumina/stargazers)
+[![npm version](https://img.shields.io/npm/v/@refract/sdk.svg)](https://www.npmjs.com/package/@refract/sdk)
+[![PyPI version](https://img.shields.io/pypi/v/Refract-sdk.svg)](https://pypi.org/project/Refract-sdk/)
+[![CI](https://github.com/aigenthix/Refract/actions/workflows/ci.yml/badge.svg)](https://github.com/aigenthix/Refract/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/aigenthix/Refract?style=social)](https://github.com/aigenthix/Refract/stargazers)
 
 **Production-grade observability for AI applications.**
 
-Lumina is an OpenTelemetry-native platform for monitoring LLM applications in production. Track costs, latency, and quality across distributed AI systems with full trace visibility and regression testing.
+Refract is an OpenTelemetry-native platform for monitoring LLM applications in production. Track costs, latency, and quality across distributed AI systems with full trace visibility and regression testing.
 
 Self-hosted. Open source. Zero vendor lock-in.
 
-![Lumina Dashboard](./docs/assets/screenshots/dashboard-home.png)
+![Refract Dashboard](./docs/assets/screenshots/dashboard-home.png)
 
 ---
 
-## Why Lumina
+## Why Refract
 
 AI applications are fundamentally different from traditional software. Token costs accumulate rapidly. Response quality degrades silently. Latency compounds across multi-step workflows. Production incidents require full trace context to debug.
 
-Existing APM tools treat LLM calls as opaque HTTP requests. Lumina provides native observability for AI systems with automatic cost calculation, quality tracking, and hierarchical tracing for complex pipelines like RAG and agents.
+Existing APM tools treat LLM calls as opaque HTTP requests. Refract provides native observability for AI systems with automatic cost calculation, quality tracking, and hierarchical tracing for complex pipelines like RAG and agents.
 
-Built on OpenTelemetry standards, Lumina integrates into your existing infrastructure without vendor lock-in.
+Built on OpenTelemetry standards, Refract integrates into your existing infrastructure without vendor lock-in.
 
 ---
 
@@ -52,11 +52,11 @@ PostgreSQL backend with automatic schema management. NATS-based queue for reliab
 
 ### Docker Compose (Recommended)
 
-Start Lumina with all services in under 60 seconds:
+Start Refract with all services in under 60 seconds:
 
 ```bash
-git clone https://github.com/use-lumina/Lumina.git
-cd Lumina/infra/docker
+git clone https://github.com/aigenthix/Refract.git
+cd Refract/infra/docker
 docker compose up -d
 ```
 
@@ -70,12 +70,12 @@ For development or custom deployments:
 
 ```bash
 # 1. Clone and install dependencies
-git clone https://github.com/use-lumina/Lumina.git
-cd Lumina
+git clone https://github.com/aigenthix/Refract.git
+cd Refract
 bun install
 
 # 2. Initialize database
-createdb lumina
+createdb Refract
 
 # 3. Start services
 cd services/ingestion && bun run dev  # Port 9411
@@ -91,21 +91,21 @@ cd apps/dashboard && bun run dev      # Port 3000
 ### TypeScript / JavaScript
 
 ```bash
-npm install @uselumina/sdk
+npm install @refract/sdk
 ```
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { initLumina } from '@uselumina/sdk';
+import { initRefract } from '@refract/sdk';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const lumina = initLumina({
+const Refract = initRefract({
   endpoint: 'http://localhost:9411/v1/traces',
   service_name: 'my-service',
 });
 
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () =>
     anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -124,21 +124,21 @@ const response = await lumina.traceLLM(
 ### Python
 
 ```bash
-pip install lumina-sdk
+pip install Refract-sdk
 ```
 
 ```python
 import anthropic
-from lumina import init_lumina
+from Refract import init_refract
 
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-lumina = init_lumina({
+Refract = init_refract({
     "endpoint": "http://localhost:9411/v1/traces",
     "service_name": "my-service",
 })
 
-response = lumina.trace_llm(
+response = Refract.trace_llm(
     lambda: client.messages.create(
         model="claude-sonnet-4-5",
         max_tokens=1024,
@@ -158,16 +158,16 @@ Traces appear in the dashboard immediately with automatic cost calculation and t
 Track complex workflows with parent-child span relationships:
 
 ```typescript
-const result = await lumina.trace('rag_pipeline', async (parentSpan) => {
+const result = await Refract.trace('rag_pipeline', async (parentSpan) => {
   parentSpan.setAttribute('user_query', query);
 
   // Child operation 1: Vector retrieval
-  const documents = await lumina.trace('vector_search', async () => {
+  const documents = await Refract.trace('vector_search', async () => {
     return await vectorDB.search(query);
   });
 
   // Child operation 2: LLM synthesis (automatically nested)
-  const completion = await lumina.traceLLM(
+  const completion = await Refract.traceLLM(
     () =>
       anthropic.messages.create({
         model: 'claude-sonnet-4-5',
@@ -189,13 +189,13 @@ View the complete trace hierarchy in the dashboard with per-span costs and laten
 ```
 ┌─────────────────────────────────┐
 │  Application                    │
-│  + @uselumina/sdk (TypeScript)  │
-│  + lumina-sdk (Python)          │
+│  + @refract/sdk (TypeScript)  │
+│  + Refract-sdk (Python)          │
 └──────────┬──────────────────────┘
            │ OTLP/HTTP
            v
 ┌──────────────────────────────────────────────┐
-│  Lumina Platform                             │
+│  Refract Platform                             │
 │                                              │
 │  ┌──────────┐    ┌──────────┐   ┌────────┐ │
 │  │Ingestion │───►│   NATS   │──►│Workers │ │
@@ -252,7 +252,7 @@ For unlimited usage, deploy with custom configuration or consider the managed cl
 
 ```bash
 # Database
-DATABASE_URL=postgres://user:password@localhost:5432/lumina
+DATABASE_URL=postgres://user:password@localhost:5432/Refract
 
 # Service Ports
 INGESTION_PORT=9411
@@ -271,7 +271,7 @@ OPENAI_API_KEY=sk-...
 ### SDK Configuration
 
 ```typescript
-const lumina = initLumina({
+const Refract = initRefract({
   endpoint: 'http://localhost:9411/v1/traces',
   service_name: 'my-service',
 
@@ -384,7 +384,7 @@ Helm charts coming soon. See [infra/k8s](./infra/k8s) for manifests.
 
 ### Managed Cloud
 
-For teams preferring a fully managed solution with enterprise features, SSO, and SLA guarantees, visit [uselumina.io](https://uselumina.io).
+For teams preferring a fully managed solution with enterprise features, SSO, and SLA guarantees, visit [refract.dev](https://refract.dev).
 
 ---
 
@@ -406,7 +406,7 @@ For teams preferring a fully managed solution with enterprise features, SSO, and
 - [ ] Multi-tenancy support
 - [ ] Prometheus metrics export
 
-See [GitHub Issues](https://github.com/use-lumina/Lumina/issues) for detailed roadmap and feature requests.
+See [GitHub Issues](https://github.com/aigenthix/Refract/issues) for detailed roadmap and feature requests.
 
 ---
 
@@ -417,16 +417,16 @@ Contributions are welcome from developers of all experience levels.
 **Getting Started**
 
 1. Read the [Contributing Guide](./CONTRIBUTING.md)
-2. Browse [Good First Issues](https://github.com/use-lumina/Lumina/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-3. Join the discussion in [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
+2. Browse [Good First Issues](https://github.com/aigenthix/Refract/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+3. Join the discussion in [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
 
 **Development Setup**
 
 ```bash
-git clone https://github.com/use-lumina/Lumina.git
-cd Lumina
+git clone https://github.com/aigenthix/Refract.git
+cd Refract
 bun install
-createdb lumina
+createdb Refract
 
 # Run tests
 bun test
@@ -441,17 +441,17 @@ bun run dev
 
 Apache 2.0 — See [LICENSE](./LICENSE) for details.
 
-Lumina is free and open-source software. Use it for any purpose, including commercial projects, without restriction.
+Refract is free and open-source software. Use it for any purpose, including commercial projects, without restriction.
 
 ---
 
 ## Support
 
-- **Documentation:** [docs.uselumina.io](http://docs.uselumina.io/)
-- **Bug Reports:** [GitHub Issues](https://github.com/use-lumina/Lumina/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
-- **Commercial Support:** Contact us at [uselumina.io](https://uselumina.io)
+- **Documentation:** [docs.refract.dev](http://docs.refract.dev/)
+- **Bug Reports:** [GitHub Issues](https://github.com/aigenthix/Refract/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
+- **Commercial Support:** Contact us at [refract.dev](https://refract.dev)
 
 ---
 
-Built by the open-source community. [Star us on GitHub](https://github.com/use-lumina/Lumina) if Lumina helps your team.
+Built by the open-source community. [Star us on GitHub](https://github.com/aigenthix/Refract) if Refract helps your team.

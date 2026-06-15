@@ -1,9 +1,9 @@
 /**
  * Ingestion Service Database Client
- * Singleton wrapper around @lumina/database
+ * Singleton wrapper around @refract/database
  */
 
-import { createDatabaseSingleton, type Database } from '@lumina/database';
+import { createDatabaseSingleton, type Database } from '@refract/database';
 
 // Create singleton instance
 const getDatabaseInstance = createDatabaseSingleton({
@@ -21,5 +21,5 @@ export function getDatabase(): Database {
   return getDatabaseInstance();
 }
 
-// Re-export everything from @lumina/database for convenience
-export * from '@lumina/database';
+// Re-export everything from @refract/database for convenience
+export * from '@refract/database';

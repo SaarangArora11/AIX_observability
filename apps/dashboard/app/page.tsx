@@ -334,7 +334,7 @@ export default function Home() {
                   <Circle className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-medium text-sm">Invite Teammates</p>
-                    <p className="text-xs text-muted-foreground">Share Lumina with your team</p>
+                    <p className="text-xs text-muted-foreground">Share Refract with your team</p>
                   </div>
                 </button>
               </div>

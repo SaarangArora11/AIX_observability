@@ -1,4 +1,4 @@
-// Inlined types from @lumina/schema and @lumina/config for standalone npm package
+// Inlined types from @refract/schema and @refract/config for standalone npm package
 
 export interface Trace {
   trace_id: string;
