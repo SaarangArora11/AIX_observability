@@ -123,6 +123,8 @@ initializeServices().then(() => {
 const port = parseInt(process.env.PORT || '8080');
 
 console.log(`Refract Ingestion Service starting on port ${port}...`);
+console.log(`DATABASE_URL is: ${process.env.DATABASE_URL ? 'set' : 'MISSING'}`);
+console.log(`DATABASE_URL value: ${process.env.DATABASE_URL}`);
 
 export default {
   port,

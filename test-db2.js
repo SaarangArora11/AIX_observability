@@ -1,1 +1,0 @@
-import postgres from 'postgres'; const sql = postgres('postgres://refract:refract@127.0.0.1:5433/refract'); sql.unsafe(\SELECT trace_id, analyzed_at FROM traces\).then(r => console.log(r)).catch(console.error).finally(() => process.exit(0));

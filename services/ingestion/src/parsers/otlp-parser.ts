@@ -1,4 +1,9 @@
-import type { OTLPTraceRequest, OTLPAttribute, OTLPAnyValue, ParsedOTLPSpan } from '@refract/schema';
+import type {
+  OTLPTraceRequest,
+  OTLPAttribute,
+  OTLPAnyValue,
+  ParsedOTLPSpan,
+} from '@refract/schema';
 
 /**
  * Parse OTLP trace request and extract spans with flattened attributes

@@ -1,6 +1,6 @@
 /**
  * Google Gemini Proxy Route
- * 
+ *
  * Handles requests to Google's Generative AI API (generateContent).
  * Acts as a transparent middleman:
  *   Client → Refract Proxy → Google Gemini API
@@ -13,13 +13,12 @@ import { sendTrace, generateTraceId, generateSpanId } from '../lib/trace-sender'
 
 const app = new Hono();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
 /**
  * POST /models/:model::method
  * Proxies to Google Gemini generateContent / streamGenerateContent
- * 
+ *
  * Example: POST /models/gemini-2.0-flash:generateContent
  */
 app.post('/models/:modelAndMethod', async (c) => {
@@ -30,8 +29,18 @@ app.post('/models/:modelAndMethod', async (c) => {
   const modelAndMethod = c.req.param('modelAndMethod');
   const [model, method] = modelAndMethod.split(':');
 
-  if (!GEMINI_API_KEY) {
-    return c.json({ error: 'GEMINI_API_KEY not configured on proxy' }, 500);
+  // Read API key from request header, fallback to environment variable
+  const headerKey = c.req.header('x-goog-api-key');
+  const envKey = process.env.GEMINI_API_KEY;
+  const apiKey = headerKey || envKey || '';
+
+  console.log(`[Proxy Google] Auth Check:`);
+  console.log(`  Header key present: ${!!headerKey}`);
+  console.log(`  Env key present: ${!!envKey}`);
+  console.log(`  Using key ending in: ...${apiKey.slice(-4)}`);
+
+  if (!apiKey) {
+    return c.json({ error: 'No API key provided. Send x-goog-api-key header or set GEMINI_API_KEY' }, 500);
   }
 
   if (!model || !method) {
@@ -45,17 +54,20 @@ app.post('/models/:modelAndMethod', async (c) => {
     // Extract prompt text for logging
     const promptText = extractPromptText(body);
 
-    // Forward to Google Gemini API
-    const geminiUrl = `${GEMINI_BASE_URL}/models/${model}:${method}?key=${GEMINI_API_KEY}`;
+    // Forward to Google Gemini API using header for authentication
+    const geminiUrl = `${GEMINI_BASE_URL}/models/${model}:${method}`;
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
       body: JSON.stringify(body),
     });
 
     const latencyMs = Date.now() - startTime;
-    const responseBody = await geminiResponse.json() as any;
+    const responseBody = (await geminiResponse.json()) as any;
 
     if (!geminiResponse.ok) {
       // Forward error response to client, but still log the trace
@@ -83,7 +95,10 @@ app.post('/models/:modelAndMethod', async (c) => {
     // Parse token usage from response
     const usageMetadata = responseBody.usageMetadata || {};
     const promptTokens = usageMetadata.promptTokenCount || 0;
-    const completionTokens = usageMetadata.candidatesTokenCount || usageMetadata.totalTokenCount - usageMetadata.promptTokenCount || 0;
+    const completionTokens =
+      usageMetadata.candidatesTokenCount ||
+      usageMetadata.totalTokenCount - usageMetadata.promptTokenCount ||
+      0;
     const totalTokens = usageMetadata.totalTokenCount || promptTokens + completionTokens;
 
     // Extract response text
@@ -159,11 +174,14 @@ function extractPromptText(body: any): string {
     const contents = body.contents || [];
     const parts: string[] = [];
     for (const content of contents) {
+      const role = content.role === 'model' ? 'assistant' : 'user';
+      let text = '';
       for (const part of content.parts || []) {
-        if (part.text) parts.push(part.text);
+        if (part.text) text += part.text;
       }
+      if (text) parts.push(`[${role}]\n${text.trim()}`);
     }
-    return parts.join('\n');
+    return parts.join('\n\n');
   } catch {
     return '';
   }

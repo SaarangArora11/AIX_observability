@@ -1,9 +1,9 @@
 /**
  * Prompt Analysis API Routes
- * 
+ *
  * On-demand prompt analysis using Gemini to categorize prompts,
  * assess complexity, and determine model-task alignment.
- * 
+ *
  * This is NOT called on every trace — it's triggered:
  * 1. From the Dashboard (user clicks "Analyze" on a trace)
  * 2. Via API for batch analysis
@@ -11,16 +11,12 @@
 
 import { Hono } from 'hono';
 import { eq, and, isNull, desc, sql } from 'drizzle-orm';
-import {
-  getDatabase,
-  traces,
-} from '../database/client';
+import { getDatabase, traces } from '../database/client';
 import { requireAuth } from '../middleware/auth';
 
 const app = new Hono();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
-const GEMINI_MODEL = 'gemini-2.0-flash'; // Cheap and fast for meta-analysis
+const GEMINI_MODEL = 'gemini-flash-latest'; // Widely available free-tier model
 
 /**
  * POST /prompt-analysis/analyze
@@ -51,11 +47,14 @@ app.post('/analyze', requireAuth, async (c) => {
       return c.json({ error: 'Trace has no prompt to analyze' }, 400);
     }
 
+    // Extract API key from headers (Dashboard should send this)
+    const clientApiKey = c.req.header('x-goog-api-key') || GEMINI_API_KEY;
+
     // Perform analysis
-    const analysis = await analyzePrompt(trace.prompt, trace.model, trace.provider || 'unknown');
+    const analysis = await analyzePrompt(trace.prompt, trace.model, trace.provider || 'unknown', clientApiKey);
 
     if (!analysis) {
-      return c.json({ error: 'Analysis failed — check GEMINI_API_KEY' }, 500);
+      return c.json({ error: 'Analysis failed — check API Key' }, 500);
     }
 
     // Calculate prompt efficiency
@@ -88,10 +87,13 @@ app.post('/analyze', requireAuth, async (c) => {
     });
   } catch (error) {
     console.error('Prompt analysis error:', error);
-    return c.json({
-      error: 'Analysis failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Analysis failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
   }
 });
 
@@ -109,14 +111,12 @@ app.post('/batch', requireAuth, async (c) => {
     const unanalyzed = await db
       .select()
       .from(traces)
-      .where(
-        and(
-          eq(traces.customerId, customerId),
-          isNull(traces.analyzedAt)
-        )
-      )
+      .where(and(eq(traces.customerId, customerId), isNull(traces.analyzedAt)))
       .orderBy(desc(traces.timestamp))
       .limit(Math.min(limit, 20)); // Cap at 20 to control costs
+
+    // Extract API key from headers
+    const clientApiKey = c.req.header('x-goog-api-key') || GEMINI_API_KEY;
 
     const results = [];
 
@@ -124,7 +124,12 @@ app.post('/batch', requireAuth, async (c) => {
       if (!trace.prompt) continue;
 
       try {
-        const analysis = await analyzePrompt(trace.prompt, trace.model, trace.provider || 'unknown');
+        const analysis = await analyzePrompt(
+          trace.prompt,
+          trace.model,
+          trace.provider || 'unknown',
+          clientApiKey
+        );
         if (!analysis) continue;
 
         const promptTokens = trace.promptTokens || 0;
@@ -163,10 +168,13 @@ app.post('/batch', requireAuth, async (c) => {
     });
   } catch (error) {
     console.error('Batch analysis error:', error);
-    return c.json({
-      error: 'Batch analysis failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Batch analysis failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
   }
 });
 
@@ -188,12 +196,7 @@ app.get('/stats', requireAuth, async (c) => {
         avgLatency: sql<number>`COALESCE(AVG(${traces.latencyMs}), 0)::float`,
       })
       .from(traces)
-      .where(
-        and(
-          eq(traces.customerId, customerId),
-          sql`${traces.promptCategory} IS NOT NULL`
-        )
-      )
+      .where(and(eq(traces.customerId, customerId), sql`${traces.promptCategory} IS NOT NULL`))
       .groupBy(traces.promptCategory);
 
     // Model fit distribution
@@ -204,12 +207,7 @@ app.get('/stats', requireAuth, async (c) => {
         totalCost: sql<number>`COALESCE(SUM(${traces.costUsd}), 0)::float`,
       })
       .from(traces)
-      .where(
-        and(
-          eq(traces.customerId, customerId),
-          sql`${traces.modelFit} IS NOT NULL`
-        )
-      )
+      .where(and(eq(traces.customerId, customerId), sql`${traces.modelFit} IS NOT NULL`))
       .groupBy(traces.modelFit);
 
     // Complexity distribution
@@ -219,12 +217,7 @@ app.get('/stats', requireAuth, async (c) => {
         count: sql<number>`COUNT(*)::int`,
       })
       .from(traces)
-      .where(
-        and(
-          eq(traces.customerId, customerId),
-          sql`${traces.promptComplexity} IS NOT NULL`
-        )
-      )
+      .where(and(eq(traces.customerId, customerId), sql`${traces.promptComplexity} IS NOT NULL`))
       .groupBy(traces.promptComplexity);
 
     // Source distribution (SDK vs Proxy)
@@ -251,12 +244,7 @@ app.get('/stats', requireAuth, async (c) => {
         avgEfficiency: sql<number>`COALESCE(AVG(${traces.promptEfficiency}), 0)::float`,
       })
       .from(traces)
-      .where(
-        and(
-          eq(traces.customerId, customerId),
-          sql`${traces.promptEfficiency} IS NOT NULL`
-        )
-      );
+      .where(and(eq(traces.customerId, customerId), sql`${traces.promptEfficiency} IS NOT NULL`));
 
     return c.json({
       categories,
@@ -266,22 +254,25 @@ app.get('/stats', requireAuth, async (c) => {
       summary: {
         total_analyzed: totalAnalyzed,
         avg_prompt_efficiency: efficiencyResult[0]?.avgEfficiency || 0,
-        overkill_percentage: totalAnalyzed > 0
-          ? ((overkillData?.count || 0) / totalAnalyzed) * 100
-          : 0,
-        model_alignment_score: totalAnalyzed > 0
-          ? ((modelFit.find((m) => m.fit === 'good_fit')?.count || 0) / totalAnalyzed) * 100
-          : 0,
+        overkill_percentage:
+          totalAnalyzed > 0 ? ((overkillData?.count || 0) / totalAnalyzed) * 100 : 0,
+        model_alignment_score:
+          totalAnalyzed > 0
+            ? ((modelFit.find((m) => m.fit === 'good_fit')?.count || 0) / totalAnalyzed) * 100
+            : 0,
         estimated_monthly_savings: estimatedMonthlySavings,
         overkill_cost: overkillCost,
       },
     });
   } catch (error) {
     console.error('Stats error:', error);
-    return c.json({
-      error: 'Failed to fetch stats',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to fetch stats',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
   }
 });
 
@@ -291,17 +282,17 @@ app.get('/stats', requireAuth, async (c) => {
 async function analyzePrompt(
   promptText: string,
   model: string,
-  provider: string
+  provider: string,
+  apiKey: string
 ): Promise<PromptAnalysis | null> {
-  if (!GEMINI_API_KEY) {
-    console.error('GEMINI_API_KEY not set — cannot analyze prompts');
+  if (!apiKey) {
+    console.error('API key not set — cannot analyze prompts');
     return null;
   }
 
   // Truncate very long prompts
-  const truncatedPrompt = promptText.length > 2000
-    ? promptText.substring(0, 2000) + '...[truncated]'
-    : promptText;
+  const truncatedPrompt =
+    promptText.length > 2000 ? promptText.substring(0, 2000) + '...[truncated]' : promptText;
 
   const metaPrompt = `You are a prompt analysis engine for an LLM observability platform called Refract.
 Analyze the following prompt and the model it was sent to.
@@ -326,10 +317,13 @@ Respond with ONLY valid JSON (no markdown, no code fences):
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey 
+        },
         body: JSON.stringify({
           contents: [{ parts: [{ text: metaPrompt }] }],
           generationConfig: {
@@ -343,12 +337,14 @@ Respond with ONLY valid JSON (no markdown, no code fences):
     if (!response.ok) {
       const errBody = await response.text();
       console.error('Gemini analysis call failed:', response.status, errBody);
-      
+
       // Fallback for hackathon: return mock data if rate limited
       if (response.status === 429 || errBody.includes('RESOURCE_EXHAUSTED')) {
         console.warn('Rate limited by Gemini. Using mock analysis data.');
         return {
-          category: ['general_chat', 'reasoning', 'creative_writing'][Math.floor(Math.random() * 3)],
+          category: ['general_chat', 'reasoning', 'creative_writing'][
+            Math.floor(Math.random() * 3)
+          ],
           complexity: 'moderate',
           model_fit: 'good_fit',
           model_fit_reason: 'The selected model is well-suited for this typical request.',
@@ -356,11 +352,11 @@ Respond with ONLY valid JSON (no markdown, no code fences):
           token_waste_estimate: Math.floor(Math.random() * 20),
         };
       }
-      
+
       return null;
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
     const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     // Parse JSON from response (handle potential markdown fences)
@@ -373,8 +369,16 @@ Respond with ONLY valid JSON (no markdown, no code fences):
 
     // Validate fields
     const validCategories = [
-      'code_generation', 'creative_writing', 'data_extraction', 'summarization',
-      'translation', 'general_chat', 'reasoning', 'math', 'instruction_following', 'other',
+      'code_generation',
+      'creative_writing',
+      'data_extraction',
+      'summarization',
+      'translation',
+      'general_chat',
+      'reasoning',
+      'math',
+      'instruction_following',
+      'other',
     ];
     const validComplexity = ['simple', 'moderate', 'complex'];
     const validFit = ['underkill', 'good_fit', 'overkill'];

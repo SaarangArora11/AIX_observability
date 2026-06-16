@@ -1,9 +1,9 @@
 /**
  * Refract Proxy Gateway
- * 
+ *
  * A transparent LLM proxy that sits between client applications and LLM providers.
  * Captures traces, calculates costs, and sends telemetry to the Refract platform.
- * 
+ *
  * Architecture:
  *   Client App → Refract Proxy (:8090) → LLM Provider (Gemini/OpenAI/Anthropic)
  *                     ↓ (async)
@@ -25,7 +25,7 @@ app.use(
   cors({
     origin: '*',
     allowMethods: ['GET', 'POST', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization', 'X-Refract-Service-Name'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Refract-Service-Name', 'x-goog-api-key'],
     exposeHeaders: [
       'X-Refract-Trace-Id',
       'X-Refract-Latency-Ms',
@@ -116,8 +116,12 @@ app.onError((err, c) => {
 // Start server
 const port = parseInt(process.env.PROXY_PORT || '8090');
 console.log(`🔀 Refract Proxy Gateway starting on port ${port}...`);
-console.log(`   Google Gemini: ${process.env.GEMINI_API_KEY ? '✅ configured' : '❌ GEMINI_API_KEY missing'}`);
-console.log(`   OpenAI:        ${process.env.OPENAI_API_KEY ? '✅ configured' : '⚠️  OPENAI_API_KEY not set'}`);
+console.log(
+  `   Google Gemini: ${process.env.GEMINI_API_KEY ? '✅ configured' : '❌ GEMINI_API_KEY missing'}`
+);
+console.log(
+  `   OpenAI:        ${process.env.OPENAI_API_KEY ? '✅ configured' : '⚠️  OPENAI_API_KEY not set'}`
+);
 console.log(`   Ingestion URL: ${process.env.INGESTION_URL || 'http://localhost:8080'}`);
 console.log(`   Demo Chat:     http://localhost:${port}/demo`);
 

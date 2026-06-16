@@ -18,7 +18,9 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
   const model = responseModel || requestModel || 'unknown';
 
   const prompt = getStringAttribute(span, 'gen_ai.prompt', '');
-  const completion = getStringAttribute(span, 'gen_ai.completion', '') || getStringAttribute(span, 'gen_ai.response', '');
+  const completion =
+    getStringAttribute(span, 'gen_ai.completion', '') ||
+    getStringAttribute(span, 'gen_ai.response', '');
 
   const promptTokens = getNumberAttribute(span, 'gen_ai.usage.prompt_tokens', 0);
   const completionTokens = getNumberAttribute(span, 'gen_ai.usage.completion_tokens', 0);
@@ -30,7 +32,8 @@ export function transformOTLPToTrace(span: ParsedOTLPSpan, customerId: string): 
 
   // Extract Refract-specific attributes
   const environment = getStringAttribute(span, 'refract.environment', 'live') as 'live' | 'test';
-  const providedCost = getNumberAttribute(span, 'gen_ai.cost', 0) || getNumberAttribute(span, 'refract.cost_usd', 0);
+  const providedCost =
+    getNumberAttribute(span, 'gen_ai.cost', 0) || getNumberAttribute(span, 'refract.cost_usd', 0);
   const source = getStringAttribute(span, 'refract.source', 'sdk');
 
   // Calculate cost if not provided

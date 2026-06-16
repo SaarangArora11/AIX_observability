@@ -13,7 +13,8 @@ import postgres from 'postgres';
 import { randomBytes } from 'crypto';
 
 async function main() {
-  const databaseUrl = process.env.DATABASE_URL || 'postgres://Refract:Refract@localhost:5432/Refract';
+  const databaseUrl =
+    process.env.DATABASE_URL || 'postgres://Refract:Refract@localhost:5432/Refract';
   const sql = postgres(databaseUrl);
 
   try {

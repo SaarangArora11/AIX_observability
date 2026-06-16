@@ -416,7 +416,9 @@ app.get('/refract-kpis', requireAuth, async (c) => {
     const { startTime, endTime } = c.req.query();
 
     const end = endTime ? new Date(endTime) : new Date();
-    const start = startTime ? new Date(startTime) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const start = startTime
+      ? new Date(startTime)
+      : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const conditions = [
       eq(traces.customerId, customerId),
@@ -503,15 +505,19 @@ app.get('/refract-kpis', requireAuth, async (c) => {
       model_fit: modelFit,
       sources,
       model_breakdown: modelBreakdown,
-      token_flow: tokenFlow[0] || { total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0 },
+      token_flow: tokenFlow[0] || {
+        total_prompt_tokens: 0,
+        total_completion_tokens: 0,
+        total_tokens: 0,
+      },
       kpis: {
         avg_prompt_efficiency: efficiency[0]?.avg_efficiency || 0,
-        model_alignment_score: totalAnalyzed > 0
-          ? ((modelFit.find((m) => m.fit === 'good_fit')?.count || 0) / totalAnalyzed) * 100
-          : 0,
-        overkill_percentage: totalAnalyzed > 0
-          ? ((overkillData?.count || 0) / totalAnalyzed) * 100
-          : 0,
+        model_alignment_score:
+          totalAnalyzed > 0
+            ? ((modelFit.find((m) => m.fit === 'good_fit')?.count || 0) / totalAnalyzed) * 100
+            : 0,
+        overkill_percentage:
+          totalAnalyzed > 0 ? ((overkillData?.count || 0) / totalAnalyzed) * 100 : 0,
         estimated_savings: estimatedSavings,
         total_analyzed: totalAnalyzed,
       },
@@ -522,10 +528,13 @@ app.get('/refract-kpis', requireAuth, async (c) => {
     });
   } catch (error) {
     console.error('Error fetching Refract KPIs:', error);
-    return c.json({
-      error: 'Failed to fetch KPIs',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to fetch KPIs',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
   }
 });
 

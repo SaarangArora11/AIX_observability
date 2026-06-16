@@ -1,6 +1,6 @@
 /**
  * OpenAI-Compatible Proxy Route
- * 
+ *
  * Handles requests in OpenAI's /v1/chat/completions format.
  * Supports any OpenAI-compatible provider (OpenAI, local models, etc).
  */
@@ -29,13 +29,16 @@ app.post('/chat/completions', async (c) => {
 
     // Extract prompt text
     const messages = body.messages || [];
-    const promptText = messages.map((m: any) => `${m.role}: ${m.content}`).join('\n');
+    const promptText = messages.map((m: any) => `[${m.role === 'assistant' ? 'assistant' : 'user'}]\n${m.content}`).join('\n\n');
 
     // Allow client to provide their own API key via header, fall back to env
     const clientApiKey = c.req.header('Authorization')?.replace('Bearer ', '') || OPENAI_API_KEY;
 
     if (!clientApiKey) {
-      return c.json({ error: 'No API key configured. Set OPENAI_API_KEY or pass Authorization header.' }, 500);
+      return c.json(
+        { error: 'No API key configured. Set OPENAI_API_KEY or pass Authorization header.' },
+        500
+      );
     }
 
     // Forward to OpenAI
@@ -43,13 +46,13 @@ app.post('/chat/completions', async (c) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${clientApiKey}`,
+        Authorization: `Bearer ${clientApiKey}`,
       },
       body: JSON.stringify(body),
     });
 
     const latencyMs = Date.now() - startTime;
-    const responseBody = await openaiResponse.json() as any;
+    const responseBody = (await openaiResponse.json()) as any;
 
     if (!openaiResponse.ok) {
       sendTrace({

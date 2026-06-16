@@ -1,6 +1,6 @@
 /**
  * Trace Sender — Asynchronously sends trace data to the Refract Ingestion Service.
- * 
+ *
  * This is the key integration point: the proxy captures LLM call metadata
  * and sends it to the ingestion service in OTLP-compatible format.
  * Fire-and-forget to avoid adding latency to the proxied request.
@@ -55,7 +55,7 @@ export function generateSpanId(): string {
 /**
  * Send a trace to the Refract Ingestion Service.
  * This constructs an OTLP-compatible payload and POSTs it.
- * 
+ *
  * Fire-and-forget: errors are logged but not thrown.
  */
 export async function sendTrace(payload: TracePayload): Promise<void> {
@@ -93,7 +93,10 @@ export async function sendTrace(payload: TracePayload): Promise<void> {
                   attributes: [
                     { key: 'gen_ai.system', value: { stringValue: payload.provider } },
                     { key: 'gen_ai.request.model', value: { stringValue: payload.model } },
-                    { key: 'gen_ai.usage.prompt_tokens', value: { intValue: payload.promptTokens } },
+                    {
+                      key: 'gen_ai.usage.prompt_tokens',
+                      value: { intValue: payload.promptTokens },
+                    },
                     {
                       key: 'gen_ai.usage.completion_tokens',
                       value: { intValue: payload.completionTokens },
@@ -124,7 +127,9 @@ export async function sendTrace(payload: TracePayload): Promise<void> {
       const errorText = await response.text();
       console.error(`[trace-sender] Failed to send trace: ${response.status} ${errorText}`);
     } else {
-      console.log(`[trace-sender] Trace sent: ${payload.traceId} (${payload.model}, $${payload.costUsd.toFixed(6)})`);
+      console.log(
+        `[trace-sender] Trace sent: ${payload.traceId} (${payload.model}, $${payload.costUsd.toFixed(6)})`
+      );
     }
   } catch (error) {
     console.error('[trace-sender] Error sending trace:', error);
