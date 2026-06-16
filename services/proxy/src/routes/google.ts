@@ -40,7 +40,10 @@ app.post('/models/:modelAndMethod', async (c) => {
   console.log(`  Using key ending in: ...${apiKey.slice(-4)}`);
 
   if (!apiKey) {
-    return c.json({ error: 'No API key provided. Send x-goog-api-key header or set GEMINI_API_KEY' }, 500);
+    return c.json(
+      { error: 'No API key provided. Send x-goog-api-key header or set GEMINI_API_KEY' },
+      500
+    );
   }
 
   if (!model || !method) {
@@ -59,9 +62,9 @@ app.post('/models/:modelAndMethod', async (c) => {
 
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
+        'x-goog-api-key': apiKey,
       },
       body: JSON.stringify(body),
     });

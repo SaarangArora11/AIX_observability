@@ -61,26 +61,27 @@ graph LR
 
 ### Files to Modify
 
-| Scope | Files | Changes |
-|-------|-------|---------|
-| Root | `package.json` | `"name": "lumina"` → `"name": "refract"` |
-| Root | `.env.example`, `.env.docker`, `.env.docker.example` | All `lumina` references → `refract` (DB name, NATS stream, env vars like `LUMINA_API_KEY` → `REFRACT_API_KEY`) |
-| Docker | `infra/docker/docker-compose.yml` | Container names (`lumina-postgres` → `refract-postgres`), DB creds, network name |
-| Dashboard | `apps/dashboard/package.json` | `"name": "@lumina/dashboard"` → `"name": "@refract/dashboard"` |
-| Dashboard | `apps/dashboard/app/layout.tsx` | Title, theme storage key, description |
-| Dashboard | `apps/dashboard/app/page.tsx` | All user-facing "Lumina" text → "Refract" |
-| SDK | `packages/sdk/package.json` | `"name": "@uselumina/sdk"` → `"name": "@refract/sdk"` |
-| Services | `services/*/src/server.ts` | Health check names, log messages |
-| Schema | `packages/database/src/schema/index.ts` | Comment: "Lumina Database Schema" → "Refract Database Schema" |
-| Schema | `packages/schema/` | Package name |
-| Core | `packages/core/` | Package name |
-| Config | `packages/config/` | Package name |
-| README | `README.md` | Full rebrand |
+| Scope     | Files                                                | Changes                                                                                                        |
+| --------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Root      | `package.json`                                       | `"name": "lumina"` → `"name": "refract"`                                                                       |
+| Root      | `.env.example`, `.env.docker`, `.env.docker.example` | All `lumina` references → `refract` (DB name, NATS stream, env vars like `LUMINA_API_KEY` → `REFRACT_API_KEY`) |
+| Docker    | `infra/docker/docker-compose.yml`                    | Container names (`lumina-postgres` → `refract-postgres`), DB creds, network name                               |
+| Dashboard | `apps/dashboard/package.json`                        | `"name": "@lumina/dashboard"` → `"name": "@refract/dashboard"`                                                 |
+| Dashboard | `apps/dashboard/app/layout.tsx`                      | Title, theme storage key, description                                                                          |
+| Dashboard | `apps/dashboard/app/page.tsx`                        | All user-facing "Lumina" text → "Refract"                                                                      |
+| SDK       | `packages/sdk/package.json`                          | `"name": "@uselumina/sdk"` → `"name": "@refract/sdk"`                                                          |
+| Services  | `services/*/src/server.ts`                           | Health check names, log messages                                                                               |
+| Schema    | `packages/database/src/schema/index.ts`              | Comment: "Lumina Database Schema" → "Refract Database Schema"                                                  |
+| Schema    | `packages/schema/`                                   | Package name                                                                                                   |
+| Core      | `packages/core/`                                     | Package name                                                                                                   |
+| Config    | `packages/config/`                                   | Package name                                                                                                   |
+| README    | `README.md`                                          | Full rebrand                                                                                                   |
 
 > [!IMPORTANT]
 > The provider CHECK constraint in `traces.ts` currently only allows `'openai', 'anthropic', 'cohere', 'other'`. We need to add `'google'` for Gemini support.
 
 ### Verification
+
 - `grep -ri "lumina" --include="*.ts" --include="*.tsx" --include="*.json" --include="*.yml" --include="*.md"` should return zero results (except in `bun.lock` and git history).
 
 ---
@@ -105,12 +106,14 @@ graph LR
 ```
 
 Add indexes:
+
 ```diff
 +    promptCategoryIdx: index('idx_prompt_category').on(table.promptCategory),
 +    sourceIdx: index('idx_source').on(table.source),
 ```
 
 Update provider CHECK constraint:
+
 ```diff
 -    sql`${table.provider} IN ('openai', 'anthropic', 'cohere', 'other')`
 +    sql`${table.provider} IN ('openai', 'anthropic', 'google', 'cohere', 'other')`
@@ -121,6 +124,7 @@ Update provider CHECK constraint:
 Create a new migration file in `packages/database/src/migrations/` for the schema changes.
 
 ### Verification
+
 - Run `bun run migrate` — migration applies cleanly.
 - Query `\d traces` in psql to confirm new columns exist.
 
@@ -214,40 +218,42 @@ export default { port, fetch: app.fetch };
 
 Model pricing table (per 1M tokens):
 
-| Model | Input | Output |
-|-------|-------|--------|
-| gemini-2.0-flash | $0.10 | $0.40 |
-| gemini-2.5-flash | $0.15 | $0.60 |
-| gemini-2.5-pro | $1.25 | $10.00 |
-| gpt-4o | $2.50 | $10.00 |
-| gpt-4o-mini | $0.15 | $0.60 |
-| claude-sonnet-4 | $3.00 | $15.00 |
+| Model            | Input | Output |
+| ---------------- | ----- | ------ |
+| gemini-2.0-flash | $0.10 | $0.40  |
+| gemini-2.5-flash | $0.15 | $0.60  |
+| gemini-2.5-pro   | $1.25 | $10.00 |
+| gpt-4o           | $2.50 | $10.00 |
+| gpt-4o-mini      | $0.15 | $0.60  |
+| claude-sonnet-4  | $3.00 | $15.00 |
 
 ### Docker Integration
 
 Add to `infra/docker/docker-compose.yml`:
+
 ```yaml
-  proxy:
-    build:
-      context: ../../
-      dockerfile: services/proxy/Dockerfile
-    container_name: refract-proxy
-    environment:
-      PROXY_PORT: 8090
-      INGESTION_URL: http://ingestion:8080
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-    ports:
-      - "8090:8090"
-    depends_on:
-      - ingestion
-    networks:
-      - refract
+proxy:
+  build:
+    context: ../../
+    dockerfile: services/proxy/Dockerfile
+  container_name: refract-proxy
+  environment:
+    PROXY_PORT: 8090
+    INGESTION_URL: http://ingestion:8080
+    GEMINI_API_KEY: ${GEMINI_API_KEY}
+    OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  ports:
+    - '8090:8090'
+  depends_on:
+    - ingestion
+  networks:
+    - refract
 ```
 
 ### Env Variables
 
 Add to `.env.example` and `.env.docker`:
+
 ```
 PROXY_PORT=8090
 GEMINI_API_KEY=your-gemini-api-key-here
@@ -256,6 +262,7 @@ NEXT_PUBLIC_PROXY_URL=http://localhost:8090
 ```
 
 ### Verification
+
 - `curl -X POST http://localhost:8090/v1/proxy/google/generateContent -H "Content-Type: application/json" -d '{"model":"gemini-2.0-flash","contents":[{"parts":[{"text":"Hello"}]}]}'` → returns Gemini response.
 - Check dashboard → new trace appears with `source: 'proxy'`, `provider: 'google'`, correct token counts.
 
@@ -268,6 +275,7 @@ NEXT_PUBLIC_PROXY_URL=http://localhost:8090
 ### How It Works
 
 The Prompt Analyzer is **not** called on every trace automatically. It's triggered:
+
 1. **Via the Dashboard** — user clicks "Analyze" on a specific trace.
 2. **Via API** — `POST /api/analyze-prompt` endpoint.
 
@@ -308,12 +316,12 @@ Respond with JSON only:
 
 ### Model Fit Logic
 
-| Prompt Complexity | Model Tier | Verdict |
-|---|---|---|
-| simple | cheap (flash/mini) | ✅ good_fit |
-| simple | expensive (pro/sonnet) | ⚠️ overkill |
-| complex | cheap (flash/mini) | ⚠️ underkill |
-| complex | expensive (pro/sonnet) | ✅ good_fit |
+| Prompt Complexity | Model Tier             | Verdict      |
+| ----------------- | ---------------------- | ------------ |
+| simple            | cheap (flash/mini)     | ✅ good_fit  |
+| simple            | expensive (pro/sonnet) | ⚠️ overkill  |
+| complex           | cheap (flash/mini)     | ⚠️ underkill |
+| complex           | expensive (pro/sonnet) | ✅ good_fit  |
 
 ### [MODIFY] `services/api/src/server.ts`
 
@@ -324,6 +332,7 @@ Respond with JSON only:
 ```
 
 ### Verification
+
 - Send a simple prompt through the proxy → manually trigger analysis → verify `prompt_category`, `prompt_complexity`, `model_fit` columns are populated.
 - Dashboard shows the analysis results on the trace detail view.
 
@@ -347,6 +356,7 @@ services/proxy/public/
 The proxy serves it at `GET /demo`.
 
 ### Features
+
 - Clean chat interface with message bubbles
 - Model selector dropdown (gemini-2.0-flash, gemini-2.5-flash, gemini-2.5-pro)
 - Shows real-time metrics per message: tokens used, cost, latency
@@ -354,6 +364,7 @@ The proxy serves it at `GET /demo`.
 - Conversation history in the session
 
 ### Chat Flow
+
 ```
 User types message
   → POST /v1/proxy/google/generateContent (to our proxy)
@@ -362,6 +373,7 @@ User types message
 ```
 
 ### Verification
+
 - Open `http://localhost:8090/demo` in browser.
 - Send a few messages → switch to dashboard at `:3000` → verify traces appear with all metrics.
 
@@ -374,6 +386,7 @@ User types message
 ### [MODIFY] `services/api/src/routes/analytics.ts`
 
 Add new endpoint:
+
 ```typescript
 // GET /cost/categories
 // Returns prompt category distribution: { category, count, totalCost, avgLatency }
@@ -383,6 +396,7 @@ Add new endpoint:
 ### [MODIFY] `apps/dashboard/app/page.tsx`
 
 Add to the main dashboard:
+
 1. **Prompt Category Pie Chart** — Distribution of prompt types (using Recharts PieChart)
 2. **Model Fit Summary** — Card showing % of prompts that are overkill/underkill/good_fit
 3. **Source Distribution** — Badge showing SDK vs Proxy trace counts
@@ -391,6 +405,7 @@ Add to the main dashboard:
 ### [NEW] Dashboard page: Prompt Analyzer page
 
 New route at `/prompt-analysis` in the dashboard:
+
 - Table of recent traces with prompt preview
 - "Analyze" button per trace (calls `POST /prompt-analysis/analyze`)
 - Results inline: category badge, complexity indicator, model-fit verdict with reasoning
@@ -399,6 +414,7 @@ New route at `/prompt-analysis` in the dashboard:
 ### [MODIFY] Sidebar Navigation
 
 Add new nav items:
+
 - "Prompt Analysis" (link to `/prompt-analysis`)
 - Keep existing: Overview, Traces, Cost, Alerts, Replay
 
@@ -408,16 +424,16 @@ These are the metrics that make Refract **not just another GitHub observability 
 
 #### Refract-Exclusive KPIs
 
-| KPI | What It Measures | Why It's Unique |
-|-----|-----------------|----------------|
-| **Prompt Efficiency Score** | Ratio of output tokens to input tokens (higher = more efficient) | No other tool rates prompt efficiency |
-| **Model-Task Alignment** | Is the model overkill/underkill for the task complexity? | LLM-powered meta-analysis unique to Refract |
-| **Token Waste Ratio** | Estimated % of tokens wasted due to overengineered prompts | Quantifies prompt optimization opportunity |
-| **Cost per Useful Token** | Cost normalized by actual output relevance | Goes beyond raw cost tracking |
-| **Time-to-Value (TTV)** | Latency per useful output token | Combines speed + quality into one metric |
-| **Model Cascading Opportunity** | % of requests that could use a cheaper model | Directly actionable savings metric |
-| **Estimated Monthly Savings** | Projected savings if all overkill prompts used suggested models | Dollar-value optimization output |
-| **Prompt Verbosity Index** | How wordy the prompt is vs task complexity | Identifies prompt bloat |
+| KPI                             | What It Measures                                                 | Why It's Unique                             |
+| ------------------------------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| **Prompt Efficiency Score**     | Ratio of output tokens to input tokens (higher = more efficient) | No other tool rates prompt efficiency       |
+| **Model-Task Alignment**        | Is the model overkill/underkill for the task complexity?         | LLM-powered meta-analysis unique to Refract |
+| **Token Waste Ratio**           | Estimated % of tokens wasted due to overengineered prompts       | Quantifies prompt optimization opportunity  |
+| **Cost per Useful Token**       | Cost normalized by actual output relevance                       | Goes beyond raw cost tracking               |
+| **Time-to-Value (TTV)**         | Latency per useful output token                                  | Combines speed + quality into one metric    |
+| **Model Cascading Opportunity** | % of requests that could use a cheaper model                     | Directly actionable savings metric          |
+| **Estimated Monthly Savings**   | Projected savings if all overkill prompts used suggested models  | Dollar-value optimization output            |
+| **Prompt Verbosity Index**      | How wordy the prompt is vs task complexity                       | Identifies prompt bloat                     |
 
 #### Enhanced Dashboard Charts
 
@@ -440,6 +456,7 @@ These are the metrics that make Refract **not just another GitHub observability 
 - **Error Rate** with severity breakdown
 
 ### Verification
+
 - Dashboard loads without errors.
 - Prompt category chart renders with data from analyzed traces.
 - Model fit summary shows correct percentages.
@@ -449,6 +466,7 @@ These are the metrics that make Refract **not just another GitHub observability 
 ## Phase 6 — Setup & Run from Scratch
 
 ### Prerequisites
+
 - [Bun](https://bun.sh/) installed
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 - Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
@@ -494,14 +512,14 @@ cd apps/dashboard && bun run dev  # Port 3000
 > [!TIP]
 > **Recommended sequence for fastest working demo:**
 
-| Step | Phase | Est. Time | Priority |
-|------|-------|-----------|----------|
-| 1 | Phase 0 — Rename Lumina → Refract | 20 min | 🔴 High |
-| 2 | Phase 1 — Database schema updates | 10 min | 🔴 High |
-| 3 | Phase 2 — Proxy Gateway (Gemini route) | 45 min | 🔴 High |
-| 4 | Phase 4 — Demo Chat Interface | 30 min | 🔴 High |
-| 5 | Phase 3 — Prompt Analyzer | 30 min | 🟡 Medium |
-| 6 | Phase 5 — Dashboard Enhancements | 30 min | 🟡 Medium |
+| Step | Phase                                  | Est. Time | Priority  |
+| ---- | -------------------------------------- | --------- | --------- |
+| 1    | Phase 0 — Rename Lumina → Refract      | 20 min    | 🔴 High   |
+| 2    | Phase 1 — Database schema updates      | 10 min    | 🔴 High   |
+| 3    | Phase 2 — Proxy Gateway (Gemini route) | 45 min    | 🔴 High   |
+| 4    | Phase 4 — Demo Chat Interface          | 30 min    | 🔴 High   |
+| 5    | Phase 3 — Prompt Analyzer              | 30 min    | 🟡 Medium |
+| 6    | Phase 5 — Dashboard Enhancements       | 30 min    | 🟡 Medium |
 
 **Total estimated: ~2.5 hours** to have a fully working demo.
 
@@ -513,11 +531,7 @@ cd apps/dashboard && bun run dev  # Port 3000
 > **Please confirm before we start:**
 >
 > 1. **Gemini API key** — Do you have one ready? We'll need it in `.env.docker` and `.env`. (We'll use `gemini-2.0-flash` as the default model for both the demo chat and the prompt analyzer to keep costs low.)
->
 > 2. **Docker Desktop** — Is it installed and running on your machine? We need it for PostgreSQL, NATS, and Redis.
->
 > 3. **Bun** — Is Bun installed? (`bun --version` in terminal). The project uses Bun as its runtime.
->
 > 4. **Renaming scope** — Should we rename the GitHub remote/repo references too, or just the code? (For hackathon, code-only is fine.)
->
 > 5. **Ready to start?** — If all the above checks out, I'll begin with Phase 0 (renaming) immediately.

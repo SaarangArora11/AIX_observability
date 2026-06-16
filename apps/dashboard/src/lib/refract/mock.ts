@@ -6,7 +6,15 @@ const models: Record<Provider, string[]> = {
   openai: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
   anthropic: ["claude-3-5-sonnet", "claude-3-haiku"],
 };
-const categories = ["summarization", "code-gen", "classification", "reasoning", "extraction", "translation", "qa"];
+const categories = [
+  "summarization",
+  "code-gen",
+  "classification",
+  "reasoning",
+  "extraction",
+  "translation",
+  "qa",
+];
 const fits: ModelFit[] = ["overkill", "good_fit", "underkill"];
 
 const seed = (s: number) => () => {
@@ -23,7 +31,8 @@ export function mockTraces(n = 50, seedNum = 42): Trace[] {
     const inputTokens = Math.floor(r() * 1800 + 80);
     const outputTokens = Math.floor(r() * 900 + 30);
     const isErr = r() < 0.08;
-    const cost = (inputTokens * 0.0000025 + outputTokens * 0.00001) * (provider === "anthropic" ? 1.4 : 1);
+    const cost =
+      (inputTokens * 0.0000025 + outputTokens * 0.00001) * (provider === "anthropic" ? 1.4 : 1);
     const fit = fits[Math.floor(r() * 3)];
     return {
       id: `trc_${(seedNum + i).toString(36)}${Math.floor(r() * 1e6).toString(36)}`,
@@ -45,7 +54,12 @@ export function mockTraces(n = 50, seedNum = 42): Trace[] {
       estimatedSavingsUsd: fit === "overkill" ? Number((cost * 0.7).toFixed(5)) : 0,
       spans: [
         { name: "proxy.intercept", startMs: 0, durationMs: 4, kind: "io" },
-        { name: "llm.completion", startMs: 5, durationMs: Math.floor(r() * 2000 + 100), kind: "llm" },
+        {
+          name: "llm.completion",
+          startMs: 5,
+          durationMs: Math.floor(r() * 2000 + 100),
+          kind: "llm",
+        },
         { name: "telemetry.emit", startMs: 5, durationMs: 2, kind: "io" },
       ],
     };
@@ -85,7 +99,10 @@ export function mockMetrics(traces: Trace[]): Metrics {
       good_fit: traces.filter((t) => t.modelFit === "good_fit").length,
       underkill: traces.filter((t) => t.modelFit === "underkill").length,
     },
-    providerMix: providers.map((p) => ({ provider: p, count: traces.filter((t) => t.provider === p).length })),
+    providerMix: providers.map((p) => ({
+      provider: p,
+      count: traces.filter((t) => t.provider === p).length,
+    })),
   };
 }
 
@@ -106,11 +123,20 @@ export function mockAnalysis(traceId: string): AnalysisResult {
           ? "Reasoning depth required exceeds this model's typical capability; upgrade recommended."
           : "Model size is well-matched to task complexity. No change recommended.",
     improvements:
-      fit === "overkill" 
-        ? ["Consider using few-shot examples to ensure the smaller model maintains high accuracy.", "Remove redundant context that may confuse smaller context windows."]
+      fit === "overkill"
+        ? [
+            "Consider using few-shot examples to ensure the smaller model maintains high accuracy.",
+            "Remove redundant context that may confuse smaller context windows.",
+          ]
         : fit === "underkill"
-          ? ["Break the prompt down into a multi-step chain of thought.", "Explicitly define the persona and constraints to guide the reasoning."]
-          : ["The prompt is well-structured.", "Consider adding edge-case handling instructions for robustness."],
+          ? [
+              "Break the prompt down into a multi-step chain of thought.",
+              "Explicitly define the persona and constraints to guide the reasoning.",
+            ]
+          : [
+              "The prompt is well-structured.",
+              "Consider adding edge-case handling instructions for robustness.",
+            ],
     mock: true,
   };
 }

@@ -29,7 +29,9 @@ app.post('/chat/completions', async (c) => {
 
     // Extract prompt text
     const messages = body.messages || [];
-    const promptText = messages.map((m: any) => `[${m.role === 'assistant' ? 'assistant' : 'user'}]\n${m.content}`).join('\n\n');
+    const promptText = messages
+      .map((m: any) => `[${m.role === 'assistant' ? 'assistant' : 'user'}]\n${m.content}`)
+      .join('\n\n');
 
     // Allow client to provide their own API key via header, fall back to env
     const clientApiKey = c.req.header('Authorization')?.replace('Bearer ', '') || OPENAI_API_KEY;

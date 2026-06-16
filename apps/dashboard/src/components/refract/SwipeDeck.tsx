@@ -29,12 +29,19 @@ export function SwipeDeck({
       <AnimatePresence>
         {visible.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="glass-card grain spotlight p-10 text-center"
           >
             <div className="font-display text-2xl mb-2">Deck cleared</div>
             <p className="text-sm text-muted-foreground">All traces reviewed.</p>
-            <button onClick={() => setIndex(0)} className="mt-4 text-sm text-primary hover:underline">Reshuffle</button>
+            <button
+              onClick={() => setIndex(0)}
+              className="mt-4 text-sm text-primary hover:underline"
+            >
+              Reshuffle
+            </button>
           </motion.div>
         )}
         {visible.map((t, i) => {
@@ -61,17 +68,31 @@ export function SwipeDeck({
               <div className="glass-card grain spotlight p-6 cursor-grab active:cursor-grabbing">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className={cn(
-                      "size-2 rounded-full",
-                      t.status === "success" ? "bg-emerald-400" : t.status === "error" ? "bg-destructive" : "bg-amber-400"
-                    )} />
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t.source}</span>
+                    <span
+                      className={cn(
+                        "size-2 rounded-full",
+                        t.status === "success"
+                          ? "bg-emerald-400"
+                          : t.status === "error"
+                            ? "bg-destructive"
+                            : "bg-amber-400",
+                      )}
+                    />
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                      {t.source}
+                    </span>
                   </div>
-                  <span className="font-mono-tight text-[10px] text-muted-foreground">{t.id.slice(0, 14)}</span>
+                  <span className="font-mono-tight text-[10px] text-muted-foreground">
+                    {t.id.slice(0, 14)}
+                  </span>
                 </div>
                 <div className="font-display text-xl mb-1">{t.model}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mb-4">{t.provider}</div>
-                <p className="text-sm text-foreground/80 line-clamp-3 mb-5 min-h-[60px]">{t.prompt}</p>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mb-4">
+                  {t.provider}
+                </div>
+                <p className="text-sm text-foreground/80 line-clamp-3 mb-5 min-h-[60px]">
+                  {t.prompt}
+                </p>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <Stat label="latency" value={formatLatency(t.latencyMs)} />
                   <Stat label="tokens" value={(t.inputTokens + t.outputTokens).toLocaleString()} />

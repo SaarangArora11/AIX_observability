@@ -8,97 +8,97 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as TracesRouteImport } from './routes/traces'
-import { Route as ReplayRouteImport } from './routes/replay'
-import { Route as AnalyzerRouteImport } from './routes/analyzer'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as TracesRouteImport } from "./routes/traces";
+import { Route as ReplayRouteImport } from "./routes/replay";
+import { Route as AnalyzerRouteImport } from "./routes/analyzer";
+import { Route as IndexRouteImport } from "./routes/index";
 
 const TracesRoute = TracesRouteImport.update({
-  id: '/traces',
-  path: '/traces',
+  id: "/traces",
+  path: "/traces",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ReplayRoute = ReplayRouteImport.update({
-  id: '/replay',
-  path: '/replay',
+  id: "/replay",
+  path: "/replay",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AnalyzerRoute = AnalyzerRouteImport.update({
-  id: '/analyzer',
-  path: '/analyzer',
+  id: "/analyzer",
+  path: "/analyzer",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/analyzer': typeof AnalyzerRoute
-  '/replay': typeof ReplayRoute
-  '/traces': typeof TracesRoute
+  "/": typeof IndexRoute;
+  "/analyzer": typeof AnalyzerRoute;
+  "/replay": typeof ReplayRoute;
+  "/traces": typeof TracesRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/analyzer': typeof AnalyzerRoute
-  '/replay': typeof ReplayRoute
-  '/traces': typeof TracesRoute
+  "/": typeof IndexRoute;
+  "/analyzer": typeof AnalyzerRoute;
+  "/replay": typeof ReplayRoute;
+  "/traces": typeof TracesRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/analyzer': typeof AnalyzerRoute
-  '/replay': typeof ReplayRoute
-  '/traces': typeof TracesRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/analyzer": typeof AnalyzerRoute;
+  "/replay": typeof ReplayRoute;
+  "/traces": typeof TracesRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analyzer' | '/replay' | '/traces'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analyzer' | '/replay' | '/traces'
-  id: '__root__' | '/' | '/analyzer' | '/replay' | '/traces'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/analyzer" | "/replay" | "/traces";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/analyzer" | "/replay" | "/traces";
+  id: "__root__" | "/" | "/analyzer" | "/replay" | "/traces";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AnalyzerRoute: typeof AnalyzerRoute
-  ReplayRoute: typeof ReplayRoute
-  TracesRoute: typeof TracesRoute
+  IndexRoute: typeof IndexRoute;
+  AnalyzerRoute: typeof AnalyzerRoute;
+  ReplayRoute: typeof ReplayRoute;
+  TracesRoute: typeof TracesRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/traces': {
-      id: '/traces'
-      path: '/traces'
-      fullPath: '/traces'
-      preLoaderRoute: typeof TracesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/replay': {
-      id: '/replay'
-      path: '/replay'
-      fullPath: '/replay'
-      preLoaderRoute: typeof ReplayRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analyzer': {
-      id: '/analyzer'
-      path: '/analyzer'
-      fullPath: '/analyzer'
-      preLoaderRoute: typeof AnalyzerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/traces": {
+      id: "/traces";
+      path: "/traces";
+      fullPath: "/traces";
+      preLoaderRoute: typeof TracesRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/replay": {
+      id: "/replay";
+      path: "/replay";
+      fullPath: "/replay";
+      preLoaderRoute: typeof ReplayRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/analyzer": {
+      id: "/analyzer";
+      path: "/analyzer";
+      fullPath: "/analyzer";
+      preLoaderRoute: typeof AnalyzerRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -107,17 +107,17 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyzerRoute: AnalyzerRoute,
   ReplayRoute: ReplayRoute,
   TracesRoute: TracesRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { startInstance } from "./start.ts";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>;
   }
 }

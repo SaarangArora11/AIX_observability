@@ -80,9 +80,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Refract — AI observability" },
-      { name: "description", content: "Transparent AI observability, telemetry, and cost-optimization for LLM applications." },
+      {
+        name: "description",
+        content:
+          "Transparent AI observability, telemetry, and cost-optimization for LLM applications.",
+      },
       { property: "og:title", content: "Refract — AI observability" },
-      { property: "og:description", content: "Transparent AI observability, telemetry, and cost-optimization for LLM applications." },
+      {
+        property: "og:description",
+        content:
+          "Transparent AI observability, telemetry, and cost-optimization for LLM applications.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

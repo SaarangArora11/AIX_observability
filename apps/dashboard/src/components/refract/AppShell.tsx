@@ -45,11 +45,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
             >
               {/* Active gradient strip */}
-              <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-r opacity-0 group-data-[status=active]:opacity-100 transition-opacity"
+              <span
+                className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-r opacity-0 group-data-[status=active]:opacity-100 transition-opacity"
                 style={{ background: "linear-gradient(180deg, #FF006E, #8338EC)" }}
               />
               {/* Active gradient bg overlay */}
-              <span className="absolute inset-0 rounded-lg opacity-0 group-data-[status=active]:opacity-[0.15] transition-opacity"
+              <span
+                className="absolute inset-0 rounded-lg opacity-0 group-data-[status=active]:opacity-[0.15] transition-opacity"
                 style={{ background: "linear-gradient(90deg, #FF006E, #8338EC, transparent)" }}
               />
               <Icon className="size-4 shrink-0 relative z-10 group-data-[status=active]:text-[#FF006E] transition-colors" />
@@ -72,7 +74,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="min-w-0">
               <div className="text-[12px] font-semibold truncate">you</div>
-              <div className="text-[10px] font-mono-tight text-[#6B7280] truncate">v0.4.2 · noir</div>
+              <div className="text-[10px] font-mono-tight text-[#6B7280] truncate">
+                v0.4.2 · noir
+              </div>
             </div>
           </div>
         </div>

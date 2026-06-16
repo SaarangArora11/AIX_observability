@@ -16,7 +16,11 @@ export const Route = createFileRoute("/traces")({
   head: () => ({
     meta: [
       { title: "Traces · Refract" },
-      { name: "description", content: "Inspect, swipe through, and analyze every LLM trace captured by the Refract Proxy." }
+      {
+        name: "description",
+        content:
+          "Inspect, swipe through, and analyze every LLM trace captured by the Refract Proxy.",
+      },
     ],
   }),
   component: TracesPage,
@@ -46,7 +50,12 @@ function TracesPage() {
     if (filter === "sdk") t = t.filter((x) => x.source === "sdk");
     if (q.trim()) {
       const Q = q.toLowerCase();
-      t = t.filter((x) => x.model.includes(Q) || x.id.toLowerCase().includes(Q) || x.prompt.toLowerCase().includes(Q));
+      t = t.filter(
+        (x) =>
+          x.model.includes(Q) ||
+          x.id.toLowerCase().includes(Q) ||
+          x.prompt.toLowerCase().includes(Q),
+      );
     }
     return t;
   }, [data, q, filter]);
@@ -55,7 +64,9 @@ function TracesPage() {
     <LayoutGroup>
       <div className="max-w-7xl mx-auto space-y-6">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Traces</div>
+          <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Traces
+          </div>
           <h1 className="font-display text-4xl">Every prompt, captured.</h1>
         </div>
 
@@ -80,9 +91,13 @@ function TracesPage() {
                     onClick={() => setFilter(f)}
                     className={cn(
                       "px-2.5 py-1 rounded-md uppercase tracking-wider text-[10px] transition-colors",
-                      filter === f ? "bg-primary/20 text-primary border border-primary/30" : "text-muted-foreground hover:text-foreground"
+                      filter === f
+                        ? "bg-primary/20 text-primary border border-primary/30"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
-                  >{f}</button>
+                  >
+                    {f}
+                  </button>
                 ))}
               </div>
             </div>
@@ -105,23 +120,36 @@ function TracesPage() {
                       onClick={() => setSelected(t)}
                       className={cn(
                         "border-t border-white/5 cursor-pointer hover:bg-white/[0.04] transition-colors",
-                        selected?.id === t.id && "bg-primary/10"
+                        selected?.id === t.id && "bg-primary/10",
                       )}
                     >
                       <td className="px-3 py-2.5 font-mono-tight text-xs">
-                        <span className={cn("inline-block size-1.5 rounded-full mr-2", t.status === "success" ? "bg-emerald-400" : "bg-destructive")} />
+                        <span
+                          className={cn(
+                            "inline-block size-1.5 rounded-full mr-2",
+                            t.status === "success" ? "bg-emerald-400" : "bg-destructive",
+                          )}
+                        />
                         {t.id.slice(0, 14)}
                       </td>
                       <td className="px-3 py-2.5">{t.model}</td>
-                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">{t.latencyMs}ms</td>
-                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">{(t.inputTokens + t.outputTokens).toLocaleString()}</td>
-                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">${t.costUsd.toFixed(4)}</td>
+                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">
+                        {t.latencyMs}ms
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">
+                        {(t.inputTokens + t.outputTokens).toLocaleString()}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono-tight text-xs">
+                        ${t.costUsd.toFixed(4)}
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
               </table>
               {traces.length === 0 && (
-                <div className="text-center text-sm text-muted-foreground py-8">No traces match.</div>
+                <div className="text-center text-sm text-muted-foreground py-8">
+                  No traces match.
+                </div>
               )}
             </div>
           </GlassCard>
@@ -140,11 +168,18 @@ function TracesPage() {
                   <GlassCard className="p-6">
                     <div className="flex items-start justify-between gap-2 mb-4">
                       <div>
-                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">trace</div>
+                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                          trace
+                        </div>
                         <div className="font-mono-tight text-xs mt-1">{selected.id}</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => del.mutate(selected.id)} className="hover:bg-destructive/20 hover:text-destructive">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => del.mutate(selected.id)}
+                          className="hover:bg-destructive/20 hover:text-destructive"
+                        >
                           <Trash2 className="size-4" />
                         </Button>
                         <Button variant="ghost" size="icon" onClick={() => setSelected(null)}>
@@ -164,27 +199,36 @@ function TracesPage() {
                     </div>
 
                     <Section title="Prompt">
-                      <pre className="whitespace-pre-wrap text-xs font-mono-tight text-foreground/80 leading-relaxed">{selected.prompt}</pre>
+                      <pre className="whitespace-pre-wrap text-xs font-mono-tight text-foreground/80 leading-relaxed">
+                        {selected.prompt}
+                      </pre>
                     </Section>
                     <Section title="Completion">
-                      <pre className="whitespace-pre-wrap text-xs font-mono-tight text-foreground/80 leading-relaxed">{selected.completion}</pre>
+                      <pre className="whitespace-pre-wrap text-xs font-mono-tight text-foreground/80 leading-relaxed">
+                        {selected.completion}
+                      </pre>
                     </Section>
                     <Section title="Spans">
                       <div className="space-y-1.5">
                         {selected.spans?.map((s, i) => (
                           <div key={i} className="flex items-center gap-3 text-xs">
-                            <span className="font-mono-tight text-muted-foreground w-32 truncate">{s.name}</span>
+                            <span className="font-mono-tight text-muted-foreground w-32 truncate">
+                              {s.name}
+                            </span>
                             <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                               <div
                                 className="h-full"
                                 style={{
                                   marginLeft: `${(s.startMs / selected.latencyMs) * 100}%`,
                                   width: `${Math.max(2, (s.durationMs / selected.latencyMs) * 100)}%`,
-                                  background: s.kind === "llm" ? "var(--ember)" : "var(--prism-cyan)",
+                                  background:
+                                    s.kind === "llm" ? "var(--ember)" : "var(--prism-cyan)",
                                 }}
                               />
                             </div>
-                            <span className="font-mono-tight text-muted-foreground w-12 text-right">{s.durationMs}ms</span>
+                            <span className="font-mono-tight text-muted-foreground w-12 text-right">
+                              {s.durationMs}ms
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -192,8 +236,15 @@ function TracesPage() {
                   </GlassCard>
                 </motion.div>
               ) : (
-                <motion.div key="deck" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 text-center">swipe deck</div>
+                <motion.div
+                  key="deck"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 text-center">
+                    swipe deck
+                  </div>
                   <SwipeDeck traces={traces} onPick={setSelected} />
                 </motion.div>
               )}
@@ -217,8 +268,12 @@ function Mini({ label, value }: { label: string; value: string }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">{title}</div>
-      <div className="rounded-lg bg-background/30 border border-white/5 p-3 max-h-40 overflow-y-auto">{children}</div>
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
+        {title}
+      </div>
+      <div className="rounded-lg bg-background/30 border border-white/5 p-3 max-h-40 overflow-y-auto">
+        {children}
+      </div>
     </div>
   );
 }

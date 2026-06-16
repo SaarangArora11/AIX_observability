@@ -13,7 +13,10 @@ export const Route = createFileRoute("/replay")({
   head: () => ({
     meta: [
       { title: "Replay · Refract" },
-      { name: "description", content: "Replay captured LLM traces and generate new ones via the built-in proxy chat." }
+      {
+        name: "description",
+        content: "Replay captured LLM traces and generate new ones via the built-in proxy chat.",
+      },
     ],
   }),
   component: ReplayPage,
@@ -28,7 +31,7 @@ function ReplayPage() {
   const { data: fullTrace } = useQuery({
     queryKey: ["trace", selected?.id],
     queryFn: () => fetchTrace(selected!.id),
-    enabled: !!selected
+    enabled: !!selected,
   });
 
   const displayTrace = fullTrace?.data || selected;
@@ -36,13 +39,17 @@ function ReplayPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Replay & Chat</div>
+        <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+          Replay & Chat
+        </div>
         <h1 className="font-display text-4xl">Rewind any prompt. Generate new ones.</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <GlassCard className="lg:col-span-2 p-5">
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">recent captures</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+            recent captures
+          </div>
           <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
             {data?.data.map((t) => (
               <button
@@ -50,11 +57,17 @@ function ReplayPage() {
                 onClick={() => setSelected(t)}
                 className={cn(
                   "w-full text-left p-3 rounded-lg border transition-all",
-                  selected?.id === t.id ? "bg-primary/10 border-primary/30" : "border-white/5 hover:bg-white/[0.04]"
+                  selected?.id === t.id
+                    ? "bg-primary/10 border-primary/30"
+                    : "border-white/5 hover:bg-white/[0.04]",
                 )}
               >
-                <div className="font-mono-tight text-[10px] text-muted-foreground">{t.id.slice(0, 14)} · {t.model}</div>
-                <div className="text-sm line-clamp-2 mt-0.5">{t.prompt || "No prompt snippet available"}</div>
+                <div className="font-mono-tight text-[10px] text-muted-foreground">
+                  {t.id.slice(0, 14)} · {t.model}
+                </div>
+                <div className="text-sm line-clamp-2 mt-0.5">
+                  {t.prompt || "No prompt snippet available"}
+                </div>
               </button>
             ))}
           </div>
@@ -77,17 +90,23 @@ function ReplayPlayer({ trace }: { trace: Trace | null }) {
   const { data: analysis } = useQuery({
     queryKey: ["analysis", trace?.id],
     queryFn: () => analyzeTrace(trace!.id),
-    enabled: !!trace
+    enabled: !!trace,
   });
 
-  useEffect(() => { setChars(0); setPlaying(false); }, [trace?.id]);
+  useEffect(() => {
+    setChars(0);
+    setPlaying(false);
+  }, [trace?.id]);
 
   useEffect(() => {
     if (!playing || !trace) return;
     const id = setInterval(() => {
       setChars((c) => {
         if (!trace) return c;
-        if (c >= trace.completion.length) { setPlaying(false); return c; }
+        if (c >= trace.completion.length) {
+          setPlaying(false);
+          return c;
+        }
         return c + 2;
       });
     }, 18);
@@ -108,36 +127,59 @@ function ReplayPlayer({ trace }: { trace: Trace | null }) {
     <GlassCard className="p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">replaying</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            replaying
+          </div>
           <div className="font-display text-xl">{trace.model}</div>
           <div className="font-mono-tight text-[10px] text-muted-foreground">{trace.id}</div>
         </div>
         <div className="flex items-center gap-1">
-          <Button size="icon" variant="ghost" onClick={() => { setChars(0); setPlaying(true); }}>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              setChars(0);
+              setPlaying(true);
+            }}
+          >
             <RotateCcw className="size-4" />
           </Button>
-          <Button size="icon" variant="ghost" onClick={() => setPlaying((p) => !p)} className="bg-primary/20 hover:bg-primary/30">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setPlaying((p) => !p)}
+            className="bg-primary/20 hover:bg-primary/30"
+          >
             {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
           </Button>
         </div>
       </div>
 
       <div className="mb-4">
-        <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">prompt</div>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
+          prompt
+        </div>
         <PromptRenderer promptText={trace.prompt} />
       </div>
 
       <div className="mb-3">
         <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5">
           <span>completion stream</span>
-          <span className="font-mono-tight">{chars}/{trace.completion.length}</span>
+          <span className="font-mono-tight">
+            {chars}/{trace.completion.length}
+          </span>
         </div>
         <div className="h-1 bg-white/5 rounded-full overflow-hidden mb-3">
-          <div className="h-full transition-[width] duration-100" style={{ width: `${pct}%`, background: "var(--gradient-ember)" }} />
+          <div
+            className="h-full transition-[width] duration-100"
+            style={{ width: `${pct}%`, background: "var(--gradient-ember)" }}
+          />
         </div>
         <pre className="text-sm font-mono-tight whitespace-pre-wrap min-h-[120px] bg-background/40 border border-white/5 p-4 rounded-lg">
           {trace.completion.slice(0, chars)}
-          {playing && <span className="inline-block w-1.5 h-4 align-middle bg-primary ml-0.5 animate-pulse" />}
+          {playing && (
+            <span className="inline-block w-1.5 h-4 align-middle bg-primary ml-0.5 animate-pulse" />
+          )}
         </pre>
       </div>
 
@@ -149,7 +191,9 @@ function ReplayPlayer({ trace }: { trace: Trace | null }) {
 
       {analysis?.data && (
         <div className="mt-6 pt-6 border-t border-white/5">
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">prompt analysis & improvements</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
+            prompt analysis & improvements
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-lg bg-white/[0.02] border border-white/5 p-4">
               <div className="text-xs font-medium mb-1">Model Fit</div>
@@ -160,7 +204,7 @@ function ReplayPlayer({ trace }: { trace: Trace | null }) {
                 </div>
               )}
             </div>
-            
+
             <div className="rounded-lg bg-white/[0.02] border border-white/5 p-4">
               <div className="text-xs font-medium mb-2">Suggested Improvements</div>
               <ul className="space-y-2">
@@ -181,16 +225,20 @@ function ReplayPlayer({ trace }: { trace: Trace | null }) {
 
 function PromptRenderer({ promptText }: { promptText: string }) {
   if (!promptText) return null;
-  
+
   if (!promptText.includes("[user]") && !promptText.includes("[assistant]")) {
-    return <pre className="text-xs font-mono-tight text-foreground/70 whitespace-pre-wrap bg-background/30 border border-white/5 p-3 rounded-lg">{promptText}</pre>;
+    return (
+      <pre className="text-xs font-mono-tight text-foreground/70 whitespace-pre-wrap bg-background/30 border border-white/5 p-3 rounded-lg">
+        {promptText}
+      </pre>
+    );
   }
 
   const blocks = promptText.split(/\[(user|assistant)\]\n/g).filter(Boolean);
   const messages = [];
   for (let i = 0; i < blocks.length; i += 2) {
     const role = blocks[i];
-    const text = blocks[i+1];
+    const text = blocks[i + 1];
     if (role && text) messages.push({ role, text: text.trim() });
   }
 
@@ -198,12 +246,14 @@ function PromptRenderer({ promptText }: { promptText: string }) {
     <div className="space-y-3 bg-background/30 border border-white/5 p-4 rounded-lg">
       {messages.map((m, i) => (
         <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
-          <div className={cn(
-            "max-w-[85%] rounded-lg p-3 text-xs font-mono-tight whitespace-pre-wrap",
-            m.role === "user" 
-              ? "bg-primary/20 border border-primary/30 text-primary-foreground" 
-              : "bg-white/[0.04] border border-white/5 text-foreground/80"
-          )}>
+          <div
+            className={cn(
+              "max-w-[85%] rounded-lg p-3 text-xs font-mono-tight whitespace-pre-wrap",
+              m.role === "user"
+                ? "bg-primary/20 border border-primary/30 text-primary-foreground"
+                : "bg-white/[0.04] border border-white/5 text-foreground/80",
+            )}
+          >
             <div className="text-[9px] uppercase tracking-widest opacity-50 mb-1">{m.role}</div>
             {m.text}
           </div>
@@ -222,12 +272,20 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-interface Msg { role: "user" | "assistant"; content: string; mock?: boolean }
+interface Msg {
+  role: "user" | "assistant";
+  content: string;
+  mock?: boolean;
+}
 
 function Chat() {
   const [model, setModel] = useState(MODELS[0]);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", content: "Hi — I route through your Refract Proxy. Anything you ask here generates a real trace. Try me." },
+    {
+      role: "assistant",
+      content:
+        "Hi — I route through your Refract Proxy. Anything you ask here generates a real trace. Try me.",
+    },
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -244,7 +302,10 @@ function Chat() {
     setMessages(newMsgs);
     setInput("");
     setSending(true);
-    const res = await chatCompletion(model, newMsgs.map((m) => ({ role: m.role, content: m.content })));
+    const res = await chatCompletion(
+      model,
+      newMsgs.map((m) => ({ role: m.role, content: m.content })),
+    );
     setMessages((m) => [...m, { role: "assistant", content: res.text, mock: !res.live }]);
     setSending(false);
   };
@@ -263,9 +324,13 @@ function Chat() {
               onClick={() => setModel(m)}
               className={cn(
                 "px-2.5 py-1 rounded-md text-[10px] font-mono-tight uppercase tracking-wider transition-colors",
-                model === m ? "bg-primary/20 text-primary border border-primary/30" : "text-muted-foreground hover:text-foreground border border-transparent"
+                model === m
+                  ? "bg-primary/20 text-primary border border-primary/30"
+                  : "text-muted-foreground hover:text-foreground border border-transparent",
               )}
-            >{m}</button>
+            >
+              {m}
+            </button>
           ))}
         </div>
       </div>
@@ -284,7 +349,7 @@ function Chat() {
                   "max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                   m.role === "user"
                     ? "bg-primary text-primary-foreground rounded-br-sm"
-                    : "bg-white/[0.05] border border-white/10 rounded-bl-sm"
+                    : "bg-white/[0.05] border border-white/10 rounded-bl-sm",
                 )}
               >
                 {m.content}
@@ -310,7 +375,11 @@ function Chat() {
           placeholder={`Message ${model}…`}
           className="flex-1 bg-background/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary/40 transition-colors"
         />
-        <Button onClick={send} disabled={sending || !input.trim()} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
+        <Button
+          onClick={send}
+          disabled={sending || !input.trim()}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+        >
           <Send className="size-4" />
         </Button>
       </div>

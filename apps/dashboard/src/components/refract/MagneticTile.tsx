@@ -2,7 +2,15 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export function MagneticTile({ children, className, strength = 14 }: { children: ReactNode; className?: string; strength?: number }) {
+export function MagneticTile({
+  children,
+  className,
+  strength = 14,
+}: {
+  children: ReactNode;
+  className?: string;
+  strength?: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -19,7 +27,10 @@ export function MagneticTile({ children, className, strength = 14 }: { children:
     x.set(px * strength * 2);
     y.set(py * strength * 2);
   };
-  const onLeave = () => { x.set(0); y.set(0); };
+  const onLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
     <motion.div

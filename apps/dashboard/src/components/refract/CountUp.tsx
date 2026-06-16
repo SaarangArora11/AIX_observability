@@ -21,12 +21,17 @@ export function CountUp({
   useEffect(() => {
     const controls = animate(mv, value, { duration, ease: [0.16, 1, 0.3, 1] });
     const unsub = rounded.on("change", (v) => setDisplay(v));
-    return () => { controls.stop(); unsub(); };
+    return () => {
+      controls.stop();
+      unsub();
+    };
   }, [value, duration, mv, rounded]);
 
   return (
     <motion.span className="font-mono-tight tabular-nums">
-      {prefix}{display}{suffix}
+      {prefix}
+      {display}
+      {suffix}
     </motion.span>
   );
 }

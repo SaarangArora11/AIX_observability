@@ -1,6 +1,6 @@
 import { loadSettings } from "./settings";
 import { mockTraces, mockMetrics, mockAnalysis } from "./mock";
-import type { Trace, Metrics, AnalysisResult, Provider, Source, TraceStatus, ModelFit } from "./types";
+import type { Trace, Metrics, AnalysisResult, Provider, TraceStatus } from "./types";
 
 const TIMEOUT_MS = 4000;
 
@@ -36,11 +36,11 @@ function mapBackendTraceToFrontend(apiTrace: any): Trace {
   const model = (apiTrace.model || "").toLowerCase();
   if (model.includes("gpt")) provider = "openai";
   else if (model.includes("gemini")) provider = "google";
-  
+
   // Infer status
   let status: TraceStatus = "success";
   if (apiTrace.status === "error" || apiTrace.status === "degraded") status = "error";
-  
+
   return {
     id: apiTrace.trace_id,
     timestamp: apiTrace.timestamp,
@@ -81,12 +81,15 @@ export async function fetchTrace(id: string): Promise<{ data: Trace | null; live
 
 export async function fetchMetrics(): Promise<{ data: Metrics; live: boolean }> {
   const s = loadSettings();
-  const live = await tryFetch<{ summary: any }>(`${s.queryApi}/cost/summary?startTime=${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}`);
+  const live = await tryFetch<{ summary: any }>(
+    `${s.queryApi}/cost/summary?startTime=${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}`,
+  );
   if (live && live.summary) {
     return {
       data: {
         totalTraces: live.summary.total_requests || 0,
-        totalTokens: (live.summary.total_prompt_tokens || 0) + (live.summary.total_completion_tokens || 0),
+        totalTokens:
+          (live.summary.total_prompt_tokens || 0) + (live.summary.total_completion_tokens || 0),
         totalCostUsd: live.summary.total_cost || 0,
         avgLatencyMs: live.summary.avg_latency_ms || 0,
         errorRate: 0, // Not explicitly in cost summary
@@ -96,7 +99,7 @@ export async function fetchMetrics(): Promise<{ data: Metrics; live: boolean }> 
         modelFit: { overkill: 0, good_fit: live.summary.total_requests || 0, underkill: 0 },
         providerMix: [],
       },
-      live: true
+      live: true,
     };
   }
   return { data: mockMetrics(mockTraces(60)), live: false };
@@ -105,11 +108,14 @@ export async function fetchMetrics(): Promise<{ data: Metrics; live: boolean }> 
 export async function deleteTrace(id: string): Promise<boolean> {
   const s = loadSettings();
   try {
-    const res = await fetch(`${s.queryApi}/traces`, buildHeaders({
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ traceIds: [id] })
-    }));
+    const res = await fetch(
+      `${s.queryApi}/traces`,
+      buildHeaders({
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ traceIds: [id] }),
+      }),
+    );
     if (res.ok) return true;
   } catch {
     /* fall through */
@@ -138,32 +144,35 @@ export async function pingService(url: string): Promise<boolean> {
 export async function chatCompletion(model: string, messages: { role: string; content: string }[]) {
   const s = loadSettings();
   try {
-    let url = '';
+    let url = "";
     let body: any = {};
 
-    if (model.includes('gemini')) {
+    if (model.includes("gemini")) {
       url = `${s.proxyApi}/v1/proxy/google/models/${model}:generateContent`;
       body = {
-        contents: messages.map(m => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }]
-        }))
+        contents: messages.map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }],
+        })),
       };
     } else {
       url = `${s.proxyApi}/v1/proxy/openai/chat/completions`;
       body = { model, messages };
     }
 
-    const res = await fetch(url, buildHeaders({
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }));
+    const res = await fetch(
+      url,
+      buildHeaders({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    );
 
     if (res.ok) {
       const json = await res.json();
-      let text = '';
-      if (model.includes('gemini')) {
+      let text = "";
+      if (model.includes("gemini")) {
         text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? JSON.stringify(json);
       } else {
         text = json.choices?.[0]?.message?.content ?? JSON.stringify(json);
@@ -187,4 +196,3 @@ export async function chatCompletion(model: string, messages: { role: string; co
     };
   }
 }
-

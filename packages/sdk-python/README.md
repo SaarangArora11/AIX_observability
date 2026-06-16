@@ -79,8 +79,8 @@ result = Refract.trace(
 
 ## Environment variables
 
-| Variable                   | Default                           | Description                        |
-| -------------------------- | --------------------------------- | ---------------------------------- |
+| Variable                    | Default                           | Description                        |
+| --------------------------- | --------------------------------- | ---------------------------------- |
 | `REFRACT_API_KEY`           | —                                 | API key (omit for self-hosted)     |
 | `REFRACT_ENDPOINT`          | `http://localhost:9411/v1/traces` | OTLP collector URL                 |
 | `Refract_SERVICE_NAME`      | —                                 | Service name attached to all spans |

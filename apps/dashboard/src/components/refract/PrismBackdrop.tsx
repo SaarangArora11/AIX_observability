@@ -16,8 +16,7 @@ export function PrismBackdrop() {
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse at 15% 0%, #0E0E12 0%, #070708 55%), #070708",
+          background: "radial-gradient(ellipse at 15% 0%, #0E0E12 0%, #070708 55%), #070708",
         }}
       />
 

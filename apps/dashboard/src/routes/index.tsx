@@ -5,14 +5,28 @@ import { GlassCard } from "@/components/refract/GlassCard";
 import { MagneticTile } from "@/components/refract/MagneticTile";
 import { CountUp } from "@/components/refract/CountUp";
 import { motion } from "framer-motion";
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { TrendingUp, Zap, DollarSign, Gauge, Activity, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Overview · Refract" },
-      { name: "description", content: "Real-time AI telemetry, prompt efficiency, and cost-optimization metrics." },
+      {
+        name: "description",
+        content: "Real-time AI telemetry, prompt efficiency, and cost-optimization metrics.",
+      },
     ],
   }),
   component: OverviewPage,
@@ -21,7 +35,11 @@ export const Route = createFileRoute("/")({
 const fmtMoney = (n: number) => `$${n.toFixed(n < 1 ? 4 : 2)}`;
 
 function OverviewPage() {
-  const { data: metrics } = useQuery({ queryKey: ["metrics"], queryFn: fetchMetrics, refetchInterval: 15000 });
+  const { data: metrics } = useQuery({
+    queryKey: ["metrics"],
+    queryFn: fetchMetrics,
+    refetchInterval: 15000,
+  });
   const { data: tracesQ } = useQuery({ queryKey: ["traces", 8], queryFn: () => fetchTraces(8) });
 
   const m = metrics?.data;
@@ -29,32 +47,53 @@ function OverviewPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Dashboard</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full border ${live ? "border-emerald-400/30 text-emerald-300 bg-emerald-400/5" : "border-amber-400/30 text-amber-300 bg-amber-400/5"}`}>
+          <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Dashboard
+          </span>
+          <span
+            className={`text-[10px] px-2 py-0.5 rounded-full border ${live ? "border-emerald-400/30 text-emerald-300 bg-emerald-400/5" : "border-amber-400/30 text-amber-300 bg-amber-400/5"}`}
+          >
             {live ? "live" : "mock data · configure endpoints"}
           </span>
         </div>
         <h1 className="font-display text-5xl md:text-6xl leading-[0.95]">
-          Transparent <span className="prism-text">telemetry</span><br />for every prompt.
+          Transparent <span className="prism-text">telemetry</span>
+          <br />
+          for every prompt.
         </h1>
         <p className="text-muted-foreground mt-3 max-w-xl">
-          Refract observes every LLM call through your proxy or SDK and surfaces what each token actually costs you.
+          Refract observes every LLM call through your proxy or SDK and surfaces what each token
+          actually costs you.
         </p>
       </motion.div>
 
       {m && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <KpiTile icon={Gauge} label="Efficiency" hint="output/input"><CountUp value={m.efficiencyScore} decimals={2} /></KpiTile>
+            <KpiTile icon={Gauge} label="Efficiency" hint="output/input">
+              <CountUp value={m.efficiencyScore} decimals={2} />
+            </KpiTile>
             <KpiTile icon={DollarSign} label="Savings" hint="vs picked models" accent>
               <CountUp value={m.estimatedSavingsUsd} decimals={4} prefix="$" />
             </KpiTile>
-            <KpiTile icon={Zap} label="Avg latency" hint="proxy + LLM"><CountUp value={m.avgLatencyMs} suffix="ms" /></KpiTile>
-            <KpiTile icon={TrendingUp} label="Tokens" hint="total"><CountUp value={m.totalTokens} /></KpiTile>
-            <KpiTile icon={Activity} label="Traces" hint="captured"><CountUp value={m.totalTraces} /></KpiTile>
-            <KpiTile icon={AlertTriangle} label="Errors" hint="rate"><CountUp value={m.errorRate * 100} decimals={1} suffix="%" /></KpiTile>
+            <KpiTile icon={Zap} label="Avg latency" hint="proxy + LLM">
+              <CountUp value={m.avgLatencyMs} suffix="ms" />
+            </KpiTile>
+            <KpiTile icon={TrendingUp} label="Tokens" hint="total">
+              <CountUp value={m.totalTokens} />
+            </KpiTile>
+            <KpiTile icon={Activity} label="Traces" hint="captured">
+              <CountUp value={m.totalTraces} />
+            </KpiTile>
+            <KpiTile icon={AlertTriangle} label="Errors" hint="rate">
+              <CountUp value={m.errorRate * 100} decimals={1} suffix="%" />
+            </KpiTile>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -64,11 +103,27 @@ function OverviewPage() {
                 <ResponsiveContainer>
                   <BarChart data={m.tokenFlow} stackOffset="sign">
                     <CartesianGrid strokeDasharray="2 4" stroke="oklch(1 0 0 / 0.06)" />
-                    <XAxis dataKey="time" stroke="oklch(1 0 0 / 0.4)" fontSize={10} tickLine={false} axisLine={false} />
-                    <YAxis stroke="oklch(1 0 0 / 0.4)" fontSize={10} tickLine={false} axisLine={false} />
+                    <XAxis
+                      dataKey="time"
+                      stroke="oklch(1 0 0 / 0.4)"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="oklch(1 0 0 / 0.4)"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                    />
                     <Tooltip
                       cursor={{ fill: "oklch(1 0 0 / 0.04)" }}
-                      contentStyle={{ background: "oklch(0.15 0.008 35 / 0.95)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 12, backdropFilter: "blur(12px)" }}
+                      contentStyle={{
+                        background: "oklch(0.15 0.008 35 / 0.95)",
+                        border: "1px solid oklch(1 0 0 / 0.1)",
+                        borderRadius: 12,
+                        backdropFilter: "blur(12px)",
+                      }}
                     />
                     <Bar dataKey="input" stackId="a" fill="var(--ember)" radius={[0, 0, 4, 4]} />
                     <Bar dataKey="output" stackId="a" fill="var(--gold)" radius={[4, 4, 0, 0]} />
@@ -86,7 +141,11 @@ function OverviewPage() {
                       data={[
                         { name: "Overkill", value: m.modelFit.overkill, fill: "var(--ember)" },
                         { name: "Good fit", value: m.modelFit.good_fit, fill: "var(--gold)" },
-                        { name: "Underkill", value: m.modelFit.underkill, fill: "var(--prism-cyan)" },
+                        {
+                          name: "Underkill",
+                          value: m.modelFit.underkill,
+                          fill: "var(--prism-cyan)",
+                        },
                       ]}
                       dataKey="value"
                       innerRadius={50}
@@ -94,9 +153,17 @@ function OverviewPage() {
                       paddingAngle={4}
                       stroke="none"
                     >
-                      {[0, 1, 2].map((i) => <Cell key={i} />)}
+                      {[0, 1, 2].map((i) => (
+                        <Cell key={i} />
+                      ))}
                     </Pie>
-                    <Tooltip contentStyle={{ background: "oklch(0.15 0.008 35 / 0.95)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 12 }} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "oklch(0.15 0.008 35 / 0.95)",
+                        border: "1px solid oklch(1 0 0 / 0.1)",
+                        borderRadius: 12,
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -118,7 +185,9 @@ function OverviewPage() {
                     <div key={p.provider}>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="capitalize">{p.provider}</span>
-                        <span className="font-mono-tight text-muted-foreground">{p.count} · {pct.toFixed(0)}%</span>
+                        <span className="font-mono-tight text-muted-foreground">
+                          {p.count} · {pct.toFixed(0)}%
+                        </span>
                       </div>
                       <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <motion.div
@@ -147,8 +216,12 @@ function OverviewPage() {
                     className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg hover:bg-white/[0.04] transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className={`size-1.5 rounded-full ${t.status === "success" ? "bg-emerald-400" : "bg-destructive"}`} />
-                      <span className="font-mono-tight text-[10px] text-muted-foreground">{t.id.slice(0, 12)}</span>
+                      <span
+                        className={`size-1.5 rounded-full ${t.status === "success" ? "bg-emerald-400" : "bg-destructive"}`}
+                      />
+                      <span className="font-mono-tight text-[10px] text-muted-foreground">
+                        {t.id.slice(0, 12)}
+                      </span>
                       <span className="text-sm truncate">{t.prompt}</span>
                     </div>
                     <div className="flex items-center gap-3 shrink-0 text-xs font-mono-tight text-muted-foreground">
@@ -166,12 +239,26 @@ function OverviewPage() {
   );
 }
 
-function KpiTile({ icon: Icon, label, hint, children, accent }: { icon: React.ComponentType<{ className?: string }>; label: string; hint: string; children: React.ReactNode; accent?: boolean }) {
+function KpiTile({
+  icon: Icon,
+  label,
+  hint,
+  children,
+  accent,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  hint: string;
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
   return (
     <MagneticTile>
       <GlassCard className="p-4 h-full">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            {label}
+          </span>
           <Icon className={`size-3.5 ${accent ? "text-primary" : "text-muted-foreground"}`} />
         </div>
         <div className={`mt-3 font-display text-3xl ${accent ? "prism-text" : ""}`}>{children}</div>

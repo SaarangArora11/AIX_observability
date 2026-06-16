@@ -51,7 +51,12 @@ app.post('/analyze', requireAuth, async (c) => {
     const clientApiKey = c.req.header('x-goog-api-key') || GEMINI_API_KEY;
 
     // Perform analysis
-    const analysis = await analyzePrompt(trace.prompt, trace.model, trace.provider || 'unknown', clientApiKey);
+    const analysis = await analyzePrompt(
+      trace.prompt,
+      trace.model,
+      trace.provider || 'unknown',
+      clientApiKey
+    );
 
     if (!analysis) {
       return c.json({ error: 'Analysis failed — check API Key' }, 500);
@@ -320,9 +325,9 @@ Respond with ONLY valid JSON (no markdown, no code fences):
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
       {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey 
+          'x-goog-api-key': apiKey,
         },
         body: JSON.stringify({
           contents: [{ parts: [{ text: metaPrompt }] }],
