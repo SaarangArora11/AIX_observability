@@ -1,6 +1,6 @@
-# Lumina Integration Guides
+# Refract Integration Guides
 
-This guide shows you how to integrate Lumina with popular LLM providers and frameworks.
+This guide shows you how to integrate Refract with popular LLM providers and frameworks.
 
 ## Table of Contents
 
@@ -18,17 +18,17 @@ This guide shows you how to integrate Lumina with popular LLM providers and fram
 All integrations follow the same pattern:
 
 ```typescript
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
-// Initialize Lumina (no API key needed for self-hosted!)
-const lumina = new Lumina({
+// Initialize Refract (no API key needed for self-hosted!)
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
   environment: 'production',
 });
 
 // Wrap your LLM call
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await yourLLMCall();
   },
@@ -48,28 +48,28 @@ const response = await lumina.traceLLM(
 ### Installation
 
 ```bash
-npm install openai @uselumina/sdk
+npm install openai @refract/sdk
 # or
-bun add openai @uselumina/sdk
+bun add openai @refract/sdk
 ```
 
 ### Basic Example
 
 ```typescript
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
 });
 
 // Chat Completions
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await openai.chat.completions.create({
       model: 'gpt-4',
@@ -96,7 +96,7 @@ console.log(reply);
 ### Streaming Example
 
 ```typescript
-const stream = await lumina.traceLLM(
+const stream = await Refract.traceLLM(
   async () => {
     return await openai.chat.completions.create({
       model: 'gpt-4',
@@ -121,7 +121,7 @@ for await (const chunk of stream) {
 ### Embeddings
 
 ```typescript
-const embeddings = await lumina.traceLLM(
+const embeddings = await Refract.traceLLM(
   async () => {
     return await openai.embeddings.create({
       model: 'text-embedding-3-small',
@@ -147,28 +147,28 @@ const embeddings = await lumina.traceLLM(
 ### Installation
 
 ```bash
-npm install @anthropic-ai/sdk @uselumina/sdk
+npm install @anthropic-ai/sdk @refract/sdk
 # or
-bun add @anthropic-ai/sdk @uselumina/sdk
+bun add @anthropic-ai/sdk @refract/sdk
 ```
 
 ### Basic Example
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
 });
 
 // Messages API
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -192,7 +192,7 @@ console.log(reply);
 ### With System Prompt
 
 ```typescript
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -216,7 +216,7 @@ const response = await lumina.traceLLM(
 ### Streaming Example
 
 ```typescript
-const stream = await lumina.traceLLM(
+const stream = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -249,9 +249,9 @@ for await (const chunk of stream) {
 ### Installation
 
 ```bash
-npm install langchain @langchain/openai @uselumina/sdk
+npm install langchain @langchain/openai @refract/sdk
 # or
-bun add langchain @langchain/openai @uselumina/sdk
+bun add langchain @langchain/openai @refract/sdk
 ```
 
 ### Basic Example
@@ -259,9 +259,9 @@ bun add langchain @langchain/openai @uselumina/sdk
 ```typescript
 import { ChatOpenAI } from '@langchain/openai';
 import { HumanMessage } from '@langchain/core/messages';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'langchain-app',
 });
@@ -272,7 +272,7 @@ const chat = new ChatOpenAI({
 });
 
 // Wrap the LangChain call
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await chat.invoke([new HumanMessage('What is the capital of France?')]);
   },
@@ -298,7 +298,7 @@ const prompt = PromptTemplate.fromTemplate('What is the capital of {country}?');
 
 const chain = new LLMChain({ llm: chat, prompt });
 
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await chain.call({ country: 'France' });
   },
@@ -323,9 +323,9 @@ const response = await lumina.traceLLM(
 ### Installation
 
 ```bash
-npm install ai @uselumina/sdk
+npm install ai @refract/sdk
 # or
-bun add ai @uselumina/sdk
+bun add ai @refract/sdk
 ```
 
 ### Basic Example
@@ -333,14 +333,14 @@ bun add ai @uselumina/sdk
 ```typescript
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'vercel-ai-app',
 });
 
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await generateText({
       model: openai('gpt-4'),
@@ -365,7 +365,7 @@ console.log(response.text);
 import { streamUI } from 'ai/rsc';
 import { openai } from '@ai-sdk/openai';
 
-const result = await lumina.traceLLM(
+const result = await Refract.traceLLM(
   async () => {
     return await streamUI({
       model: openai('gpt-4'),
@@ -392,18 +392,18 @@ const result = await lumina.traceLLM(
 // app/api/chat/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const lumina = new Lumina({
-  endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/v1/traces',
+const Refract = new Refract({
+  endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/v1/traces',
   serviceName: 'nextjs-api',
 });
 
 export async function POST(req: NextRequest) {
   const { message } = await req.json();
 
-  const response = await lumina.traceLLM(
+  const response = await Refract.traceLLM(
     async () => {
       return await openai.chat.completions.create({
         model: 'gpt-4',
@@ -432,16 +432,16 @@ export async function POST(req: NextRequest) {
 'use server';
 
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const lumina = new Lumina({
-  endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/v1/traces',
+const Refract = new Refract({
+  endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/v1/traces',
   serviceName: 'nextjs-actions',
 });
 
 export async function chatAction(message: string) {
-  const response = await lumina.traceLLM(
+  const response = await Refract.traceLLM(
     async () => {
       return await openai.chat.completions.create({
         model: 'gpt-4',
@@ -472,14 +472,14 @@ export async function chatAction(message: string) {
 ```typescript
 import express from 'express';
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const app = express();
 app.use(express.json());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const lumina = new Lumina({
-  endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/v1/traces',
+const Refract = new Refract({
+  endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/v1/traces',
   serviceName: 'express-api',
 });
 
@@ -487,7 +487,7 @@ app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    const response = await lumina.traceLLM(
+    const response = await Refract.traceLLM(
       async () => {
         return await openai.chat.completions.create({
           model: 'gpt-4',
@@ -524,12 +524,12 @@ app.listen(3000, () => {
 
 ## Configuration Options
 
-### Lumina Constructor
+### Refract Constructor
 
 ```typescript
-const lumina = new Lumina({
+const Refract = new Refract({
   // Required for managed cloud, optional for self-hosted
-  apiKey: 'lumina_customer_abc...',
+  apiKey: 'Refract_customer_abc...',
 
   // Ingestion endpoint (default: http://localhost:8080/v1/traces)
   endpoint: 'http://localhost:8080/v1/traces',
@@ -557,7 +557,7 @@ const lumina = new Lumina({
 ### Trace Options
 
 ```typescript
-await lumina.traceLLM(
+await Refract.traceLLM(
   async () => {
     /* your LLM call */
   },
@@ -619,7 +619,7 @@ await lumina.traceLLM(
 
 ### 3. Track Costs
 
-Lumina automatically calculates costs based on token usage, but you can override:
+Refract automatically calculates costs based on token usage, but you can override:
 
 ```typescript
 {
@@ -634,14 +634,14 @@ Lumina automatically calculates costs based on token usage, but you can override
 
 ```typescript
 try {
-  const response = await lumina.traceLLM(
+  const response = await Refract.traceLLM(
     async () => {
       return await openai.chat.completions.create({...});
     },
     { name: 'chat', provider: 'openai', model: 'gpt-4', prompt: '...' }
   );
 } catch (error) {
-  // Lumina captures the error automatically
+  // Refract captures the error automatically
   console.error('LLM call failed:', error);
   throw error;
 }
@@ -660,6 +660,6 @@ try {
 
 ## Need Help?
 
-- 💬 [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
-- 🐛 [Report an Issue](https://github.com/use-lumina/Lumina/issues)
-- 📖 [Read the Docs](https://use-lumina.github.io/Lumina)
+- 💬 [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
+- 🐛 [Report an Issue](https://github.com/aigenthix/Refract/issues)
+- 📖 [Read the Docs](https://use-Refract.github.io/Refract)

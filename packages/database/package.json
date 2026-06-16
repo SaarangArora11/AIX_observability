@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/database",
+  "name": "@refract/database",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",

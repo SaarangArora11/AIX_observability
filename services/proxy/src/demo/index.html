@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refract — Demo Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #16161f;
+      --bg-hover: #1e1e2a;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text-muted: #6b6b80;
+      --text-dim: #4a4a5e;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-dim: rgba(99, 102, 241, 0.15);
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --gradient-1: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+      --gradient-2: linear-gradient(135deg, #06b6d4, #3b82f6, #6366f1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      backdrop-filter: blur(20px);
+      z-index: 10;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 100px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .dashboard-link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .dashboard-link:hover {
+      color: var(--text);
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* Model Selector */
+    .model-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .model-bar label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .model-select {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .model-select:hover, .model-select:focus { border-color: var(--accent); }
+    .model-select option { background: var(--bg-card); }
+    .session-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .stat-value { color: var(--text); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+    /* Chat Area */
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-behavior: smooth;
+    }
+    .chat-container::-webkit-scrollbar { width: 6px; }
+    .chat-container::-webkit-scrollbar-track { background: transparent; }
+    .chat-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .message {
+      max-width: 85%;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .message.user { align-self: flex-end; }
+    .message.assistant { align-self: flex-start; }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .user .message-bubble {
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .assistant .message-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Trace Metrics Bar */
+    .trace-metrics {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.06);
+      border: 1px solid rgba(99, 102, 241, 0.1);
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .trace-metric {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .trace-metric .label { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.3px; }
+    .trace-metric .value { color: var(--text); font-weight: 500; }
+    .trace-metric .value.cost { color: var(--success); }
+    .trace-metric .value.latency { color: var(--warning); }
+    .trace-metric .value.efficiency { color: var(--accent-hover); }
+    .trace-metric-divider { width: 1px; height: 12px; background: var(--border); }
+    .trace-link {
+      margin-left: auto;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 10px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .trace-link:hover { opacity: 1; }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      align-items: center;
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: bounce 1.4s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.8); opacity: 0.4; }
+      40% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Input Area */
+    .input-area {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    .input-wrapper {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .input-field {
+      flex: 1;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      outline: none;
+      max-height: 120px;
+      min-height: 44px;
+      line-height: 1.5;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .input-field::placeholder { color: var(--text-dim); }
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: none;
+      background: var(--gradient-1);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .send-btn:hover { opacity: 0.9; }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .send-btn svg { width: 18px; height: 18px; }
+
+    /* Welcome state */
+    .welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+    .welcome h2 {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .welcome p { font-size: 14px; max-width: 400px; line-height: 1.6; }
+    .welcome-features {
+      display: flex;
+      gap: 24px;
+      margin-top: 8px;
+    }
+    .welcome-feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .welcome-feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <span class="logo">Refract</span>
+      <span class="badge">Demo Chat</span>
+    </div>
+    <div class="header-right">
+      <a href="http://localhost:3000" target="_blank" class="dashboard-link">📊 Open Dashboard</a>
+      <a href="http://localhost:3000/traces" target="_blank" class="dashboard-link">🔍 View Traces</a>
+    </div>
+  </div>
+
+  <!-- Model Selector Bar -->
+  <div class="model-bar">
+    <label>Model</label>
+    <select id="model-select" class="model-select">
+      <option value="gemini-2.0-flash" selected>gemini-2.0-flash (fastest, $0.10/1M)</option>
+      <option value="gemini-2.5-flash">gemini-2.5-flash (balanced, $0.15/1M)</option>
+      <option value="gemini-2.5-pro">gemini-2.5-pro (smartest, $1.25/1M)</option>
+      <option value="gemini-1.5-flash">gemini-1.5-flash (legacy, $0.075/1M)</option>
+    </select>
+    <div class="session-stats">
+      <div>Messages: <span class="stat-value" id="msg-count">0</span></div>
+      <div>Tokens: <span class="stat-value" id="token-count">0</span></div>
+      <div>Cost: <span class="stat-value" id="cost-total">$0.000000</span></div>
+      <div>Avg Latency: <span class="stat-value" id="avg-latency">-</span></div>
+    </div>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat-container" id="chat-container">
+    <div class="welcome" id="welcome">
+      <h2>Welcome to Refract Demo</h2>
+      <p>Send a message to see your LLM usage tracked in real-time. Every message flows through the Refract Proxy and appears on your dashboard.</p>
+      <div class="welcome-features">
+        <div class="welcome-feature">
+          <div class="welcome-feature-icon">⚡</div>
+          <span>Real-time Tracking</span>
+        </div>
+        <div class="welcome-feature">
+          <div class="welcome-feature-icon">💰</div>
+          <span>Cost Analysis</span>
+        </div>
+        <div class="welcome-feature">
+          <div class="welcome-feature-icon">📊</div>
+          <span>Live Dashboard</span>
+        </div>
+        <div class="welcome-feature">
+          <div class="welcome-feature-icon">🔬</div>
+          <span>Prompt Analysis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea
+        id="message-input"
+        class="input-field"
+        placeholder="Send a message to generate traces..."
+        rows="1"
+      ></textarea>
+      <button id="send-btn" class="send-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const PROXY_BASE = window.location.origin;
+    const chatContainer = document.getElementById('chat-container');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const modelSelect = document.getElementById('model-select');
+    const welcome = document.getElementById('welcome');
+
+    // Session stats
+    let sessionMessages = 0;
+    let sessionTokens = 0;
+    let sessionCost = 0;
+    let latencies = [];
+    let conversationHistory = [];
+
+    // Auto-resize textarea
+    messageInput.addEventListener('input', () => {
+      messageInput.style.height = 'auto';
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    });
+
+    // Send on Enter (Shift+Enter for newline)
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      // Hide welcome
+      if (welcome) welcome.style.display = 'none';
+
+      // Add user message
+      addMessage('user', text);
+      messageInput.value = '';
+      messageInput.style.height = 'auto';
+      sendBtn.disabled = true;
+
+      // Add conversation context
+      conversationHistory.push({ role: 'user', parts: [{ text }] });
+
+      // Show typing indicator
+      const typingEl = addTypingIndicator();
+
+      try {
+        const model = modelSelect.value;
+        const response = await fetch(`${PROXY_BASE}/v1/proxy/google/models/${model}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: conversationHistory,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2048,
+            },
+          }),
+        });
+
+        // Remove typing indicator
+        typingEl.remove();
+
+        // Parse Refract headers
+        const traceId = response.headers.get('X-Refract-Trace-Id') || '';
+        const latencyMs = parseFloat(response.headers.get('X-Refract-Latency-Ms') || '0');
+        const costUsd = parseFloat(response.headers.get('X-Refract-Cost-Usd') || '0');
+        const promptTokens = parseInt(response.headers.get('X-Refract-Prompt-Tokens') || '0');
+        const completionTokens = parseInt(response.headers.get('X-Refract-Completion-Tokens') || '0');
+        const efficiency = parseFloat(response.headers.get('X-Refract-Efficiency') || '0');
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          addMessage('assistant', `Error: ${data.error?.message || JSON.stringify(data)}`, {
+            traceId, latencyMs, costUsd, promptTokens, completionTokens, model, efficiency, error: true
+          });
+          return;
+        }
+
+        // Extract response text
+        const responseText = data.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || 'No response';
+
+        // Add to conversation history
+        conversationHistory.push({ role: 'model', parts: [{ text: responseText }] });
+
+        // Update session stats
+        sessionMessages++;
+        sessionTokens += promptTokens + completionTokens;
+        sessionCost += costUsd;
+        latencies.push(latencyMs);
+
+        updateStats();
+
+        // Display response with metrics
+        addMessage('assistant', responseText, {
+          traceId, latencyMs, costUsd, promptTokens, completionTokens, model, efficiency
+        });
+
+      } catch (error) {
+        typingEl.remove();
+        addMessage('assistant', `Connection error: ${error.message}. Is the proxy running on ${PROXY_BASE}?`);
+      } finally {
+        sendBtn.disabled = false;
+        messageInput.focus();
+      }
+    }
+
+    function addMessage(role, text, metrics = null) {
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${role}`;
+
+      let html = `<div class="message-bubble">${escapeHtml(text)}</div>`;
+
+      if (metrics && role === 'assistant') {
+        html += `
+          <div class="trace-metrics">
+            <div class="trace-metric">
+              <span class="label">Model</span>
+              <span class="value">${metrics.model}</span>
+            </div>
+            <div class="trace-metric-divider"></div>
+            <div class="trace-metric">
+              <span class="label">Latency</span>
+              <span class="value latency">${metrics.latencyMs.toFixed(0)}ms</span>
+            </div>
+            <div class="trace-metric-divider"></div>
+            <div class="trace-metric">
+              <span class="label">Cost</span>
+              <span class="value cost">$${metrics.costUsd.toFixed(6)}</span>
+            </div>
+            <div class="trace-metric-divider"></div>
+            <div class="trace-metric">
+              <span class="label">Tokens</span>
+              <span class="value">${metrics.promptTokens}→${metrics.completionTokens}</span>
+            </div>
+            <div class="trace-metric-divider"></div>
+            <div class="trace-metric">
+              <span class="label">Efficiency</span>
+              <span class="value efficiency">${metrics.efficiency.toFixed(2)}x</span>
+            </div>
+            ${metrics.traceId ? `<a href="http://localhost:3000/traces?id=${metrics.traceId}" target="_blank" class="trace-link">View in Dashboard →</a>` : ''}
+          </div>
+        `;
+      }
+
+      messageEl.innerHTML = html;
+      chatContainer.appendChild(messageEl);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+      const el = document.createElement('div');
+      el.className = 'message assistant';
+      el.innerHTML = `
+        <div class="message-bubble">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      `;
+      chatContainer.appendChild(el);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      return el;
+    }
+
+    function updateStats() {
+      document.getElementById('msg-count').textContent = sessionMessages;
+      document.getElementById('token-count').textContent = sessionTokens.toLocaleString();
+      document.getElementById('cost-total').textContent = `$${sessionCost.toFixed(6)}`;
+      const avgLat = latencies.length > 0
+        ? (latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(0)
+        : '-';
+      document.getElementById('avg-latency').textContent = avgLat === '-' ? '-' : `${avgLat}ms`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Focus input on load
+    messageInput.focus();
+  </script>
+</body>
+</html>

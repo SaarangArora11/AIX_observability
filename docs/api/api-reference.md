@@ -1,6 +1,6 @@
 # API Reference
 
-Lumina provides OpenAPI/Swagger documentation for all APIs.
+Refract provides OpenAPI/Swagger documentation for all APIs.
 
 ## Table of contents
 
@@ -17,7 +17,7 @@ Or use a local Swagger UI:
 npm install -g swagger-ui-watcher
 
 # Serve the docs
-cd /Users/evansonigiri/Lumina
+cd /Users/evansonigiri/Refract
 swagger-ui-watcher docs/openapi.yaml
 ```
 
@@ -112,7 +112,7 @@ Ingestion API uses API key authentication for trace ingestion:
 
 ```bash
 curl -X POST http://localhost:8080/v1/traces \
-  -H "X-API-Key: lumina_live_YOUR_API_KEY" \
+  -H "X-API-Key: refract_live_YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d @trace.json
 ```
@@ -122,7 +122,7 @@ curl -X POST http://localhost:8080/v1/traces \
 **API Key Details:**
 
 - Each customer has separate `live` and `test` environment keys
-- Keys are prefixed with `lumina_live_` or `lumina_test_`
+- Keys are prefixed with `refract_live_` or `Refract_test_`
 - Keys are generated during customer onboarding
 - Contact admin to rotate keys
 

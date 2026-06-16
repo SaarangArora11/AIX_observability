@@ -10,7 +10,7 @@ We release patches for security vulnerabilities in the following versions:
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security issue in Lumina, please report it responsibly.
+We take security vulnerabilities seriously. If you discover a security issue in Refract, please report it responsibly.
 
 ### How to Report
 
@@ -18,8 +18,8 @@ We take security vulnerabilities seriously. If you discover a security issue in 
 
 Instead, please report security issues via one of these methods:
 
-1. **Email:** security@lumina.dev (coming soon)
-2. **GitHub Security Advisory:** Use the [GitHub Security Advisory](https://github.com/use-lumina/Lumina/security/advisories/new) feature
+1. **Email:** security@Refract.dev (coming soon)
+2. **GitHub Security Advisory:** Use the [GitHub Security Advisory](https://github.com/aigenthix/Refract/security/advisories/new) feature
 
 ### What to Include
 
@@ -56,21 +56,21 @@ We do not currently have a paid bug bounty program, but we deeply appreciate sec
 - **Database Security:** Use strong passwords and restrict database access
 - **API Keys:** Rotate API keys regularly, store them securely
 - **Network Security:** Use firewalls, restrict ports, enable auth
-- **Updates:** Keep Lumina and dependencies up to date
+- **Updates:** Keep Refract and dependencies up to date
 - **Monitoring:** Enable logging and monitor for suspicious activity
 
 ### For SDK Users
 
 - **Environment Variables:** Never hardcode API keys in source code
 - **Secrets Management:** Use secure secrets management (e.g., Vault, AWS Secrets Manager)
-- **Input Validation:** Validate user inputs before passing to Lumina SDK
+- **Input Validation:** Validate user inputs before passing to Refract SDK
 - **Rate Limiting:** Implement rate limiting on your API endpoints
 
 ## Known Security Considerations
 
 ### Data Privacy
 
-- Lumina stores LLM prompts and responses in PostgreSQL
+- Refract stores LLM prompts and responses in PostgreSQL
 - For production use with sensitive data:
   - Enable PostgreSQL encryption at rest
   - Use network encryption (TLS)
@@ -96,10 +96,10 @@ Security updates will be announced via:
 
 ## Contact
 
-For non-security issues, use [GitHub Issues](https://github.com/use-lumina/Lumina/issues).
+For non-security issues, use [GitHub Issues](https://github.com/aigenthix/Refract/issues).
 
 For security concerns, use the reporting methods above.
 
 ---
 
-**Thank you for helping keep Lumina secure!**
+**Thank you for helping keep Refract secure!**

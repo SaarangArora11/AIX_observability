@@ -1,15 +1,15 @@
-# Lumina + OpenAI Basic Integration
+# Refract + OpenAI Basic Integration
 
-Simple example demonstrating how to integrate Lumina observability with OpenAI SDK.
+Simple example demonstrating how to integrate Refract observability with OpenAI SDK.
 
 ## Prerequisites
 
-- Lumina running (see [Quickstart Guide](../../docs/guides/QUICKSTART.md))
+- Refract running (see [Quickstart Guide](../../docs/guides/QUICKSTART.md))
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 
 ## Quick Start
 
-### 1. Start Lumina
+### 1. Start Refract
 
 ```bash
 cd ../../infra/docker
@@ -20,7 +20,7 @@ Verify it's running:
 
 ```bash
 curl http://localhost:8080/health
-# Should return: {"status":"ok","service":"lumina-ingestion"}
+# Should return: {"status":"ok","service":"refract-ingestion"}
 ```
 
 ### 2. Install Dependencies
@@ -44,20 +44,20 @@ bun run start
 ## What You'll See
 
 ```
-🚀 Lumina + OpenAI Integration Example
+🚀 Refract + OpenAI Integration Example
 ==================================================
 
 📤 Sending prompt: What is the capital of France?
 📥 Response: The capital of France is Paris.
 💰 Cost: $0.000090
 📊 Tokens: 30
-✅ Trace sent to Lumina!
+✅ Trace sent to Refract!
 
 📤 Sending prompt: Explain quantum computing in one sentence.
 📥 Response: Quantum computing uses quantum bits...
 💰 Cost: $0.000120
 📊 Tokens: 40
-✅ Trace sent to Lumina!
+✅ Trace sent to Refract!
 
 ✨ Done! Check your traces at http://localhost:3000/traces
 ```
@@ -75,18 +75,18 @@ Open http://localhost:3000/traces to see your captured LLM calls with:
 
 ```typescript
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // No API key needed for self-hosted!
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
 });
 
 // Wrap your OpenAI call
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await openai.chat.completions.create({
       model: 'gpt-4',
@@ -102,7 +102,7 @@ const response = await lumina.traceLLM(
 );
 ```
 
-That's it! Lumina automatically captures:
+That's it! Refract automatically captures:
 
 - ✅ Prompt and response
 - ✅ Token usage and cost
@@ -136,7 +136,7 @@ Every LLM call is captured with:
 
 **"Connection refused" error:**
 
-- Make sure Lumina is running: `docker-compose ps`
+- Make sure Refract is running: `docker-compose ps`
 - Check the ingestion service: `curl http://localhost:8080/health`
 
 **"Invalid API key" from OpenAI:**
@@ -152,6 +152,6 @@ Every LLM call is captured with:
 
 ## Learn More
 
-- [Lumina Documentation](../../docs/guides/QUICKSTART.md)
+- [Refract Documentation](../../docs/guides/QUICKSTART.md)
 - [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
 - [Integration Guides](../../docs/guides/INTEGRATIONS.md)

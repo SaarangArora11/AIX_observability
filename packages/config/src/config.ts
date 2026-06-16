@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Database Configuration Schema
  */
 export const DatabaseConfigSchema = z.object({
-  duckdb_path: z.string().default('./data/lumina.db'),
+  duckdb_path: z.string().default('./data/Refract.db'),
   max_connections: z.number().int().positive().default(10),
   query_timeout_ms: z.number().int().positive().default(30000),
 });
@@ -16,8 +16,8 @@ export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
  */
 export const NatsConfigSchema = z.object({
   url: z.string().url().default('nats://localhost:4222'),
-  stream_name: z.string().default('lumina-traces'),
-  consumer_name: z.string().default('lumina-ingestion-consumer'),
+  stream_name: z.string().default('refract-traces'),
+  consumer_name: z.string().default('refract-ingestion-consumer'),
   max_retries: z.number().int().nonnegative().default(3),
 });
 
@@ -77,7 +77,7 @@ export type AlertConfig = z.infer<typeof AlertConfigSchema>;
  * Ingestion Service Configuration
  */
 export const IngestionConfigSchema = z.object({
-  service_name: z.string().default('lumina-ingestion'),
+  service_name: z.string().default('refract-ingestion'),
   server: ServerConfigSchema,
   database: DatabaseConfigSchema,
   nats: NatsConfigSchema,
@@ -92,7 +92,7 @@ export type IngestionConfig = z.infer<typeof IngestionConfigSchema>;
  * API Service Configuration
  */
 export const ApiConfigSchema = z.object({
-  service_name: z.string().default('lumina-api'),
+  service_name: z.string().default('refract-api'),
   server: ServerConfigSchema,
   database: DatabaseConfigSchema,
   auth: AuthConfigSchema,
@@ -104,7 +104,7 @@ export type ApiConfig = z.infer<typeof ApiConfigSchema>;
  * Replay Service Configuration
  */
 export const ReplayConfigSchema = z.object({
-  service_name: z.string().default('lumina-replay'),
+  service_name: z.string().default('refract-replay'),
   server: ServerConfigSchema,
   database: DatabaseConfigSchema,
   auth: AuthConfigSchema,

@@ -41,7 +41,7 @@ export function GlobalNavSidebar() {
       {/* Header */}
       <div className="h-14 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
         {!collapsed && (
-          <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">Lumina</span>
+          <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">Refract</span>
         )}
         <Button
           variant="ghost"

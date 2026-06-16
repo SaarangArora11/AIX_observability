@@ -19,12 +19,12 @@ export default async function AlertDetailPage({ params }: Params) {
   try {
     // Get cookie from server-side request
     const cookieStore = await cookies();
-    const token = cookieStore.get('lumina_token')?.value;
+    const token = cookieStore.get('Refract_token')?.value;
 
     // Fetch alert with authentication
     const response = await fetch(`${API_BASE_URL}/alerts/${id}`, {
       headers: {
-        ...(token ? { Cookie: `lumina_token=${token}` } : {}),
+        ...(token ? { Cookie: `Refract_token=${token}` } : {}),
       },
       cache: 'no-store',
     });

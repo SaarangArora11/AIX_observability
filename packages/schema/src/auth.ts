@@ -5,7 +5,7 @@ import { z } from 'zod';
  * Represents an API key for SDK authentication
  */
 export const ApiKeySchema = z.object({
-  api_key: z.string().regex(/^lumina_(live|test)_[a-zA-Z0-9]{32}$/),
+  api_key: z.string().regex(/^Refract_(live|test)_[a-zA-Z0-9]{32}$/),
   customer_id: z.string().min(1),
   environment: z.enum(['live', 'test']),
 

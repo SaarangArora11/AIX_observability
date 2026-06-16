@@ -1,5 +1,5 @@
 /**
- * Lumina Database Schema
+ * Refract Database Schema
  * Exports all table schemas and TypeScript types
  */
 

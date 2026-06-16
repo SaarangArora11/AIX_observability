@@ -14,7 +14,7 @@ import {
  */
 export function loadIngestionConfig(): IngestionConfig {
   const config = {
-    service_name: process.env.SERVICE_NAME || 'lumina-ingestion',
+    service_name: process.env.SERVICE_NAME || 'refract-ingestion',
     server: {
       port: parseInt(process.env.INGESTION_PORT || '8080', 10),
       host: process.env.HOST || '0.0.0.0',
@@ -22,14 +22,14 @@ export function loadIngestionConfig(): IngestionConfig {
       log_level: (process.env.LOG_LEVEL || 'info') as 'debug' | 'info' | 'warn' | 'error',
     },
     database: {
-      duckdb_path: process.env.DUCKDB_PATH || './data/lumina.db',
+      duckdb_path: process.env.DUCKDB_PATH || './data/Refract.db',
       max_connections: parseInt(process.env.DB_MAX_CONNECTIONS || '10', 10),
       query_timeout_ms: parseInt(process.env.DB_QUERY_TIMEOUT_MS || '30000', 10),
     },
     nats: {
       url: process.env.NATS_URL || 'nats://localhost:4222',
-      stream_name: process.env.NATS_STREAM || 'lumina-traces',
-      consumer_name: process.env.NATS_CONSUMER || 'lumina-ingestion-consumer',
+      stream_name: process.env.NATS_STREAM || 'refract-traces',
+      consumer_name: process.env.NATS_CONSUMER || 'refract-ingestion-consumer',
       max_retries: parseInt(process.env.NATS_MAX_RETRIES || '3', 10),
     },
     auth: {
@@ -69,7 +69,7 @@ export function loadIngestionConfig(): IngestionConfig {
  */
 export function loadApiConfig(): ApiConfig {
   const config = {
-    service_name: process.env.SERVICE_NAME || 'lumina-api',
+    service_name: process.env.SERVICE_NAME || 'refract-api',
     server: {
       port: parseInt(process.env.API_PORT || '8081', 10),
       host: process.env.HOST || '0.0.0.0',
@@ -77,7 +77,7 @@ export function loadApiConfig(): ApiConfig {
       log_level: (process.env.LOG_LEVEL || 'info') as 'debug' | 'info' | 'warn' | 'error',
     },
     database: {
-      duckdb_path: process.env.DUCKDB_PATH || './data/lumina.db',
+      duckdb_path: process.env.DUCKDB_PATH || './data/Refract.db',
       max_connections: parseInt(process.env.DB_MAX_CONNECTIONS || '10', 10),
       query_timeout_ms: parseInt(process.env.DB_QUERY_TIMEOUT_MS || '30000', 10),
     },
@@ -97,7 +97,7 @@ export function loadApiConfig(): ApiConfig {
  */
 export function loadReplayConfig(): ReplayConfig {
   const config = {
-    service_name: process.env.SERVICE_NAME || 'lumina-replay',
+    service_name: process.env.SERVICE_NAME || 'refract-replay',
     server: {
       port: parseInt(process.env.REPLAY_PORT || '8082', 10),
       host: process.env.HOST || '0.0.0.0',
@@ -105,7 +105,7 @@ export function loadReplayConfig(): ReplayConfig {
       log_level: (process.env.LOG_LEVEL || 'info') as 'debug' | 'info' | 'warn' | 'error',
     },
     database: {
-      duckdb_path: process.env.DUCKDB_PATH || './data/lumina.db',
+      duckdb_path: process.env.DUCKDB_PATH || './data/Refract.db',
       max_connections: parseInt(process.env.DB_MAX_CONNECTIONS || '10', 10),
       query_timeout_ms: parseInt(process.env.DB_QUERY_TIMEOUT_MS || '30000', 10),
     },
@@ -126,21 +126,21 @@ export function loadReplayConfig(): ReplayConfig {
  * Load and validate SDK configuration from environment variables
  */
 export function loadSdkConfig(): SdkConfig {
-  const apiKey = process.env.LUMINA_API_KEY;
+  const apiKey = process.env.REFRACT_API_KEY;
 
   if (!apiKey) {
-    throw new Error('LUMINA_API_KEY environment variable is required');
+    throw new Error('REFRACT_API_KEY environment variable is required');
   }
 
   const config = {
     api_key: apiKey,
-    endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/ingest',
-    environment: (process.env.LUMINA_ENVIRONMENT || 'live') as 'live' | 'test',
-    batch_size: parseInt(process.env.LUMINA_BATCH_SIZE || '10', 10),
-    batch_interval_ms: parseInt(process.env.LUMINA_BATCH_INTERVAL_MS || '5000', 10),
-    max_retries: parseInt(process.env.LUMINA_MAX_RETRIES || '3', 10),
-    timeout_ms: parseInt(process.env.LUMINA_TIMEOUT_MS || '10000', 10),
-    enabled: process.env.LUMINA_ENABLED !== 'false',
+    endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/ingest',
+    environment: (process.env.REFRACT_ENVIRONMENT || 'live') as 'live' | 'test',
+    batch_size: parseInt(process.env.REFRACT_BATCH_SIZE || '10', 10),
+    batch_interval_ms: parseInt(process.env.REFRACT_BATCH_INTERVAL_MS || '5000', 10),
+    max_retries: parseInt(process.env.REFRACT_MAX_RETRIES || '3', 10),
+    timeout_ms: parseInt(process.env.REFRACT_TIMEOUT_MS || '10000', 10),
+    enabled: process.env.REFRACT_ENABLED !== 'false',
   };
 
   const validated = SdkConfigSchema.parse(config);

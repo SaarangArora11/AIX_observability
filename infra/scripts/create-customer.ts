@@ -35,7 +35,7 @@ function parseArgs() {
 // Generate API key
 function generateApiKey(customerId: string, _environment: 'live' | 'test'): string {
   const randomString = randomBytes(20).toString('hex');
-  return `lumina_${customerId}_${randomString}`;
+  return `Refract_${customerId}_${randomString}`;
 }
 
 // Generate customer ID
@@ -97,7 +97,7 @@ async function main() {
   if (!databaseUrl) {
     console.error('❌ Error: DATABASE_URL environment variable not set');
     console.log('\nSet it with:');
-    console.log('  export DATABASE_URL="postgres://user@localhost:5432/lumina"');
+    console.log('  export DATABASE_URL="postgres://user@localhost:5432/Refract"');
     process.exit(1);
   }
 

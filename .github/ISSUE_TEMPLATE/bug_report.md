@@ -28,7 +28,7 @@ What actually happened.
 
 - **OS:** [e.g., macOS 13.5, Ubuntu 22.04]
 - **Bun Version:** [e.g., 1.0.15]
-- **Lumina Version/Commit:** [e.g., v0.1.0 or commit hash]
+- **Refract Version/Commit:** [e.g., v0.1.0 or commit hash]
 - **PostgreSQL Version:** [e.g., 14.9]
 
 ## Logs/Error Messages

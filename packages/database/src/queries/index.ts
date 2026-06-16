@@ -1,5 +1,5 @@
 /**
- * Lumina Database Queries
+ * Refract Database Queries
  * Exports all reusable query builders
  */
 

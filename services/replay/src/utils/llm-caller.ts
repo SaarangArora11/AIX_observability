@@ -5,7 +5,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
-import { calculateCost } from '@lumina/core';
+import { calculateCost } from '@refract/core';
 
 export interface LLMCallResult {
   response: string;

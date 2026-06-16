@@ -1,5 +1,5 @@
 /**
- * Lumina Query API Service
+ * Refract Query API Service
  * Provides RESTful endpoints for dashboard queries
  */
 
@@ -10,6 +10,7 @@ import tracesRoutes from './routes/traces';
 import analyticsRoutes from './routes/analytics';
 import alertsRoutes from './routes/alerts';
 import authRoutes from './routes/auth';
+import promptAnalysisRoutes from './routes/prompt-analysis';
 
 const app = new Hono();
 
@@ -18,7 +19,7 @@ app.use('*', logger());
 app.use(
   '*',
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8090'],
     credentials: true,
   })
 );
@@ -27,7 +28,7 @@ app.use(
 app.get('/health', (c) => {
   return c.json({
     status: 'healthy',
-    service: 'lumina-api',
+    service: 'refract-api',
     version: '0.1.0',
     timestamp: new Date().toISOString(),
   });
@@ -38,6 +39,7 @@ app.route('/auth', authRoutes);
 app.route('/traces', tracesRoutes);
 app.route('/cost', analyticsRoutes);
 app.route('/alerts', alertsRoutes);
+app.route('/prompt-analysis', promptAnalysisRoutes);
 
 // 404 handler
 app.notFound((c) => {
@@ -65,7 +67,7 @@ async function start() {
     console.log('✅ Database client ready');
 
     // Start server
-    console.log(`🚀 Lumina Query API starting on port ${PORT}...`);
+    console.log(`🚀 Refract Query API starting on port ${PORT}...`);
 
     Bun.serve({
       port: PORT,

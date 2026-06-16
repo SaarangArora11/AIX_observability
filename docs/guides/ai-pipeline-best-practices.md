@@ -1,6 +1,6 @@
 # AI Pipeline Best Practices
 
-A comprehensive guide to instrumenting, monitoring, and optimizing AI applications with Lumina.
+A comprehensive guide to instrumenting, monitoring, and optimizing AI applications with Refract.
 
 ## Table of Contents
 
@@ -22,12 +22,12 @@ Instrument your most expensive or failure-prone operations first:
 
 ```typescript
 // ✅ Priority 1: LLM calls (expensive)
-await lumina.trace(() => llm.generate(prompt), {
+await Refract.trace(() => llm.generate(prompt), {
   name: 'llm-generation',
 });
 
 // ✅ Priority 2: Vector searches (can be slow)
-await lumina.trace(() => vectorDB.search(query), {
+await Refract.trace(() => vectorDB.search(query), {
   name: 'vector-search',
 });
 
@@ -57,7 +57,7 @@ Name spans to describe **what** they do, not **how**:
 Include attributes that help debug business logic:
 
 ```typescript
-await lumina.trace(
+await Refract.trace(
   async () => {
     return await processOrder(order);
   },
@@ -84,20 +84,20 @@ Use parent spans to organize complex workflows:
 
 ```typescript
 // ✅ Good: Grouped workflow
-await lumina.trace(
+await Refract.trace(
   async () => {
-    const user = await lumina.trace(fetchUser, { name: 'fetch-user' });
-    const perms = await lumina.trace(checkPerms, { name: 'check-permissions' });
-    const data = await lumina.trace(fetchData, { name: 'fetch-data' });
+    const user = await Refract.trace(fetchUser, { name: 'fetch-user' });
+    const perms = await Refract.trace(checkPerms, { name: 'check-permissions' });
+    const data = await Refract.trace(fetchData, { name: 'fetch-data' });
     return format(data);
   },
   { name: 'user-dashboard-load' }
 );
 
 // ❌ Bad: Flat structure
-await lumina.trace(fetchUser);
-await lumina.trace(checkPerms);
-await lumina.trace(fetchData);
+await Refract.trace(fetchUser);
+await Refract.trace(checkPerms);
+await Refract.trace(fetchData);
 ```
 
 ---
@@ -109,7 +109,7 @@ await lumina.trace(fetchData);
 Tag traces with cost centers:
 
 ```typescript
-await lumina.trace(
+await Refract.trace(
   async () => {
     // ... LLM call
   },
@@ -129,7 +129,7 @@ await lumina.trace(
 Monitor spending per service/feature:
 
 ```typescript
-// In Lumina dashboard, set alerts:
+// In Refract dashboard, set alerts:
 // - Daily cost for 'customer-support' > $100
 // - Weekly cost for 'product-recommendations' > $500
 // - Monthly total cost > $5,000
@@ -139,11 +139,11 @@ Monitor spending per service/feature:
 
 ```typescript
 async function smartModelSelection(task: Task) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       // Simple tasks: Use cheap models
       if (task.complexity === 'low') {
-        return await lumina.trace(
+        return await Refract.trace(
           () => {
             return claudeHaiku.generate(task.prompt);
           },
@@ -155,7 +155,7 @@ async function smartModelSelection(task: Task) {
       }
 
       // Complex tasks: Use powerful models
-      return await lumina.trace(
+      return await Refract.trace(
         () => {
           return claudeSonnet.generate(task.prompt);
         },
@@ -169,7 +169,7 @@ async function smartModelSelection(task: Task) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - How often is each tier used?
 // - What's the cost difference?
 // - Is quality maintained with budget tier?
@@ -179,7 +179,7 @@ async function smartModelSelection(task: Task) {
 
 ```typescript
 async function cachedLLMCall(prompt: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       // Check cache
       const cached = await cache.get(prompt);
@@ -189,7 +189,7 @@ async function cachedLLMCall(prompt: string) {
       }
 
       // Cache miss: Pay for LLM
-      const result = await lumina.trace(
+      const result = await Refract.trace(
         () => {
           return llm.generate(prompt);
         },
@@ -206,7 +206,7 @@ async function cachedLLMCall(prompt: string) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Cache hit rate
 // - Cost savings from caching
 // - Set alert if hit rate drops below 70%
@@ -215,7 +215,7 @@ async function cachedLLMCall(prompt: string) {
 ### Monitor Token Usage
 
 ```typescript
-await lumina.trace(
+await Refract.trace(
   async () => {
     const response = await llm.generate(prompt);
 
@@ -246,7 +246,7 @@ await lumina.trace(
 Track quality metrics over time:
 
 ```typescript
-await lumina.trace(
+await Refract.trace(
   async () => {
     const response = await llm.generate(prompt);
 
@@ -264,7 +264,7 @@ await lumina.trace(
   }
 );
 
-// Lumina will baseline these metrics
+// Refract will baseline these metrics
 // Alert when they deviate significantly
 ```
 
@@ -272,9 +272,9 @@ await lumina.trace(
 
 ```typescript
 async function factCheckResponse(query: string, response: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
-      // Use Lumina's semantic scorer
+      // Use Refract's semantic scorer
       // It automatically detects when responses don't match expected quality
 
       return response;
@@ -289,7 +289,7 @@ async function factCheckResponse(query: string, response: string) {
   );
 }
 
-// Lumina's semantic scorer will alert you when:
+// Refract's semantic scorer will alert you when:
 // - Response quality drops below baseline
 // - Responses become inconsistent
 // - Hallucinations detected
@@ -297,7 +297,7 @@ async function factCheckResponse(query: string, response: string) {
 
 ### A/B Test Prompts
 
-Use Lumina's replay feature:
+Use Refract's replay feature:
 
 ```typescript
 // Version A (current production)
@@ -308,7 +308,7 @@ const promptB = 'Provide a brief, accurate summary of this article:';
 
 // 1. Capture 100 production requests
 // 2. Run replay with promptA vs promptB
-// 3. Compare in Lumina dashboard:
+// 3. Compare in Refract dashboard:
 //    - Cost: Which is cheaper?
 //    - Quality: Semantic similarity scores
 //    - Speed: Which is faster?
@@ -318,7 +318,7 @@ const promptB = 'Provide a brief, accurate summary of this article:';
 ### Monitor User Satisfaction
 
 ```typescript
-await lumina.trace(
+await Refract.trace(
   async () => {
     const response = await generateResponse(query);
 
@@ -338,13 +338,13 @@ await lumina.trace(
 // Later, when user gives feedback:
 async function recordFeedback(responseId: string, rating: number) {
   // Associate feedback with the trace
-  await lumina.addAttribute(responseId, {
+  await Refract.addAttribute(responseId, {
     'user.rating': rating,
     'user.satisfied': rating >= 4,
   });
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Average user rating per endpoint
 // - Correlation between cost and satisfaction
 // - Alert when satisfaction drops
@@ -379,9 +379,9 @@ const recommendations = await fetchRecs(userId);
 
 // ✅ Good: Parallel (1s total)
 const [user, orders, recommendations] = await Promise.all([
-  lumina.trace(() => fetchUser(userId), { name: 'fetch-user' }),
-  lumina.trace(() => fetchOrders(userId), { name: 'fetch-orders' }),
-  lumina.trace(() => fetchRecs(userId), { name: 'fetch-recs' }),
+  Refract.trace(() => fetchUser(userId), { name: 'fetch-user' }),
+  Refract.trace(() => fetchOrders(userId), { name: 'fetch-orders' }),
+  Refract.trace(() => fetchRecs(userId), { name: 'fetch-recs' }),
 ]);
 ```
 
@@ -389,7 +389,7 @@ const [user, orders, recommendations] = await Promise.all([
 
 ```typescript
 async function streamingResponse(prompt: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       const stream = await llm.generateStream(prompt);
 
@@ -416,7 +416,7 @@ async function streamingResponse(prompt: string) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Time to first token (TTFT)
 // - Total generation time
 // - Streaming vs non-streaming performance
@@ -426,7 +426,7 @@ async function streamingResponse(prompt: string) {
 
 ```typescript
 async function safeAPICall(input: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       // Set timeout for LLM call
       const timeoutMs = 10000; // 10 seconds
@@ -447,7 +447,7 @@ async function safeAPICall(input: string) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - How often do timeouts occur?
 // - Which endpoints time out most?
 // - Set alerts for timeout rate > 5%
@@ -461,11 +461,11 @@ async function safeAPICall(input: string) {
 
 ```typescript
 async function robustPipeline(input: string) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       try {
         // Try primary model
-        return await lumina.trace(
+        return await Refract.trace(
           () => {
             return primaryModel.generate(input);
           },
@@ -474,7 +474,7 @@ async function robustPipeline(input: string) {
       } catch (primaryError) {
         // Fallback to secondary model
         try {
-          return await lumina.trace(
+          return await Refract.trace(
             () => {
               return secondaryModel.generate(input);
             },
@@ -487,7 +487,7 @@ async function robustPipeline(input: string) {
           );
         } catch (secondaryError) {
           // Last resort: cached/static response
-          return await lumina.trace(
+          return await Refract.trace(
             () => {
               return getCachedResponse(input);
             },
@@ -505,7 +505,7 @@ async function robustPipeline(input: string) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Primary success rate
 // - Fallback usage rate
 // - Alert when fallback rate > 10%
@@ -515,12 +515,12 @@ async function robustPipeline(input: string) {
 
 ```typescript
 async function retryableCall(input: string, maxRetries = 3) {
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       let lastError;
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          return await lumina.trace(
+          return await Refract.trace(
             () => {
               return llm.generate(input);
             },
@@ -548,7 +548,7 @@ async function retryableCall(input: string, maxRetries = 3) {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Success rate by attempt number
 // - Most common error types
 // - Alert when retry rate > 20%
@@ -558,10 +558,10 @@ async function retryableCall(input: string, maxRetries = 3) {
 
 ```typescript
 try {
-  await lumina.trace(() => riskyOperation(), { name: 'risky-op' });
+  await Refract.trace(() => riskyOperation(), { name: 'risky-op' });
 } catch (error) {
   // Log error with context
-  await lumina.trace(
+  await Refract.trace(
     () => {
       throw error; // Re-throw to record error
     },
@@ -577,7 +577,7 @@ try {
   );
 }
 
-// Track in Lumina:
+// Track in Refract:
 // - Most common error types
 // - Error rate by endpoint
 // - Correlation between errors and cost/latency
@@ -597,7 +597,7 @@ function redactSensitive(text: string): string {
     .replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[SSN-REDACTED]');
 }
 
-await lumina.trace(
+await Refract.trace(
   async () => {
     const response = await llm.generate(prompt);
     return response;
@@ -605,7 +605,7 @@ await lumina.trace(
   {
     name: 'customer-support',
     attributes: {
-      prompt: redactSensitive(prompt), // Redact before sending to Lumina
+      prompt: redactSensitive(prompt), // Redact before sending to Refract
       'user.id': userId,
       // Don't log: credit cards, SSNs, passwords, etc.
     },
@@ -617,20 +617,20 @@ await lumina.trace(
 
 ```typescript
 // Production: Use read-only API key for apps
-LUMINA_API_KEY=lumina_live_readonly_...
+REFRACT_API_KEY=refract_live_readonly_...
 
 // Development: Use test environment
-LUMINA_API_KEY=lumina_test_...
-LUMINA_ENVIRONMENT=development
+REFRACT_API_KEY=Refract_test_...
+REFRACT_ENVIRONMENT=development
 
 // CI/CD: Use separate key with limited permissions
-LUMINA_API_KEY=lumina_ci_...
+REFRACT_API_KEY=Refract_ci_...
 ```
 
 ### Implement Data Retention
 
 ```typescript
-// In Lumina dashboard, set retention policies:
+// In Refract dashboard, set retention policies:
 // - Production traces: 30 days
 // - Development traces: 7 days
 // - PII data: Auto-redacted or 24 hours
@@ -646,7 +646,7 @@ LUMINA_API_KEY=lumina_ci_...
 ```typescript
 // Expose health check endpoint
 app.get('/health', async (req, res) => {
-  const health = await lumina.trace(
+  const health = await Refract.trace(
     async () => {
       return {
         status: 'healthy',
@@ -671,8 +671,8 @@ app.get('/health', async (req, res) => {
 process.on('SIGTERM', async () => {
   console.log('Shutting down gracefully...');
 
-  // Flush any pending Lumina traces
-  await lumina.flush();
+  // Flush any pending Refract traces
+  await Refract.flush();
 
   // Close connections
   await db.close();
@@ -685,10 +685,10 @@ process.on('SIGTERM', async () => {
 ### Load Testing
 
 ```typescript
-// Use Lumina to monitor during load tests:
+// Use Refract to monitor during load tests:
 
 // 1. Run load test (e.g., with k6 or Locust)
-// 2. Watch Lumina dashboard in real-time:
+// 2. Watch Refract dashboard in real-time:
 //    - Latency percentiles (p50, p95, p99)
 //    - Error rate
 //    - Cost per request
@@ -703,15 +703,15 @@ process.on('SIGTERM', async () => {
 async function featureFlag(userId: string) {
   const useNewModel = rollout.isEnabled(userId, 'new-model-v2');
 
-  return await lumina.trace(
+  return await Refract.trace(
     async () => {
       if (useNewModel) {
-        return await lumina.trace(() => newModel.generate(prompt), {
+        return await Refract.trace(() => newModel.generate(prompt), {
           name: 'new-model-v2',
           attributes: { feature_flag: 'enabled' },
         });
       } else {
-        return await lumina.trace(() => oldModel.generate(prompt), {
+        return await Refract.trace(() => oldModel.generate(prompt), {
           name: 'old-model-v1',
           attributes: { feature_flag: 'disabled' },
         });
@@ -721,7 +721,7 @@ async function featureFlag(userId: string) {
   );
 }
 
-// Compare in Lumina:
+// Compare in Refract:
 // - New model vs old model performance
 // - Cost difference
 // - Quality metrics
@@ -734,7 +734,7 @@ async function featureFlag(userId: string) {
 
 ### Before Going to Production
 
-- [ ] Instrument all LLM calls with Lumina
+- [ ] Instrument all LLM calls with Refract
 - [ ] Add cost attribution tags (team, feature, customer)
 - [ ] Set up cost alerts (daily, weekly, monthly)
 - [ ] Set up quality alerts (semantic scoring enabled)
@@ -768,7 +768,7 @@ async function featureFlag(userId: string) {
 ## Next Steps
 
 - ✅ Follow these best practices in your AI pipelines
-- 📊 Monitor metrics in Lumina dashboard
+- 📊 Monitor metrics in Refract dashboard
 - 🔔 Set up proactive alerts
 - 🔄 Use replay for continuous improvement
 - 📈 Optimize based on data, not guesses

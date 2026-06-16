@@ -1,15 +1,15 @@
 /**
- * Initialize PostgreSQL database for Lumina
+ * Initialize PostgreSQL database for Refract
  * Runs Drizzle migrations to create tables and indexes
  */
 
-import { createDatabase, runMigrations } from '@lumina/database';
+import { createDatabase, runMigrations } from '@refract/database';
 
 async function main() {
-  console.log('Initializing PostgreSQL database for Lumina...');
+  console.log('Initializing PostgreSQL database for Refract...');
 
   const { db, client } = createDatabase({
-    connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/lumina',
+    connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/Refract',
   });
 
   try {

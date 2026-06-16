@@ -1,26 +1,26 @@
 #!/usr/bin/env bun
 /**
- * Lumina + OpenAI Basic Integration Example
+ * Refract + OpenAI Basic Integration Example
  *
- * This example shows how to integrate Lumina observability with OpenAI SDK.
+ * This example shows how to integrate Refract observability with OpenAI SDK.
  *
  * Setup:
- *   1. Start Lumina: cd ../../infra/docker && docker-compose up -d
+ *   1. Start Refract: cd ../../infra/docker && docker-compose up -d
  *   2. Set your OpenAI API key: export OPENAI_API_KEY=sk-...
  *   3. Run this example: bun run index.ts
  */
 
 import OpenAI from 'openai';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Initialize Lumina (no API key needed for self-hosted!)
-const lumina = new Lumina({
-  endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/v1/traces',
+// Initialize Refract (no API key needed for self-hosted!)
+const Refract = new Refract({
+  endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/v1/traces',
   service_name: 'openai-basic-example',
   environment: 'live',
 });
@@ -29,8 +29,8 @@ async function chatWithOpenAI(prompt: string) {
   console.log('\n Sending prompt:', prompt);
 
   try {
-    // Wrap your OpenAI call with lumina.traceLLM()
-    const response = await lumina.traceLLM(
+    // Wrap your OpenAI call with Refract.traceLLM()
+    const response = await Refract.traceLLM(
       async () => {
         return await openai.chat.completions.create({
           model: 'gpt-4',
@@ -61,7 +61,7 @@ async function chatWithOpenAI(prompt: string) {
     console.log('📥 Response:', message);
     console.log('💰 Cost:', `$${((response.usage?.total_tokens || 0) * 0.00003).toFixed(6)}`);
     console.log('📊 Tokens:', response.usage?.total_tokens);
-    console.log('✅ Trace sent to Lumina!');
+    console.log('✅ Trace sent to Refract!');
 
     return message;
   } catch (error) {
@@ -71,7 +71,7 @@ async function chatWithOpenAI(prompt: string) {
 }
 
 async function main() {
-  console.log('🚀 Lumina + OpenAI Integration Example');
+  console.log('🚀 Refract + OpenAI Integration Example');
   console.log('='.repeat(50));
 
   // Example 1: Simple chat
@@ -82,7 +82,7 @@ async function main() {
 
   // Flush traces before exiting
   console.log('\n⏳ Flushing traces...');
-  await lumina.flush();
+  await Refract.flush();
   console.log('✅ All traces flushed!');
 
   console.log('\n✨ Done! Check your traces at http://localhost:3000/traces');

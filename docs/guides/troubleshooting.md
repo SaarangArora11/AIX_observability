@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-This guide covers common issues you might encounter when setting up and using Lumina.
+This guide covers common issues you might encounter when setting up and using Refract.
 
 ## Table of Contents
 
@@ -80,33 +80,33 @@ bun install
 
 ## Database Connection Issues
 
-### Problem: `database "lumina" does not exist`
+### Problem: `database "refract" does not exist`
 
 **Symptoms:**
 
 ```
-Failed to connect to database: database "lumina" does not exist
+Failed to connect to database: database "refract" does not exist
 ```
 
 **Solution:**
 Create the database:
 
 ```bash
-createdb lumina
+createdb Refract
 ```
 
 Or using psql:
 
 ```bash
 psql postgres
-CREATE DATABASE lumina;
+CREATE DATABASE Refract;
 \q
 ```
 
 **Verification:**
 
 ```bash
-psql -d lumina -c "SELECT 1"
+psql -d Refract -c "SELECT 1"
 ```
 
 ---
@@ -169,13 +169,13 @@ echo $DATABASE_URL
 2. Update with correct credentials:
 
 ```bash
-export DATABASE_URL="postgres://username:password@localhost:5432/lumina"
+export DATABASE_URL="postgres://username:password@localhost:5432/Refract"
 ```
 
 3. For local development without password:
 
 ```bash
-export DATABASE_URL="postgres://username@localhost:5432/lumina"
+export DATABASE_URL="postgres://username@localhost:5432/Refract"
 ```
 
 ---
@@ -192,7 +192,7 @@ PostgresError: relation "traces" already exists
 This is usually harmless. Tables are created with `IF NOT EXISTS` clause. If you need to reset:
 
 ```bash
-psql -d lumina -c "DROP TABLE IF EXISTS replay_results CASCADE; DROP TABLE IF EXISTS replay_sets CASCADE; DROP TABLE IF EXISTS traces CASCADE;"
+psql -d Refract -c "DROP TABLE IF EXISTS replay_results CASCADE; DROP TABLE IF EXISTS replay_sets CASCADE; DROP TABLE IF EXISTS traces CASCADE;"
 ```
 
 Then restart the services to recreate tables.
@@ -266,7 +266,7 @@ echo $DATABASE_URL
 3. Ensure database is accessible:
 
 ```bash
-psql -d lumina -c "SELECT 1"
+psql -d Refract -c "SELECT 1"
 ```
 
 4. Check for missing dependencies:
@@ -289,7 +289,7 @@ Service starts but queries fail with "relation does not exist"
 
 ```sql
 -- Connect to database
-psql -d lumina
+psql -d Refract
 
 -- For ingestion service (traces table)
 -- See /services/ingestion/src/database/postgres.ts for schema
@@ -336,7 +336,7 @@ curl -X POST http://localhost:9411/v1/traces \
 3. Check database:
 
 ```bash
-psql -d lumina -c "SELECT COUNT(*) FROM traces;"
+psql -d Refract -c "SELECT COUNT(*) FROM traces;"
 ```
 
 **Common Causes:**
@@ -375,7 +375,7 @@ Ensure your traces include required fields:
 Check SDK configuration:
 
 ```typescript
-const lumina = initLumina({
+const Refract = initRefract({
   endpoint: 'http://localhost:9411/v1/traces',
   service_name: 'my-app', // Required
 });
@@ -428,7 +428,7 @@ curl "http://localhost:8081/api/traces"
 1. Check if traces exist:
 
 ```bash
-psql -d lumina -c "SELECT COUNT(*) FROM traces;"
+psql -d Refract -c "SELECT COUNT(*) FROM traces;"
 ```
 
 2. Check query filters:
@@ -466,7 +466,7 @@ curl "http://localhost:8081/api/traces?startDate=2024-01-01"
 2. Verify database connection:
 
 ```bash
-psql -d lumina -c "SELECT 1"
+psql -d Refract -c "SELECT 1"
 ```
 
 3. Check for SQL syntax errors in filters
@@ -484,7 +484,7 @@ Cost or latency analytics show unexpected numbers
 1. Verify data in database:
 
 ```sql
-psql -d lumina
+psql -d Refract
 
 -- Check cost data
 SELECT service_name, AVG(cost_usd), SUM(cost_usd)
@@ -526,7 +526,7 @@ SELECT COUNT(*) FROM traces WHERE latency_ms IS NULL;
 1. Verify trace IDs exist:
 
 ```bash
-psql -d lumina -c "SELECT trace_id FROM traces LIMIT 10;"
+psql -d Refract -c "SELECT trace_id FROM traces LIMIT 10;"
 ```
 
 2. Use exact trace_id values from database:
@@ -592,7 +592,7 @@ LIMIT 1;
 
 ```typescript
 // Test similarity calculation
-import { textSimilarity } from '@lumina/core';
+import { textSimilarity } from '@refract/core';
 const score = textSimilarity('hello', 'hello');
 console.log(score); // Should be 1.0
 ```
@@ -634,14 +634,14 @@ USING trace_ids::TEXT[];
 ### Problem: Traces not sent from application
 
 **Symptoms:**
-Application runs but no traces appear in Lumina
+Application runs but no traces appear in Refract
 
 **Diagnostic Steps:**
 
 1. Enable debug logging:
 
 ```typescript
-const lumina = initLumina({
+const Refract = initRefract({
   debug: true,
   // ...other config
 });
@@ -673,10 +673,10 @@ Type 'X' is not assignable to type 'Y'
 
 **Solution:**
 
-1. Ensure @uselumina/sdk is properly installed:
+1. Ensure @refract/sdk is properly installed:
 
 ```bash
-bun add @uselumina/sdk
+bun add @refract/sdk
 ```
 
 2. Check TypeScript version compatibility:
@@ -688,7 +688,7 @@ bun add -D typescript@latest
 3. Import types correctly:
 
 ```typescript
-import { initLumina, type LuminaConfig } from '@uselumina/sdk';
+import { initRefract, type RefractConfig } from '@refract/sdk';
 ```
 
 ---
@@ -707,11 +707,11 @@ const response = await anthropic.messages.create({...});
 console.log(response.usage); // { input_tokens, output_tokens }
 ```
 
-2. Lumina SDK automatically extracts these. If not working:
+2. Refract SDK automatically extracts these. If not working:
 
 ```typescript
 // Manually pass token info
-await lumina.traceLLM(async () => response, {
+await Refract.traceLLM(async () => response, {
   name: 'test',
   system: 'anthropic',
   prompt: '...',

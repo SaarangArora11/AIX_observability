@@ -1,6 +1,6 @@
-# Lumina SDK - Next.js RAG Example
+# Refract SDK - Next.js RAG Example
 
-This example demonstrates how to use `@uselumina/sdk` to track LLM calls in a Next.js application.
+This example demonstrates how to use `@refract/sdk` to track LLM calls in a Next.js application.
 
 ## Setup
 
@@ -21,9 +21,9 @@ This example demonstrates how to use `@uselumina/sdk` to track LLM calls in a Ne
 
    ```bash
    cd ../..
-   bun run --filter @lumina/schema build
-   bun run --filter @lumina/config build
-   bun run --filter @uselumina/sdk build
+   bun run --filter @refract/schema build
+   bun run --filter @refract/config build
+   bun run --filter @refract/sdk build
    cd examples/nextjs-rag
    ```
 
@@ -40,7 +40,7 @@ This example demonstrates how to use `@uselumina/sdk` to track LLM calls in a Ne
 1. **Open browser console** (F12) to see SDK logs
 2. **Send a chat message** - The SDK will capture the OpenAI call
 3. **Check console for:**
-   - `[Lumina SDK]` logs showing trace capture
+   - `[Refract SDK]` logs showing trace capture
    - Trace IDs (e.g., `trace_lx8w9_abc123`)
    - Batch flushing attempts
 
@@ -60,13 +60,13 @@ Since the ingestion service isn't running yet, you'll see:
 
 ```typescript
 // app/api/chat/route.ts
-const lumina = initLumina({
-  api_key: process.env.LUMINA_API_KEY,
+const Refract = initRefract({
+  api_key: process.env.REFRACT_API_KEY,
   environment: 'test',
 });
 
 // Wrap any LLM call
-const response = await lumina.trace(async () => {
+const response = await Refract.trace(async () => {
   return await openai.chat.completions.create({...});
 });
 ```
@@ -84,8 +84,8 @@ The SDK automatically captures:
 
 **No traces captured:**
 
-- Check `LUMINA_ENABLED=true` in `.env.local`
-- Verify SDK is initialized (check for `[Lumina SDK]` logs)
+- Check `REFRACT_ENABLED=true` in `.env.local`
+- Verify SDK is initialized (check for `[Refract SDK]` logs)
 
 **OpenAI errors:**
 

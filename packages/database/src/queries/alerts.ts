@@ -185,7 +185,7 @@ export async function insertAlert(db: Database, alert: NewAlert): Promise<string
 }
 
 /**
- * Helper function to insert alerts from @lumina/core Alert type
+ * Helper function to insert alerts from @refract/core Alert type
  * This is for compatibility with the alert processing system
  *
  * @example

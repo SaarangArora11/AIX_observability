@@ -5,7 +5,7 @@ export default {
   out: './src/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgresql://localhost:5432/lumina',
+    url: process.env.DATABASE_URL || 'postgres://refract:refract@localhost:5433/refract',
   },
   verbose: true,
   strict: true,

@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { getVectorStore } from '@/lib/vector-store';
-import { initLumina } from '@uselumina/sdk';
+import { initRefract } from '@refract/sdk';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 });
 
-// Initialize Lumina
-const lumina = initLumina({
-  api_key: process.env.LUMINA_API_KEY || 'lumina_test123_abc',
+// Initialize Refract
+const Refract = initRefract({
+  api_key: process.env.REFRACT_API_KEY || 'Refract_test123_abc',
   service_name: 'rag-example',
   environment: (process.env.NODE_ENV === 'production' ? 'live' : 'test') as 'live' | 'test',
 });
@@ -57,8 +57,8 @@ Answer:`
 
 ${message}`;
 
-    // Call Claude with Lumina tracing
-    const response = await lumina.traceLLM(
+    // Call Claude with Refract tracing
+    const response = await Refract.traceLLM(
       async () => {
         return await anthropic.messages.create({
           model: 'claude-sonnet-4-5-20250929',

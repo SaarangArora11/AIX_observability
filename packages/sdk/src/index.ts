@@ -1,7 +1,7 @@
-// @lumina/sdk - User-facing instrumentation library
+// @Refract/sdk - User-facing instrumentation library
 
 // Main SDK class
-export { Lumina, initLumina, getLumina } from './lumina';
+export { Refract, initRefract, getRefract } from './refract';
 
 // Semantic conventions for LLM operations
 export * as SemanticConventions from './semantic-conventions';

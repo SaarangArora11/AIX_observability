@@ -1,16 +1,16 @@
-# Lumina + OpenAI Basic Integration (Python)
+# Refract + OpenAI Basic Integration (Python)
 
-Simple example showing how to instrument OpenAI calls with Lumina observability.
+Simple example showing how to instrument OpenAI calls with Refract observability.
 
 ## Prerequisites
 
-- Lumina running locally (see [Quickstart](../../../docs/guides/QUICKSTART.md))
+- Refract running locally (see [Quickstart](../../../docs/guides/QUICKSTART.md))
 - Python 3.9+
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 
 ## Quick Start
 
-### 1. Start Lumina
+### 1. Start Refract
 
 ```bash
 cd ../../../infra/docker
@@ -21,7 +21,7 @@ Verify it's running:
 
 ```bash
 curl http://localhost:8080/health
-# {"status":"ok","service":"lumina-ingestion"}
+# {"status":"ok","service":"refract-ingestion"}
 ```
 
 ### 2. Install Dependencies
@@ -47,20 +47,20 @@ python main.py
 ## What You'll See
 
 ```
-Lumina + OpenAI Integration Example
+Refract + OpenAI Integration Example
 ==================================================
 
 Sending prompt: What is the capital of France?
 Response: The capital of France is Paris.
 Cost: $0.000090
 Tokens: 30
-Trace sent to Lumina!
+Trace sent to Refract!
 
 Sending prompt: Explain quantum computing in one sentence.
 Response: Quantum computing uses quantum bits...
 Cost: $0.000120
 Tokens: 40
-Trace sent to Lumina!
+Trace sent to Refract!
 
 Done! Check your traces at http://localhost:3000/traces
 ```
@@ -69,18 +69,18 @@ Done! Check your traces at http://localhost:3000/traces
 
 ```python
 import openai
-from lumina import init_lumina
+from Refract import init_refract
 
 client = openai.OpenAI(api_key="...")
 
 # No API key needed for self-hosted!
-lumina = init_lumina({
+Refract = init_refract({
     "endpoint": "http://localhost:8080/v1/traces",
     "service_name": "my-app",
 })
 
 # Wrap your OpenAI call
-response = lumina.trace_llm(
+response = Refract.trace_llm(
     lambda: client.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": "Hello!"}],
@@ -91,7 +91,7 @@ response = lumina.trace_llm(
 )
 ```
 
-Lumina automatically captures:
+Refract automatically captures:
 
 - Prompt and response text
 - Token usage (prompt + completion)
@@ -115,7 +115,7 @@ Lumina automatically captures:
 
 ## Troubleshooting
 
-**`Connection refused`** — Make sure Lumina is running: `docker-compose ps`
+**`Connection refused`** — Make sure Refract is running: `docker-compose ps`
 
 **`OPENAI_API_KEY` not set** — Run `export OPENAI_API_KEY=sk-...`
 

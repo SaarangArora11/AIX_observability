@@ -25,7 +25,7 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 export function ThemeProvider({
   children,
   defaultTheme = 'light',
-  storageKey = 'lumina-ui-theme',
+  storageKey = 'refract-ui-theme',
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(() => {

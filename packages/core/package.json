@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/core",
+  "name": "@refract/core",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,8 +16,8 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@lumina/schema": "workspace:*",
-    "@lumina/config": "workspace:*",
+    "@refract/schema": "workspace:*",
+    "@refract/config": "workspace:*",
     "@anthropic-ai/sdk": "^0.32.1",
     "ioredis": "^5.3.2"
   },

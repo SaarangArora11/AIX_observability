@@ -1,15 +1,15 @@
-# Lumina + Anthropic (Claude) Basic Integration
+# Refract + Anthropic (Claude) Basic Integration
 
-Simple example demonstrating how to integrate Lumina observability with Anthropic's Claude SDK.
+Simple example demonstrating how to integrate Refract observability with Anthropic's Claude SDK.
 
 ## Prerequisites
 
-- Lumina running (see [Quickstart Guide](../../docs/guides/QUICKSTART.md))
+- Refract running (see [Quickstart Guide](../../docs/guides/QUICKSTART.md))
 - Anthropic API key ([Get one here](https://console.anthropic.com/))
 
 ## Quick Start
 
-### 1. Start Lumina
+### 1. Start Refract
 
 ```bash
 cd ../../infra/docker
@@ -20,7 +20,7 @@ Verify it's running:
 
 ```bash
 curl http://localhost:8080/health
-# Should return: {"status":"ok","service":"lumina-ingestion"}
+# Should return: {"status":"ok","service":"refract-ingestion"}
 ```
 
 ### 2. Install Dependencies
@@ -44,20 +44,20 @@ bun run start
 ## What You'll See
 
 ```
-🚀 Lumina + Anthropic (Claude) Integration Example
+🚀 Refract + Anthropic (Claude) Integration Example
 ==================================================
 
 📤 Sending prompt: What is the capital of France?
 📥 Response: The capital of France is Paris.
 💰 Cost: $0.000045
 📊 Tokens: 10 input + 8 output = 18 total
-✅ Trace sent to Lumina!
+✅ Trace sent to Refract!
 
 📤 Sending prompt: Explain quantum computing in one sentence.
 📥 Response: Quantum computing harnesses quantum mechanics...
 💰 Cost: $0.000060
 📊 Tokens: 12 input + 15 output = 27 total
-✅ Trace sent to Lumina!
+✅ Trace sent to Refract!
 
 📤 Sending prompt: Write a haiku about observability.
 📥 Response:
@@ -66,7 +66,7 @@ bun run start
     Systems whisper truth
 💰 Cost: $0.000075
 📊 Tokens: 10 input + 20 output = 30 total
-✅ Trace sent to Lumina!
+✅ Trace sent to Refract!
 
 ✨ Done! Check your traces at http://localhost:3000/traces
 ```
@@ -84,18 +84,18 @@ Open http://localhost:3000/traces to see your captured LLM calls with:
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // No API key needed for self-hosted!
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
   serviceName: 'my-app',
 });
 
 // Wrap your Anthropic call
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -112,7 +112,7 @@ const response = await lumina.traceLLM(
 );
 ```
 
-That's it! Lumina automatically captures:
+That's it! Refract automatically captures:
 
 - ✅ Prompt and response
 - ✅ Token usage and cost
@@ -137,7 +137,7 @@ Every LLM call is captured with:
 
 ## Claude Models
 
-Lumina works with all Claude models:
+Refract works with all Claude models:
 
 | Model               | Input Cost | Output Cost | Use Case     |
 | ------------------- | ---------- | ----------- | ------------ |
@@ -157,7 +157,7 @@ Lumina works with all Claude models:
 ### Stream Responses
 
 ```typescript
-const stream = await lumina.traceLLM(
+const stream = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -184,7 +184,7 @@ for await (const chunk of stream) {
 ### With System Prompts
 
 ```typescript
-const response = await lumina.traceLLM(
+const response = await Refract.traceLLM(
   async () => {
     return await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
@@ -209,7 +209,7 @@ const response = await lumina.traceLLM(
 
 **"Connection refused" error:**
 
-- Make sure Lumina is running: `docker-compose ps`
+- Make sure Refract is running: `docker-compose ps`
 - Check the ingestion service: `curl http://localhost:8080/health`
 
 **"Invalid API key" from Anthropic:**
@@ -225,7 +225,7 @@ const response = await lumina.traceLLM(
 
 ## Learn More
 
-- [Lumina Documentation](../../docs/guides/QUICKSTART.md)
+- [Refract Documentation](../../docs/guides/QUICKSTART.md)
 - [Anthropic API Reference](https://docs.anthropic.com/en/api)
 - [Integration Guides](../../docs/guides/INTEGRATIONS.md)
 - [Claude Models Overview](https://www.anthropic.com/api)

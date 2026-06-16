@@ -1,9 +1,9 @@
 /**
  * API Service Database Client
- * Singleton wrapper around @lumina/database
+ * Singleton wrapper around @refract/database
  */
 
-import { createDatabaseSingletonWithClient, type Database } from '@lumina/database';
+import { createDatabaseSingletonWithClient, type Database } from '@refract/database';
 import type postgres from 'postgres';
 
 // Create singleton instance with both db and client
@@ -31,5 +31,5 @@ export function getClient(): postgres.Sql {
   return getClientInstance();
 }
 
-// Re-export everything from @lumina/database for convenience
-export * from '@lumina/database';
+// Re-export everything from @refract/database for convenience
+export * from '@refract/database';

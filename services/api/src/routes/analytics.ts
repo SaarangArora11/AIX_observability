@@ -405,5 +405,128 @@ app.get('/anomalies', requireAuth, async (c) => {
     );
   }
 });
+/**
+ * GET /analytics/refract-kpis
+ * Refract-specific KPIs: prompt efficiency, model alignment, savings, etc.
+ */
+app.get('/refract-kpis', requireAuth, async (c) => {
+  try {
+    const db = getDatabase();
+    const customerId = c.get('customerId') as string;
+    const { startTime, endTime } = c.req.query();
+
+    const end = endTime ? new Date(endTime) : new Date();
+    const start = startTime ? new Date(startTime) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const conditions = [
+      eq(traces.customerId, customerId),
+      gte(traces.timestamp, start),
+      lte(traces.timestamp, end),
+    ];
+
+    // Prompt category distribution
+    const categories = await db
+      .select({
+        category: traces.promptCategory,
+        count: sql<number>`COUNT(*)::int`,
+        total_cost: sql<number>`COALESCE(SUM(${traces.costUsd}), 0)::float`,
+        avg_latency: sql<number>`COALESCE(AVG(${traces.latencyMs}), 0)::float`,
+      })
+      .from(traces)
+      .where(and(...conditions, sql`${traces.promptCategory} IS NOT NULL`))
+      .groupBy(traces.promptCategory);
+
+    // Model fit distribution
+    const modelFit = await db
+      .select({
+        fit: traces.modelFit,
+        count: sql<number>`COUNT(*)::int`,
+        total_cost: sql<number>`COALESCE(SUM(${traces.costUsd}), 0)::float`,
+      })
+      .from(traces)
+      .where(and(...conditions, sql`${traces.modelFit} IS NOT NULL`))
+      .groupBy(traces.modelFit);
+
+    // Source distribution (SDK vs Proxy)
+    const sources = await db
+      .select({
+        source: traces.source,
+        count: sql<number>`COUNT(*)::int`,
+        total_cost: sql<number>`COALESCE(SUM(${traces.costUsd}), 0)::float`,
+      })
+      .from(traces)
+      .where(and(...conditions))
+      .groupBy(traces.source);
+
+    // Prompt efficiency average
+    const efficiency = await db
+      .select({
+        avg_efficiency: sql<number>`COALESCE(AVG(${traces.promptEfficiency}), 0)::float`,
+      })
+      .from(traces)
+      .where(and(...conditions, sql`${traces.promptEfficiency} IS NOT NULL`));
+
+    // Model breakdown (cost by model)
+    const modelBreakdown = await db
+      .select({
+        model: traces.model,
+        provider: traces.provider,
+        count: sql<number>`COUNT(*)::int`,
+        total_cost: sql<number>`COALESCE(SUM(${traces.costUsd}), 0)::float`,
+        avg_latency: sql<number>`COALESCE(AVG(${traces.latencyMs}), 0)::float`,
+        total_tokens: sql<number>`COALESCE(SUM(${traces.tokens}), 0)::int`,
+      })
+      .from(traces)
+      .where(and(...conditions))
+      .groupBy(traces.model, traces.provider)
+      .orderBy(desc(sql`SUM(${traces.costUsd})`))
+      .limit(10);
+
+    // Token flow (prompt vs completion tokens)
+    const tokenFlow = await db
+      .select({
+        total_prompt_tokens: sql<number>`COALESCE(SUM(${traces.promptTokens}), 0)::int`,
+        total_completion_tokens: sql<number>`COALESCE(SUM(${traces.completionTokens}), 0)::int`,
+        total_tokens: sql<number>`COALESCE(SUM(${traces.tokens}), 0)::int`,
+      })
+      .from(traces)
+      .where(and(...conditions));
+
+    // Calculate savings estimate
+    const overkillData = modelFit.find((m) => m.fit === 'overkill');
+    const totalAnalyzed = modelFit.reduce((sum, m) => sum + m.count, 0);
+    const overkillCost = overkillData?.total_cost || 0;
+    const estimatedSavings = overkillCost * 0.6; // 60% savings estimate
+
+    return c.json({
+      categories,
+      model_fit: modelFit,
+      sources,
+      model_breakdown: modelBreakdown,
+      token_flow: tokenFlow[0] || { total_prompt_tokens: 0, total_completion_tokens: 0, total_tokens: 0 },
+      kpis: {
+        avg_prompt_efficiency: efficiency[0]?.avg_efficiency || 0,
+        model_alignment_score: totalAnalyzed > 0
+          ? ((modelFit.find((m) => m.fit === 'good_fit')?.count || 0) / totalAnalyzed) * 100
+          : 0,
+        overkill_percentage: totalAnalyzed > 0
+          ? ((overkillData?.count || 0) / totalAnalyzed) * 100
+          : 0,
+        estimated_savings: estimatedSavings,
+        total_analyzed: totalAnalyzed,
+      },
+      time_range: {
+        start: start.toISOString(),
+        end: end.toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching Refract KPIs:', error);
+    return c.json({
+      error: 'Failed to fetch KPIs',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    }, 500);
+  }
+});
 
 export default app;

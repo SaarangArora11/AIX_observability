@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { OTLPTraceRequest } from '@lumina/schema';
+import type { OTLPTraceRequest } from '@refract/schema';
 import { parseOTLPTraces } from '../parsers/otlp-parser';
 import { transformOTLPBatch } from '../transformers/otlp-transformer';
 import {
@@ -57,18 +57,43 @@ traces.post('/v1/traces', async (c) => {
       );
     }
 
-    // Transform to Lumina trace format
-    const traces = transformOTLPBatch(parsedSpans, customerId);
+    // Transform to Refract trace format
+    const schemaTraces = transformOTLPBatch(parsedSpans, customerId);
+
+    const dbTraces = schemaTraces.map((t) => ({
+      traceId: t.trace_id,
+      spanId: t.span_id,
+      parentSpanId: t.parent_span_id,
+      customerId: t.customer_id,
+      timestamp: t.timestamp,
+      serviceName: t.service_name,
+      endpoint: t.endpoint,
+      environment: t.environment,
+      model: t.model,
+      provider: t.provider,
+      prompt: t.prompt,
+      response: t.response,
+      tokens: t.tokens,
+      promptTokens: t.prompt_tokens,
+      completionTokens: t.completion_tokens,
+      latencyMs: t.latency_ms,
+      costUsd: t.cost_usd,
+      metadata: t.metadata,
+      tags: t.tags,
+      status: t.status,
+      errorMessage: t.error_message,
+      source: t.source,
+    }));
 
     // Store in PostgreSQL (synchronous for immediate query availability)
     const db = getDatabase();
-    await insertTracesBatch(db, traces);
+    await insertTracesBatch(db, dbTraces as any);
 
     // Increment rate limit counter after successful ingestion
     const rateLimitKey = c.get('rateLimitKey') as string | undefined;
     if (rateLimitKey) {
       // Don't await - increment async to keep response fast
-      incrementTraceCount(rateLimitKey, traces.length).catch((err) => {
+      incrementTraceCount(rateLimitKey, schemaTraces.length).catch((err) => {
         console.error('Failed to increment trace count:', err);
         // Don't fail the request if counter increment fails
       });
@@ -78,7 +103,7 @@ traces.post('/v1/traces', async (c) => {
     // This keeps the HTTP response fast while allowing background analysis
     if (isNATSConnected()) {
       // Don't await - publish async to keep response <20ms
-      publishTraces(traces).catch((err) => {
+      publishTraces(schemaTraces).catch((err) => {
         console.error('Failed to publish traces to NATS:', err);
         // Don't fail the request if NATS publish fails
         // Traces are already stored in DB
@@ -91,7 +116,7 @@ traces.post('/v1/traces', async (c) => {
     return c.json(
       {
         message: 'Traces ingested successfully',
-        count: traces.length,
+        count: schemaTraces.length,
       },
       200
     );

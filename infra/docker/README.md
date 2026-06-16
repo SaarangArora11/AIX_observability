@@ -1,6 +1,6 @@
-# Lumina Docker Setup
+# Refract Docker Setup
 
-Quick start guide for running Lumina self-hosted with Docker Compose.
+Quick start guide for running Refract self-hosted with Docker Compose.
 
 ## Prerequisites
 
@@ -52,15 +52,15 @@ Open http://localhost:3000 in your browser
 ### 4. Send your first trace
 
 ```typescript
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 // For self-hosted, no API key needed!
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
 });
 
 // Track an LLM call
-await lumina.traceLLM({
+await Refract.traceLLM({
   provider: 'openai',
   model: 'gpt-4',
   prompt: 'Hello world',
@@ -142,7 +142,7 @@ Check if API service is running:
 curl http://localhost:8081/health
 ```
 
-Should return: `{"status":"ok","service":"lumina-api"}`
+Should return: `{"status":"ok","service":"refract-api"}`
 
 ### Migrations not running
 
@@ -169,13 +169,13 @@ Data is stored in Docker volumes:
 To backup:
 
 ```bash
-docker run --rm -v docker_postgres-data:/data -v $(pwd):/backup alpine tar czf /backup/lumina-backup.tar.gz -C /data .
+docker run --rm -v docker_postgres-data:/data -v $(pwd):/backup alpine tar czf /backup/Refract-backup.tar.gz -C /data .
 ```
 
 To restore:
 
 ```bash
-docker run --rm -v docker_postgres-data:/data -v $(pwd):/backup alpine tar xzf /backup/lumina-backup.tar.gz -C /data
+docker run --rm -v docker_postgres-data:/data -v $(pwd):/backup alpine tar xzf /backup/Refract-backup.tar.gz -C /data
 ```
 
 ## Authentication Modes
@@ -193,7 +193,7 @@ docker run --rm -v docker_postgres-data:/data -v $(pwd):/backup alpine tar xzf /
 
 ```typescript
 // No API key needed
-const lumina = new Lumina({
+const Refract = new Refract({
   endpoint: 'http://localhost:8080/v1/traces',
 });
 ```
@@ -211,9 +211,9 @@ const lumina = new Lumina({
 
 ```typescript
 // API key required
-const lumina = new Lumina({
-  apiKey: 'lumina_customer123_abc...',
-  endpoint: 'https://api.lumina.dev/v1/traces',
+const Refract = new Refract({
+  apiKey: 'Refract_customer123_abc...',
+  endpoint: 'https://api.Refract.dev/v1/traces',
 });
 ```
 
@@ -225,12 +225,12 @@ For production, update:
 2. `JWT_SECRET` - Generate a strong secret
 3. `CORS_ORIGIN` - Set to your domain
 4. `NODE_ENV=production` - Already set
-5. Database passwords - Change `lumina` defaults
+5. Database passwords - Change `Refract` defaults
 6. Add HTTPS reverse proxy (Nginx/Caddy)
 7. Set up automated backups
 8. Configure monitoring/alerts
 
 ## Support
 
-- GitHub Issues: https://github.com/yourusername/Lumina/issues
-- Documentation: https://use-lumina.github.io/Lumina
+- GitHub Issues: https://github.com/yourusername/Refract/issues
+- Documentation: https://use-Refract.github.io/Refract

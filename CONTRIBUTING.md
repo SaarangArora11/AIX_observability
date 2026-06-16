@@ -1,6 +1,6 @@
-# Contributing to Lumina
+# Contributing to Refract
 
-Thank you for your interest in contributing to Lumina! We welcome contributions from the community.
+Thank you for your interest in contributing to Refract! We welcome contributions from the community.
 
 ## Table of Contents
 
@@ -22,12 +22,12 @@ By participating in this project, you agree to maintain a respectful and inclusi
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/lumina.git
-   cd lumina
+   git clone https://github.com/your-username/Refract.git
+   cd Refract
    ```
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/use-lumina/Lumina.git
+   git remote add upstream https://github.com/aigenthix/Refract.git
    ```
 
 ## Development Setup
@@ -49,13 +49,13 @@ By participating in this project, you agree to maintain a respectful and inclusi
 2. **Create database**:
 
    ```bash
-   createdb lumina
+   createdb Refract
    ```
 
 3. **Set environment variables**:
 
    ```bash
-   export DATABASE_URL="postgres://localhost:5432/lumina"
+   export DATABASE_URL="postgres://localhost:5432/Refract"
    ```
 
 4. **Start development services**:
@@ -222,7 +222,7 @@ test(core): add tests for cost calculator
 
 ## Code Style
 
-Lumina uses automated code quality tools:
+Refract uses automated code quality tools:
 
 - **ESLint** - Linting TypeScript/JavaScript
 - **Prettier** - Code formatting
@@ -241,9 +241,9 @@ See [docs/guides/CODE_QUALITY.md](./docs/guides/CODE_QUALITY.md) for detailed gu
 ## Project Structure
 
 ```
-lumina/
+Refract/
 ├── packages/           # Reusable packages
-│   ├── sdk/           # Client SDK (@uselumina/sdk)
+│   ├── sdk/           # Client SDK (@refract/sdk)
 │   ├── core/          # Shared business logic
 │   ├── schema/        # Type definitions
 │   └── config/        # Configuration
@@ -285,20 +285,20 @@ Look for issues labeled `good first issue` on GitHub. These are designed for new
 
 - **GitHub Issues**: Bug reports, feature requests
 - **GitHub Discussions**: Questions, ideas, community chat
-- **Twitter**: [@lumina_oss](https://twitter.com/lumina_oss) (coming soon)
+- **Twitter**: [@Refract_oss](https://twitter.com/Refract_oss) (coming soon)
 
 ## Questions?
 
 If you have questions about contributing:
 
 1. Check the [documentation](./docs/)
-2. Search [existing issues](https://github.com/use-lumina/Lumina/issues)
+2. Search [existing issues](https://github.com/aigenthix/Refract/issues)
 3. Open a new issue with the `question` label
 
 ## License
 
-By contributing to Lumina, you agree that your contributions will be licensed under the [Apache License 2.0](./LICENSE).
+By contributing to Refract, you agree that your contributions will be licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-Thank you for contributing to Lumina! 🚀
+Thank you for contributing to Refract! 🚀

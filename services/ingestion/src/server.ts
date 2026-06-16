@@ -5,8 +5,8 @@ import { authMiddleware } from './middleware/auth';
 import traces from './routes/traces';
 import { initializeNATS } from './queue/nats-client';
 import { startConsumer } from './queue/consumer';
-import { initializeCache } from '@lumina/core';
-import { initializeSemanticScorer } from '@lumina/core';
+import { initializeCache } from '@refract/core';
+import { initializeSemanticScorer } from '@refract/core';
 import { scheduleRetentionCleanup } from './jobs/retention-cleanup';
 import { scheduleBaselineUpdates } from './jobs/update-baselines';
 import type { AppVariables } from './types/hono';
@@ -26,7 +26,7 @@ app.use(
 
 // Health check endpoint (no auth required)
 app.get('/health', (c) => {
-  return c.json({ status: 'ok', service: 'lumina-ingestion' });
+  return c.json({ status: 'ok', service: 'refract-ingestion' });
 });
 
 // Apply auth middleware to all trace routes
@@ -122,7 +122,7 @@ initializeServices().then(() => {
 // Start server
 const port = parseInt(process.env.PORT || '8080');
 
-console.log(`Lumina Ingestion Service starting on port ${port}...`);
+console.log(`Refract Ingestion Service starting on port ${port}...`);
 
 export default {
   port,

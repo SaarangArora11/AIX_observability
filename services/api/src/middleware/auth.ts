@@ -23,7 +23,7 @@ export async function requireAuth(c: Context, next: Next) {
 
   // Self-hosted mode: no authentication required, use default customer
   if (!authRequired) {
-    c.set('customerId', 'default-customer');
+    c.set('customerId', 'default');
     return await next();
   }
 
@@ -36,7 +36,7 @@ export async function requireAuth(c: Context, next: Next) {
   if (!finalToken) {
     const cookieHeader = c.req.header('cookie');
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:^|; )lumina_token=([^;]+)/);
+      const match = cookieHeader.match(/(?:^|; )Refract_token=([^;]+)/);
       if (match) {
         finalToken = match[1];
       }
@@ -75,7 +75,7 @@ export async function optionalAuth(c: Context, next: Next) {
   if (!finalToken) {
     const cookieHeader = c.req.header('cookie');
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:^|; )lumina_token=([^;]+)/);
+      const match = cookieHeader.match(/(?:^|; )Refract_token=([^;]+)/);
       if (match) finalToken = match[1];
     }
   }

@@ -1,4 +1,4 @@
-// @lumina/schema - Shared type definitions and Zod schemas
+// @refract/schema - Shared type definitions and Zod schemas
 
 // Trace schemas
 export * from './trace';

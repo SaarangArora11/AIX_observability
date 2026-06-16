@@ -1,5 +1,5 @@
 /**
- * Lumina Diff Engine
+ * Refract Diff Engine
  * Provides reusable comparison logic for replay testing
  */
 

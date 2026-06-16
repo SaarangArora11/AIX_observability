@@ -1,5 +1,5 @@
 {
-  "name": "@lumina/example-openai-basic",
+  "name": "@Refract/example-openai-basic",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "start": "bun run index.ts"
   },
   "dependencies": {
-    "@uselumina/sdk": "workspace:*",
+    "@refract/sdk": "workspace:*",
     "openai": "^4.73.1"
   },
   "devDependencies": {

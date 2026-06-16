@@ -1,26 +1,26 @@
 #!/usr/bin/env bun
 /**
- * Lumina + Anthropic Basic Integration Example
+ * Refract + Anthropic Basic Integration Example
  *
- * This example shows how to integrate Lumina observability with Anthropic SDK.
+ * This example shows how to integrate Refract observability with Anthropic SDK.
  *
  * Setup:
- *   1. Start Lumina: cd ../../infra/docker && docker-compose up -d
+ *   1. Start Refract: cd ../../infra/docker && docker-compose up -d
  *   2. Set your Anthropic API key: export ANTHROPIC_API_KEY=sk-ant-...
  *   3. Run this example: bun run index.ts
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Initialize Lumina (no API key needed for self-hosted!)
-const lumina = new Lumina({
-  endpoint: process.env.LUMINA_ENDPOINT || 'http://localhost:8080/v1/traces',
+// Initialize Refract (no API key needed for self-hosted!)
+const Refract = new Refract({
+  endpoint: process.env.REFRACT_ENDPOINT || 'http://localhost:8080/v1/traces',
   service_name: 'anthropic-basic-example',
   environment: 'live',
 });
@@ -29,8 +29,8 @@ async function chatWithClaude(prompt: string) {
   console.log('\n📤 Sending prompt:', prompt);
 
   try {
-    // Wrap your Anthropic call with lumina.traceLLM()
-    const response = await lumina.traceLLM(
+    // Wrap your Anthropic call with Refract.traceLLM()
+    const response = await Refract.traceLLM(
       async () => {
         return await anthropic.messages.create({
           model: 'claude-sonnet-4-5',
@@ -65,7 +65,7 @@ async function chatWithClaude(prompt: string) {
       '📊 Tokens:',
       `${response.usage.input_tokens} input + ${response.usage.output_tokens} output = ${response.usage.input_tokens + response.usage.output_tokens} total`
     );
-    console.log('✅ Trace sent to Lumina!');
+    console.log('✅ Trace sent to Refract!');
 
     return message;
   } catch (error) {
@@ -75,7 +75,7 @@ async function chatWithClaude(prompt: string) {
 }
 
 async function main() {
-  console.log('🚀 Lumina + Anthropic (Claude) Integration Example');
+  console.log('🚀 Refract + Anthropic (Claude) Integration Example');
   console.log('='.repeat(50));
 
   // Example 1: Simple chat
@@ -89,7 +89,7 @@ async function main() {
 
   // Flush traces before exiting
   console.log('\n⏳ Flushing traces...');
-  await lumina.flush();
+  await Refract.flush();
   console.log('✅ All traces flushed!');
 
   console.log('\n✨ Done! Check your traces at http://localhost:3000/traces');

@@ -1,9 +1,9 @@
 {
-  "name": "@uselumina/sdk",
+  "name": "@refract/sdk",
   "version": "0.1.2",
-  "description": "Official TypeScript/JavaScript SDK for Lumina - Open-source AI Observability Platform",
+  "description": "Official TypeScript/JavaScript SDK for Refract - Open-source AI Observability Platform",
   "keywords": [
-    "lumina",
+    "refract",
     "observability",
     "llm",
     "ai",
@@ -15,17 +15,17 @@
     "claude",
     "gpt"
   ],
-  "homepage": "https://uselumina.io",
+  "homepage": "https://refract.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/use-lumina/Lumina.git",
+    "url": "https://github.com/aigenthix/Refract.git",
     "directory": "packages/sdk"
   },
   "bugs": {
-    "url": "https://github.com/use-lumina/Lumina/issues"
+    "url": "https://github.com/aigenthix/Refract/issues"
   },
   "license": "Apache-2.0",
-  "author": "Lumina Team",
+  "author": "Refract Team",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

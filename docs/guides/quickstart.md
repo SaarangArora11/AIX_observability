@@ -1,10 +1,10 @@
-# Lumina Quickstart Guide
+# Refract Quickstart Guide
 
-Get Lumina running locally in 5 minutes with Docker Compose.
+Get Refract running locally in 5 minutes with Docker Compose.
 
-## What is Lumina?
+## What is Refract?
 
-Lumina is an open-source, OpenTelemetry-native observability platform for AI systems that provides:
+Refract is an open-source, OpenTelemetry-native observability platform for AI systems that provides:
 
 - ✅ **Real-time trace ingestion** - Track every LLM call
 - ✅ **Cost & quality monitoring** - Get alerted on spikes and drops
@@ -51,8 +51,8 @@ To use the **replay feature with real LLM calls**, you'll need API keys:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/use-lumina/Lumina.git
-cd Lumina
+git clone https://github.com/aigenthix/Refract.git
+cd Refract
 ```
 
 ### Step 2: Configure Environment
@@ -104,7 +104,7 @@ AUTH_REQUIRED=true
 
 > **Note:** Self-hosted defaults to `AUTH_REQUIRED=false`, meaning no user authentication is required. All traces use `customerId='default'`.
 
-### Step 3: Start Lumina
+### Step 3: Start Refract
 
 ```bash
 cd infra/docker
@@ -114,7 +114,7 @@ docker-compose --env-file ../../.env.docker up -d
 This will:
 
 - Pull required Docker images (PostgreSQL, Redis, NATS)
-- Build Lumina services (ingestion, API, replay, dashboard)
+- Build Refract services (ingestion, API, replay, dashboard)
 - Run database migrations automatically
 - Start all services in the background
 
@@ -132,13 +132,13 @@ You should see all services with status `Up (healthy)`:
 
 ```
 NAME                 STATUS
-lumina-postgres      Up (healthy)
-lumina-redis         Up (healthy)
-lumina-nats          Up (healthy)
-lumina-ingestion     Up (healthy)
-lumina-api           Up (healthy)
-lumina-replay        Up (healthy)
-lumina-dashboard     Up (healthy)
+refract-postgres      Up (healthy)
+refract-redis         Up (healthy)
+refract-nats          Up (healthy)
+refract-ingestion     Up (healthy)
+refract-api           Up (healthy)
+refract-replay        Up (healthy)
+refract-dashboard     Up (healthy)
 ```
 
 Check service logs:
@@ -164,29 +164,29 @@ Open your browser and navigate to:
 http://localhost:3000
 ```
 
-You should see the Lumina dashboard! 🎉
+You should see the Refract dashboard! 🎉
 
 ## Send Your First Trace
 
-Now let's send a test trace to see Lumina in action.
+Now let's send a test trace to see Refract in action.
 
 ### Option 1: Using the SDK (Recommended)
 
 **Install the SDK:**
 
 ```bash
-npm install @uselumina/sdk
+npm install @refract/sdk
 # or
-bun add @uselumina/sdk
+bun add @refract/sdk
 ```
 
 **Send a trace:**
 
 ```typescript
-import { Lumina } from '@uselumina/sdk';
+import { Refract } from '@refract/sdk';
 
-// Initialize Lumina client
-const lumina = new Lumina({
+// Initialize Refract client
+const Refract = new Refract({
   apiKey: 'test-key',
   endpoint: 'http://localhost:8080/v1/traces',
   environment: 'live',
@@ -194,7 +194,7 @@ const lumina = new Lumina({
 });
 
 // Track an LLM call
-await lumina.traceLLM({
+await Refract.traceLLM({
   provider: 'openai',
   model: 'gpt-4',
   prompt: 'What is the capital of France?',
@@ -210,7 +210,7 @@ await lumina.traceLLM({
   },
 });
 
-console.log('✅ Trace sent to Lumina!');
+console.log('✅ Trace sent to Refract!');
 ```
 
 ### Option 2: Using cURL
@@ -248,7 +248,7 @@ curl -X POST http://localhost:8080/v1/traces \
 
 ### Tracing Complex Workflows
 
-While `traceLLM` is great for single LLM calls, most real-world applications involve multiple steps (e.g., retrieving data, then calling an LLM). Lumina allows you to trace these complex workflows using parent and child spans.
+While `traceLLM` is great for single LLM calls, most real-world applications involve multiple steps (e.g., retrieving data, then calling an LLM). Refract allows you to trace these complex workflows using parent and child spans.
 
 This gives you an end-to-end view of your entire operation, helping you pinpoint bottlenecks and attribute costs to each specific step.
 
@@ -278,16 +278,16 @@ Replay lets you re-run production traces to test changes:
 
 ```typescript
 // Capture a baseline
-await lumina.createReplaySet({
+await Refract.createReplaySet({
   name: 'Production baseline',
   description: 'Captured before prompt change',
   sampleSize: 100,
 });
 
 // After making changes, replay the traces
-await lumina.replayTraces({
+await Refract.replayTraces({
   replaySetId: 'replay-set-id',
-  // Lumina automatically compares old vs new responses
+  // Refract automatically compares old vs new responses
 });
 ```
 
@@ -313,7 +313,7 @@ If you see "port is already allocated":
 # Check what's using the port
 lsof -i :3000  # or :5432, :8080, etc.
 
-# Stop the conflicting service or change Lumina's ports in .env.docker
+# Stop the conflicting service or change Refract's ports in .env.docker
 ```
 
 ### Services Not Starting
@@ -348,7 +348,7 @@ docker-compose logs ingestion
 
 ```bash
 curl http://localhost:8081/health
-# Should return: {"status":"ok","service":"lumina-api"}
+# Should return: {"status":"ok","service":"refract-api"}
 ```
 
 2. Verify `NEXT_PUBLIC_API_URL` in .env.docker:
@@ -369,7 +369,7 @@ docker-compose down
 docker-compose up -d
 ```
 
-## Stopping Lumina
+## Stopping Refract
 
 ```bash
 # Stop all services (keeps data)
@@ -394,12 +394,12 @@ Your data is stored in Docker volumes:
 docker run --rm \
   -v docker_postgres-data:/data \
   -v $(pwd):/backup \
-  alpine tar czf /backup/lumina-backup-$(date +%Y%m%d).tar.gz -C /data .
+  alpine tar czf /backup/Refract-backup-$(date +%Y%m%d).tar.gz -C /data .
 ```
 
 ## What's Next?
 
-- 📖 [Architecture Overview](./architecture.md) - Understand how Lumina works
+- 📖 [Architecture Overview](./architecture.md) - Understand how Refract works
 - 🔌 [Integration Guides](./integrations.md) - Connect your LLM applications
 - 🚨 [Alert Configuration](./ALERTS.md) - Configure cost and quality alerts
 - 🔁 [Replay Guide](./replay.md) - Test changes safely
@@ -408,13 +408,13 @@ docker run --rm \
 
 ## Need Help?
 
-- 📝 [Documentation](https://use-lumina.github.io/Lumina)
-- 💬 [GitHub Discussions](https://github.com/use-lumina/Lumina/discussions)
-- 🐛 [Report an Issue](https://github.com/use-lumina/Lumina/issues)
-- 🌟 [Star us on GitHub](https://github.com/use-lumina/Lumina)
+- 📝 [Documentation](https://use-Refract.github.io/Refract)
+- 💬 [GitHub Discussions](https://github.com/aigenthix/Refract/discussions)
+- 🐛 [Report an Issue](https://github.com/aigenthix/Refract/issues)
+- 🌟 [Star us on GitHub](https://github.com/aigenthix/Refract)
 
 ---
 
 **Free Forever • All Features Included**
 
-Self-hosted Lumina includes all features with 50k traces/day and 7-day retention for $0. Need more? Upgrade to our managed cloud for unlimited traces and retention. Check out our [pricing page](https://yourdomain.com/pricing).
+Self-hosted Refract includes all features with 50k traces/day and 7-day retention for $0. Need more? Upgrade to our managed cloud for unlimited traces and retention. Check out our [pricing page](https://yourdomain.com/pricing).

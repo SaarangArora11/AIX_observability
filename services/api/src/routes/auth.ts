@@ -58,7 +58,7 @@ app.post('/login', async (c) => {
     const maxAge = 7 * 24 * 60 * 60; // 7 days
     const secureFlag = process.env.NODE_ENV === 'production' ? '; Secure' : '';
     const sameSite = 'Lax';
-    const cookie = `lumina_token=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=${sameSite}${secureFlag}`;
+    const cookie = `Refract_token=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=${sameSite}${secureFlag}`;
 
     // Set cookie header
     c.header('Set-Cookie', cookie);
@@ -227,7 +227,7 @@ app.post('/logout', async (c) => {
   // Be defensive: always attempt to clear the cookie and return success.
   try {
     const secureFlag = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-    const cookie = `lumina_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secureFlag}`;
+    const cookie = `Refract_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secureFlag}`;
 
     // Set cookie header to clear the cookie
     c.header('Set-Cookie', cookie);

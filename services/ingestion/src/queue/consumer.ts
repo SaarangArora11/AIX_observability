@@ -1,7 +1,7 @@
 import { getNATSConnection } from './nats-client';
 import { getDatabase, buildTraceQuery, insertAlertsFromCore } from '../database/client';
-import { analyzeTrace, calculateBaseline } from '@lumina/core';
-import type { Trace } from '@lumina/schema';
+import { analyzeTrace, calculateBaseline } from '@refract/core';
+import type { Trace } from '@refract/schema';
 import { AckPolicy, DeliverPolicy, type JsMsg } from 'nats';
 
 const SUBJECT = 'traces.ingest';
