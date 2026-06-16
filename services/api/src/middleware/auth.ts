@@ -23,7 +23,7 @@ export async function requireAuth(c: Context, next: Next) {
 
   // Self-hosted mode: no authentication required, use default customer
   if (!authRequired) {
-    c.set('customerId', 'default-customer');
+    c.set('customerId', 'default');
     return await next();
   }
 

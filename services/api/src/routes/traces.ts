@@ -433,4 +433,36 @@ app.get('/:id', requireAuth, async (c) => {
   }
 });
 
+/**
+ * DELETE /traces
+ * Delete multiple traces by their IDs
+ */
+app.delete('/', requireAuth, async (c) => {
+  try {
+    const db = getDatabase();
+    const { traceIds } = await c.req.json();
+
+    if (!Array.isArray(traceIds) || traceIds.length === 0) {
+      return c.json({ error: 'traceIds must be a non-empty array' }, 400);
+    }
+
+    // Delete traces (this will cascade to child spans if configured, otherwise we just delete by traceId)
+    await db.delete(traces).where(inArray(traces.traceId, traceIds));
+
+    // Also delete any associated alerts
+    await db.delete(alerts).where(inArray(alerts.traceId, traceIds));
+
+    return c.json({ success: true, deletedCount: traceIds.length });
+  } catch (error) {
+    console.error('Error deleting traces:', error);
+    return c.json(
+      {
+        error: 'Failed to delete traces',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+});
+
 export default app;

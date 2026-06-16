@@ -1,7 +1,7 @@
 // @Refract/sdk - User-facing instrumentation library
 
 // Main SDK class
-export { Refract, initRefract, getRefract } from './Refract';
+export { Refract, initRefract, getRefract } from './refract';
 
 // Semantic conventions for LLM operations
 export * as SemanticConventions from './semantic-conventions';

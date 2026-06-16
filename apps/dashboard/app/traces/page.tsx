@@ -6,7 +6,7 @@ import { TraceTableToolbar } from '@/components/traces/trace-table-toolbar';
 import { TraceFilterPanel } from '@/components/traces/trace-filter-panel';
 import { TraceTable } from '@/components/traces/trace-table';
 import { TraceInspector } from '@/components/traces/trace-inspector';
-import { getTraces, getTraceById, type Trace as APITrace } from '@/lib/api';
+import { getTraces, getTraceById, deleteTraces, type Trace as APITrace } from '@/lib/api';
 import type { UITrace, TraceSpan, HierarchicalSpan } from '@/types/trace';
 
 // Force dynamic rendering
@@ -65,7 +65,7 @@ function mapApiTraceToUI(trace: APITrace): UITrace {
     endpoint: trace.endpoint,
     model: trace.model || 'unknown',
     status:
-      trace.status === 'ok' || trace.status === 'healthy'
+      trace.status === 'ok' || trace.status === 'healthy' || trace.status === 'success'
         ? 'healthy'
         : trace.status === 'degraded'
           ? 'degraded'
@@ -188,8 +188,26 @@ function TracesPageContent() {
   };
 
   // Bulk action handlers
-  const handleDeleteSelected = () => {
-    alert(`Delete ${selectedRows.size} trace(s)?`);
+  const handleDeleteSelected = async () => {
+    if (selectedRows.size === 0) return;
+    
+    if (!window.confirm(`Delete ${selectedRows.size} trace(s)?`)) {
+      return;
+    }
+
+    try {
+      const traceIds = Array.from(selectedRows);
+      await deleteTraces(traceIds);
+      
+      setTraces(prev => prev.filter(t => !selectedRows.has(t.id)));
+      setSelectedRows(new Set());
+      if (selectedTrace && selectedRows.has(selectedTrace.id)) {
+        setSelectedTrace(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete traces:', error);
+      alert('Failed to delete traces. Please check the console.');
+    }
   };
 
   const handleAddToQueue = () => {

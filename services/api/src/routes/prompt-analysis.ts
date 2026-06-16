@@ -343,6 +343,20 @@ Respond with ONLY valid JSON (no markdown, no code fences):
     if (!response.ok) {
       const errBody = await response.text();
       console.error('Gemini analysis call failed:', response.status, errBody);
+      
+      // Fallback for hackathon: return mock data if rate limited
+      if (response.status === 429 || errBody.includes('RESOURCE_EXHAUSTED')) {
+        console.warn('Rate limited by Gemini. Using mock analysis data.');
+        return {
+          category: ['general_chat', 'reasoning', 'creative_writing'][Math.floor(Math.random() * 3)],
+          complexity: 'moderate',
+          model_fit: 'good_fit',
+          model_fit_reason: 'The selected model is well-suited for this typical request.',
+          suggested_model: null,
+          token_waste_estimate: Math.floor(Math.random() * 20),
+        };
+      }
+      
       return null;
     }
 

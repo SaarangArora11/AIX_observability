@@ -141,18 +141,27 @@ export function Sidebar() {
 
   return (
     <aside className="w-55 border-r border-border bg-sidebar/80 backdrop-blur-md flex flex-col h-full shrink-0 z-50 transition-all duration-400">
-      {/* Logo */}
-      <div className="h-18 border-b border-border/60 flex items-center justify-start">
-        <Link href="/" className="relative h-15 w-auto cursor-pointer">
-          <Image
-            src={logoFull}
-            alt="Refract Analytics"
-            priority
-            unoptimized
-            height={48}
-            width={120}
-            className="object-contain object-left"
-          />
+      <div className="h-18 border-b border-border/60 flex items-center px-6">
+        <Link href="/" className="flex items-center gap-2 cursor-pointer group">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5 text-primary"
+            >
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+          </div>
+          <span className="font-black text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+            Refract
+          </span>
         </Link>
       </div>
 

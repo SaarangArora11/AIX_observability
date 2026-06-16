@@ -105,6 +105,23 @@ export async function getTraceById(id: string): Promise<TraceDetailResponse> {
   return response.json();
 }
 
+export async function deleteTraces(traceIds: string[]): Promise<{ success: true; deletedCount: number }> {
+  const response = await fetch(`${API_BASE_URL}/traces`, {
+    method: 'DELETE',
+    headers: {
+      ...buildHeaders(),
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ traceIds }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to delete traces: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 export interface TraceTrendsParams extends TimeRangeParams {
   service?: string;
   endpoint?: string;
